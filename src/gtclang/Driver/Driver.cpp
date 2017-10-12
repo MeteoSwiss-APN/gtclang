@@ -30,7 +30,8 @@
 
 namespace gtclang {
 
-std::pair<int, std::shared_ptr<dawn::SIR>> Driver::run(const llvm::SmallVectorImpl<const char*>& args) {
+std::pair<int, std::shared_ptr<dawn::SIR>>
+Driver::run(const llvm::SmallVectorImpl<const char*>& args) {
 
   // Print a stack trace if we signal out
   llvm::sys::PrintStackTraceOnErrorSignal(args[0]);
@@ -49,7 +50,7 @@ std::pair<int, std::shared_ptr<dawn::SIR>> Driver::run(const llvm::SmallVectorIm
   OptionsParser optionsParser(&context->getOptions());
   llvm::SmallVector<const char*, 16> clangArgs;
   if(!optionsParser.parse(args, clangArgs))
-    return std::pair<int,std::shared_ptr<dawn::SIR>> (1,returnSIR);
+    return std::pair<int, std::shared_ptr<dawn::SIR>>(1, returnSIR);
 
   // Ininitialize the Logger
   auto logger = llvm::make_unique<Logger>();
@@ -77,7 +78,7 @@ std::pair<int, std::shared_ptr<dawn::SIR>> Driver::run(const llvm::SmallVectorIm
   if(context->getOptions().Verbose)
     dawn::Logger::getSingleton().registerLogger(oldLogger);
 
-  return std::pair<int, std::shared_ptr<dawn::SIR>>(ret,returnSIR);
+  return std::pair<int, std::shared_ptr<dawn::SIR>>(ret, returnSIR);
 }
 
 } // namespace gtclang

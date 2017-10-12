@@ -33,7 +33,7 @@ class GTClangASTAction : public clang::ASTFrontendAction {
 
 public:
   GTClangASTAction(GTClangContext* context);
-  virtual ~GTClangASTAction(){}
+  virtual ~GTClangASTAction() {}
 
   /// @brief Create the AST consumer to read the AST
   virtual std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance& compiler,

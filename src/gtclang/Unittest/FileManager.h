@@ -26,9 +26,8 @@ namespace gtclang {
 /// @ingroup unittest
 class FileManager {
 
-
 public:
-  enum testKind{unittest, integrationtet};
+  enum testKind { unittest, integrationtet };
 
   FileManager();
   /// @brief set if unit- or integrationtest
@@ -39,6 +38,7 @@ public:
 
   /// @brief Path of the unittest data files
   const std::string& dataPath() const { return dataPath_; }
+
 private:
   std::string dataPath_;
 
