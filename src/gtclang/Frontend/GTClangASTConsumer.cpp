@@ -17,6 +17,7 @@
 #include "gtclang/Frontend/GTClangASTConsumer.h"
 #include "dawn/Compiler/DawnCompiler.h"
 #include "dawn/SIR/SIR.h"
+#include "dawn/SIR/SIRSerializer.h"
 #include "dawn/Support/Config.h"
 #include "dawn/Support/Format.h"
 #include "dawn/Support/StringUtil.h"
@@ -29,6 +30,7 @@
 #include "gtclang/Support/Config.h"
 #include "gtclang/Support/FileUtil.h"
 #include "gtclang/Support/Logger.h"
+#include "gtclang/Support/StringUtil.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Decl.h"
 #include "clang/Basic/FileManager.h"
@@ -115,6 +117,12 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   if(context_->getOptions().DumpSIR) {
     SIR->dump();
   }
+
+  if(context_->getOptions().WriteSIR) {
+    dawn::SIRSerializer::serialize(replaceFilenameExt(context_->getOptions().OutputFile, ".sir"),
+                                   SIR.get());
+  }
+
   parentAction_->setSIR(SIR);
 
   // Set the backend

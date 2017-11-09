@@ -100,6 +100,15 @@ std::vector<std::string> tokenizeString(const std::string& str, std::string deli
   return tokensVector;
 }
 
+std::string replaceFilenameExt(const std::string& str, const std::string& extension) {
+  std::string newStr = str;
+  std::string::size_type pos = 0;
+  pos = newStr.rfind(".", newStr.size() - 1);
+  if(pos != std::string::npos)
+    newStr.replace(pos, newStr.length(), extension);
+  return newStr;
+}
+
 const char* copyCString(const std::string& str) {
   const std::string::size_type size = str.size();
   char* buffer = new char[size + 1];
