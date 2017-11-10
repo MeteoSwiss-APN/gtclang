@@ -40,6 +40,8 @@
 #include "llvm/ADT/StringSwitch.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/MemoryBuffer.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Path.h"
 #include <cstdio>
 #include <ctime>
 #include <iostream>
@@ -118,11 +120,6 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
     SIR->dump();
   }
 
-  if(context_->getOptions().WriteSIR) {
-    dawn::SIRSerializer::serialize(replaceFilenameExt(context_->getOptions().OutputFile, ".sir"),
-                                   SIR.get());
-  }
-
   parentAction_->setSIR(SIR);
 
   // Set the backend
@@ -178,6 +175,17 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
     llvm::SmallVector<char, 40> path(OutputFile.data(), OutputFile.data() + OutputFile.size());
     llvm::sys::fs::make_absolute(path);
     generatedFilename.assign(path.data(), path.size());
+  }
+
+  if(context_->getOptions().WriteSIR) {
+
+    llvm::SmallVector<char, 40> filename = llvm::SmallVector<char, 40>(
+        generatedFilename.data(), generatedFilename.data() + generatedFilename.size());
+
+    llvm::sys::path::replace_extension(filename, llvm::Twine(".sir"));
+
+    dawn::SIRSerializer::serialize(std::string(filename.data(), filename.data() + filename.size()),
+                                   SIR.get());
   }
 
   // Create the generated file

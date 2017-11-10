@@ -48,14 +48,6 @@ extern std::string splitString(const std::string& str, std::size_t lineSize,
 /// @ingroup support
 extern std::vector<std::string> tokenizeString(const std::string& str, std::string delim);
 
-/// @brief Replace the extension of a filename (if found) @param str by a new extention
-///
-/// @param str       Filename to replace
-/// @param extension new extension to insert into the filename
-///
-/// @ingroup support
-extern std::string replaceFilenameExt(const std::string& str, const std::string& extension);
-
 /// @brief Return a deep copy of the string
 /// @ingroup support
 extern const char* copyCString(const std::string& str);
