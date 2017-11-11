@@ -26,7 +26,7 @@ stencil Test {
 
   Do {
     vertical_region(k_start, k_end)
-        b = a(i + 1) + a[i - 1] + a(j + 1) + a[j - 1] + a[k - 1] + a[k + 1];
+        b = a(i + 1) + a[i - 1] + a(i, j + 1) + a[j - 1, k] + a[k - 1] + a[j + 1, k + 1];
   }
 };
 
