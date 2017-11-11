@@ -1,5 +1,5 @@
 {
- "filename": "/code/gtclang-all/gtclang/test/integration-test/SIR/offset.cpp",
+ "filename": "/code/gtclang-all/gtclang/test/integration-test/SIR/AccessTest.cpp",
  "stencils": [
   {
    "name": "Test",

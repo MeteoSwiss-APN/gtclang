@@ -1,5 +1,5 @@
 {
- "filename": "/code/gtclang-all/gtclang/test/integration-test/SIR/stencil_fn_call.cpp",
+ "filename": "/code/gtclang-all/gtclang/test/integration-test/SIR/StencilFnCallTest.cpp",
  "stencils": [
   {
    "name": "Test",
