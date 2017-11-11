@@ -152,7 +152,7 @@
                           "negate_offset": false,
                           "loc": {
                            "Line": 29,
-                           "Column": 46
+                           "Column": 49
                           }
                          }
                         },
@@ -180,7 +180,7 @@
                         "negate_offset": false,
                         "loc": {
                          "Line": 29,
-                         "Column": 57
+                         "Column": 63
                         }
                        }
                       },
@@ -208,7 +208,7 @@
                       "negate_offset": false,
                       "loc": {
                        "Line": 29,
-                       "Column": 68
+                       "Column": 74
                       }
                      }
                     },
