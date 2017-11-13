@@ -17,7 +17,6 @@
 find_package(GridTools QUIET)
 
 if(GridTools_FOUND)
-  set(GRIDTOOLS_INCLUDE_DIRS "${GridTools_DIR}/include")
   set(GTCLANG_HAS_GRIDTOOLS 1)
 endif()
 

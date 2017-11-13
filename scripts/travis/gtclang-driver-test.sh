@@ -39,6 +39,7 @@ cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                            
          -DCMAKE_C_COMPILER="$CC"                                                                  \
          -DCMAKE_BUILD_TYPE="$CONFIG"                                                              \
          -DBOOST_ROOT="$BOOST_ROOT"                                                                \
+         -DGRIDTOOLS_ROOT="$GRIDTOOLS_ROOT"                                                        \
          -DDAWN_ROOT="$DAWN_ROOT"                                                                  \
          -DGTCLANG_TESTING=ON                                                                      \
          -DGTCLANG_UNIT_TESTING=ON                                                                 \

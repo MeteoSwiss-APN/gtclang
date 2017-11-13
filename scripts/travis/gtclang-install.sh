@@ -30,7 +30,7 @@ gtclang_get_dawn() {
   }
 
   # Update the repository
-  if [[ ! -z "$(ls -A ${DAWN_DIR})" ]]; then
+  if [[ ! -z "$(ls -A ${DAWN_DIR} 2> /dev/null )" ]]; then
     # We have cached version, pull changes
     cd "${DAWN_DIR}"
     git pull origin master || fatal_error_bootstrap "failed to update master"
@@ -41,6 +41,8 @@ gtclang_get_dawn() {
     local gtclang_git_url=$(git remote get-url --push origin)
     local dawn_git_url=$(sed 's/gtclang/dawn/g' <<< "$gtclang_git_url")
 
+    local dawn_branch="find_gridtools"
+
     eval git ls-remote --exit-code -h "$dawn_git_url" &> /dev/null
     local ret=$?
 
@@ -50,11 +52,14 @@ gtclang_get_dawn() {
     fi
 
     echo "Cloning from $dawn_git_url"
-    git clone $dawn_git_url "$DAWN_DIR" || fatal_error_bootstrap "failed to clone master"
+    git clone -b $dawn_branch $dawn_git_url "$DAWN_DIR" || fatal_error_bootstrap "failed to clone master"
   fi
 
   # Create symlinks for packages
   ln -sf "$this_script_dir/install_boost.sh" "$DAWN_SCRIPT_DIR/install_boost.sh"                   \
+    || fatal_error_bootstrap "failed to create symlinks"
+
+  ln -sf "$this_script_dir/install_gridtools.sh" "$DAWN_SCRIPT_DIR/install_gridtools.sh"               \
     || fatal_error_bootstrap "failed to create symlinks"
 
   popd
@@ -90,7 +95,7 @@ gtclang_install_dependencies() {
 
   # Install 3rd party dependencies
   source "$DAWN_SCRIPT_DIR/install.sh"
-  install_driver -i ${CACHE_DIR} -b cmake,protobuf,boost -c boost:system
+  install_driver -i ${CACHE_DIR} -b cmake,protobuf,boost,gridtools -c boost:system
 
   # Install Dawn
   gtclang_build_dawn
