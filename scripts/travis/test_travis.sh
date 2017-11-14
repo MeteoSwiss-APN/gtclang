@@ -1,5 +1,6 @@
-##===------------------------------------------------------------------------------*- CMake -*-===##
-##                         _       _       
+#!/bin/bash
+##===-------------------------------------------------------------------------------*- bash -*-===##
+##                         _       _
 ##                        | |     | |
 ##                    __ _| |_ ___| | __ _ _ __   __ _ 
 ##                   / _` | __/ __| |/ _` | '_ \ / _` |
@@ -14,15 +15,21 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-find_package(GridTools QUIET)
+this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if(GridTools_FOUND)
-  set(GTCLANG_HAS_GRIDTOOLS 1)
-endif()
+build_dir=$(pwd)/travis_build
+mkdir $build_dir
 
-dawn_export_package(
-  NAME GridTools
-  FOUND ${GridTools_FOUND}
-  INCLUDE_DIRS ${GRIDTOOLS_INCLUDE_DIRS} 
-  VERSION "${GridTools_VERSION}" 
-)
+cd $build_dir
+
+
+export CACHE_DIR=${build_dir}
+
+export BOOST_VERSION=1.60.0
+export GRIDTOOLS_VERSION=master
+export CMAKE_VERSION=3.8.1
+export PROTOBUF_VERSION=3.4.1
+export CXX_COMPILER=`which g++-5`
+export C_COMPILER=`which gcc-5`
+
+bash ${this_script_dir}/gtclang-driver-test.sh -c "cmake,protobuf,boost,gridtools"

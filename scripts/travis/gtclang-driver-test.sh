@@ -15,11 +15,43 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+function help() {
+  echo "./gtclang-driver-test [-components <comp>]"
+}
+
+#Check the number of arguments. If none are passed, print help and exit.
+NUMARGS=$#
+# echo -e \\n"Number of arguments: $NUMARGS"
+
+if [ $NUMARGS -gt 2 ]; then
+  echo "wrong number of parameters $@"
+  help
+  exit 1
+fi
+
+OPTS=`getopt -o c: --long components: -n 'parse-options' -- "$@"`
+
+eval set -- "$OPTS"
+
+components="cmake,protobuf,boost,gridtools"
+
+while getopts "c:" opt; do
+  case $opt in 
+  c)
+     components=$OPTARG
+     ;;
+  \?) #unrecognized option - show help
+     echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
+     ;;
+  esac
+done
+
 this_script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Setup dependencies
 source "$this_script_dir/gtclang-install.sh"
-gtclang_install_dependencies
+
+gtclang_install_dependencies $components
 
 if [ ! -z ${CLANG_VERSION+x} ]; then
   install_driver -i "${CACHE_DIR}" -b clang
@@ -39,6 +71,7 @@ cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                            
          -DCMAKE_C_COMPILER="$CC"                                                                  \
          -DCMAKE_BUILD_TYPE="$CONFIG"                                                              \
          -DBOOST_ROOT="$BOOST_ROOT"                                                                \
+         -DGRIDTOOLS_ROOT="$GRIDTOOLS_ROOT"                                                        \
          -DDAWN_ROOT="$DAWN_ROOT"                                                                  \
          -DGTCLANG_TESTING=ON                                                                      \
          -DGTCLANG_UNIT_TESTING=ON                                                                 \
