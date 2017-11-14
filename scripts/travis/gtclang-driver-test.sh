@@ -22,8 +22,11 @@ function help() {
 #Check the number of arguments. If none are passed, print help and exit.
 NUMARGS=$#
 # echo -e \\n"Number of arguments: $NUMARGS"
-if [ $NUMARGS -gt 1 ]; then
+
+if [ $NUMARGS -gt 2 ]; then
+  echo "wrong number of parameters $@"
   help
+  exit 1
 fi
 
 OPTS=`getopt -o c: --long components: -n 'parse-options' -- "$@"`

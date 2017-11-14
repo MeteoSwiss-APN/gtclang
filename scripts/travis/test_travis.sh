@@ -26,10 +26,10 @@ cd $build_dir
 export CACHE_DIR=${build_dir}
 
 export BOOST_VERSION=1.60.0
-export GRIDTOOLS_VERSION=1.05.02
+export GRIDTOOLS_VERSION=master
 export CMAKE_VERSION=3.8.1
 export PROTOBUF_VERSION=3.4.1
 export CXX_COMPILER=`which g++-5`
 export C_COMPILER=`which gcc-5`
 
-bash ${this_script_dir}/gtclang-driver-test.sh -c "cmake,protobuf,boost"
+bash ${this_script_dir}/gtclang-driver-test.sh -c "cmake,protobuf,boost,gridtools"
