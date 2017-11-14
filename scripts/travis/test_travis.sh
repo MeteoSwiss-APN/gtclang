@@ -32,4 +32,4 @@ export PROTOBUF_VERSION=3.4.1
 export CXX_COMPILER=`which g++-5`
 export C_COMPILER=`which gcc-5`
 
-bash ${this_script_dir}/gtclang-driver-test.sh
+bash ${this_script_dir}/gtclang-driver-test.sh -c "cmake,protobuf,boost"

@@ -32,10 +32,12 @@ stencil Test01 {
 
   void Do() {
     vertical_region(k_start, k_start) {
-      foo[i, j + 1, k] = 5;      // EXPECTED: %line%: foo(i, j+1, k) = 5;
+// clang-format off
+      foo[i, j + 1, k] = 5;      // EXPECTED: %line%: foo(i, j + 1, k) = 5;
       foo = bar[i];              // EXPECTED: %line%: foo = bar(i);
       foo[i] = bar[i, j];        // EXPECTED: %line%: foo(i) = bar(i, j);
-      foo = TestFun(bar[i + 1]); // EXPECTED: %line%: foo = TestFun(bar(i+1));
+      foo = TestFun(bar[i + 1]); // EXPECTED: %line%: foo = TestFun(bar(i + 1));
+// clang-format on
     }
   }
 };
@@ -45,7 +47,9 @@ stencil Test02 {
 
   void Do() {
     vertical_region(k_start, k_start)
-        foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j+1, k) = bar;
+// clang-format off
+        foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j + 1, k) = bar;
+// clang-format on
   }
 };
 
@@ -54,6 +58,8 @@ stencil Test03 {
 
   void Do() {
     vertical_region(k_start, k_start)
-        foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j+1, k) = bar;
+// clang-format off
+        foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j + 1, k) = bar;
+// clang-format on
   }
 };
