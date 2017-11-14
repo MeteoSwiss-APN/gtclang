@@ -24,7 +24,6 @@ cd $build_dir
 
 
 export CACHE_DIR=${build_dir}
-echo " CC $CACHE_DIR "
 
 export BOOST_VERSION=1.60.0
 export GRIDTOOLS_VERSION=1.05.02
