@@ -86,7 +86,22 @@ gtclang_build_dawn() {
   popd
 }
 
-gtclang_install_dependencies() {
+# @brief Install dependency libraries
+#
+# @param $1   list of dependent components (comma separated)
+function gtclang_install_dependencies() {
+  pushd $(pwd)
+  local start_time=$(date +%s)
+
+  if [[ $# -lt 1 ]]; then
+    fatal_error "argument mistmatch: ${FUNCNAME[0]} <install_prefix> <version> <components...>"
+  fi
+
+  local components=$1
+  shift
+
+  echo "Installing dependencies ", ${components}
+
   export DAWN_DIR="$CACHE_DIR/dawn"
   export DAWN_SCRIPT_DIR="$DAWN_DIR/scripts/travis"
 
