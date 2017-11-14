@@ -41,8 +41,6 @@ gtclang_get_dawn() {
     local gtclang_git_url=$(git remote get-url --push origin)
     local dawn_git_url=$(sed 's/gtclang/dawn/g' <<< "$gtclang_git_url")
 
-    local dawn_branch="find_gridtools"
-
     eval git ls-remote --exit-code -h "$dawn_git_url" &> /dev/null
     local ret=$?
 
@@ -52,7 +50,7 @@ gtclang_get_dawn() {
     fi
 
     echo "Cloning from $dawn_git_url"
-    git clone -b $dawn_branch $dawn_git_url "$DAWN_DIR" || fatal_error_bootstrap "failed to clone master"
+    git clone $dawn_git_url "$DAWN_DIR" || fatal_error_bootstrap "failed to clone master"
   fi
 
   # Create symlinks for packages
