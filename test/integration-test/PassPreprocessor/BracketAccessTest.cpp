@@ -21,6 +21,7 @@
 using namespace gridtools::clang;
 using namespace gridtools;
 
+// clang-format off
 stencil_function TestFun {
   storage foo;
 
@@ -45,7 +46,7 @@ stencil Test02 {
 
   void Do() {
     vertical_region(k_start, k_start) 
-foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j + 1, k) = bar;
+      foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j + 1, k) = bar;
   }
 };
 
@@ -54,7 +55,9 @@ stencil Test03 {
 
   void Do() {
     vertical_region(k_start, k_start) 
-foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j + 1, k) = bar;
+      foo[i, j + 1, k] = bar; // EXPECTED: %line%: foo(i, j + 1, k) = bar;
   }
 };
+
+// clang-format on
 
