@@ -17,7 +17,7 @@
 #include "gtclang/Frontend/GTClangASTConsumer.h"
 #include "dawn/Compiler/DawnCompiler.h"
 #include "dawn/SIR/SIR.h"
-#include "dawn/SIR/SIRSerializerJSON.h"
+#include "dawn/SIR/SIRSerializer.h"
 #include "dawn/Support/Config.h"
 #include "dawn/Support/Format.h"
 #include "dawn/Support/StringUtil.h"
@@ -30,6 +30,7 @@
 #include "gtclang/Support/Config.h"
 #include "gtclang/Support/FileUtil.h"
 #include "gtclang/Support/Logger.h"
+#include "gtclang/Support/StringUtil.h"
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/Decl.h"
 #include "clang/Basic/FileManager.h"
@@ -38,7 +39,9 @@
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/StringSwitch.h"
 #include "llvm/Support/FileSystem.h"
+#include "llvm/Support/FileSystem.h"
 #include "llvm/Support/MemoryBuffer.h"
+#include "llvm/Support/Path.h"
 #include <cstdio>
 #include <ctime>
 #include <iostream>
@@ -114,9 +117,9 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   SIR->GlobalVariableMap = globalsParser.getGlobalVariableMap();
 
   if(context_->getOptions().DumpSIR) {
-    dawn::SIRSerializerJSON::serialize("sir.json", SIR.get());
     SIR->dump();
   }
+
   parentAction_->setSIR(SIR);
 
   // Set the backend
@@ -147,6 +150,29 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
     return;
   }
 
+  // Determine filename of generated file (by default we append "_gen" to the filename)
+  std::string generatedFilename;
+  if(context_->getOptions().OutputFile.empty())
+    generatedFilename = llvm::StringRef(file_).split(".cpp").first.str() + "_gen.cpp";
+  else {
+    const auto& OutputFile = context_->getOptions().OutputFile;
+    llvm::SmallVector<char, 40> path(OutputFile.data(), OutputFile.data() + OutputFile.size());
+    llvm::sys::fs::make_absolute(path);
+    generatedFilename.assign(path.data(), path.size());
+  }
+
+  if(context_->getOptions().WriteSIR) {
+    llvm::SmallVector<char, 40> filename = llvm::SmallVector<char, 40>(
+        generatedFilename.data(), generatedFilename.data() + generatedFilename.size());
+
+    llvm::sys::path::replace_extension(filename, llvm::Twine(".sir"));
+
+    std::string generatedSIR(filename.data(), filename.data() + filename.size());
+    DAWN_LOG(INFO) << "Generating SIR file " << generatedFilename;
+
+    dawn::SIRSerializer::serialize(generatedSIR, SIR.get());
+  }
+
   // Do we generate code?
   if(!context_->getOptions().CodeGen) {
     DAWN_LOG(INFO) << "Skipping code-generation";
@@ -162,17 +188,6 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   // Get a copy of the main-file's code
   std::unique_ptr<llvm::MemoryBuffer> generatedCode =
       llvm::MemoryBuffer::getMemBufferCopy(SM.getBufferData(SM.getMainFileID()));
-
-  // Determine filename of generated file (by default we append "_gen" to the filename)
-  std::string generatedFilename;
-  if(context_->getOptions().OutputFile.empty())
-    generatedFilename = llvm::StringRef(file_).split(".cpp").first.str() + "_gen.cpp";
-  else {
-    const auto& OutputFile = context_->getOptions().OutputFile;
-    llvm::SmallVector<char, 40> path(OutputFile.data(), OutputFile.data() + OutputFile.size());
-    llvm::sys::fs::make_absolute(path);
-    generatedFilename.assign(path.data(), path.size());
-  }
 
   // Create the generated file
   DAWN_LOG(INFO) << "Creating generated file " << generatedFilename;

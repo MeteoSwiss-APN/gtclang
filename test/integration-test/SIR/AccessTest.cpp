@@ -14,32 +14,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#pragma once
+// RUN: %gtclang% %file% -write-sir -fno-codegen -o %filename%_gen.cpp
+// EXPECTED_FILE: OUTPUT:%filename%_gen.sir REFERENCE:%filename%_gen_ref.sir
 
-#include "gridtools/clang/dimension.hpp"
+#include "gridtools/clang_dsl.hpp"
 
-namespace gridtools {
+using namespace gridtools::clang;
 
-    namespace clang {
+stencil Test {
+  storage a, b;
 
-        /*
-         * @brief A stencil which can be called as a function from other `stencils`
-         * @ingroup gridtools_clang
-         */
-        class stencil_function {
-          protected:
-            dimension i;
-            dimension j;
-            dimension k;
+  Do {
+    vertical_region(k_start, k_end)
+        b = a(i + 1) + a[i - 1] + a(i, j + 1) + a[j - 1, k] + a[k - 1] + a[j + 1, k + 1];
+  }
+};
 
-          private:
-            stencil_function &operator=(stencil_function) = delete;
-
-          public:
-            template < typename... T >
-            stencil_function(T &&...);
-
-            operator double() const;
-        };
-    }
-}
+int main() {}

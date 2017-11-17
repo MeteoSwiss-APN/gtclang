@@ -28,6 +28,7 @@ set(directories
   ${cwd}/PassTemporaryMerger
   ${cwd}/PassTemporaryType
   ${cwd}/PassPreprocessor
+  ${cwd}/SIR
   ${cwd}/PassSetNonTempCaches
 )
 
