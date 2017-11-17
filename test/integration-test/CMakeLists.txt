@@ -29,6 +29,7 @@ set(directories
   ${cwd}/PassTemporaryType
   ${cwd}/PassPreprocessor
   ${cwd}/PassSetNonTempCaches
+  ${cwd}/SIR
 )
 
 list(APPEND compiler_flags -std=c++11 -O2)
