@@ -32,11 +32,7 @@ project(gtclang-all C CXX)
 cmake_minimum_required(VERSION 3.9)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-get_cmake_property(_variableNames VARIABLES)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
 include(GTClangCloneRepository)
 
@@ -92,7 +88,7 @@ make_config_string("Compiler" ${MSBUILD_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
 msbuild_report_result("Configuration summary" ${config_info})
 
-include(msbuildAddDependency)
+include(GTClangAddDependency)
 include(msbuildFindPackage)
 
 include(msbuildSetDownloadDir)
@@ -110,13 +106,36 @@ msbuild_find_package(
     MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
 )
 
-msbuild_add_dependency(NAME "Boost")
+gtclang_add_dependency(NAME "Boost")
 
-set(gtclang_cmake_args -Ddawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
+#TODO Cleanup the mess with the naming conventions
+set(gtclang_cmake_args -DDawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
+
+option(GTCLANG_ENABLE_GRIDTOOLS "Enable GridTools compilation" OFF)
+
+set(gtclang_dependencies "boost" "dawn")
+
+if(GTCLANG_ENABLE_GRIDTOOLS) 
+  msbuild_find_package(
+    PACKAGE gridtools
+    REQUIRED_VARS GridTools_DIR
+    DEPENDS "boost"
+    ADDITIONAL
+      DOWNLOAD_DIR ${MSBUILD_DOWNLOAD_DIR}
+      GIT_REPOSITORY "git@github.com:eth-cscs/gridtools.git"
+      GIT_TAG "master" 
+      MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
+      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON
+         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+  )
+  list(APPEND gtclang_dependencies "gridtools")
+
+  list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
+endif()
 
 msbuild_find_package(
   PACKAGE gtclang
-  DEPENDS "boost" "dawn"
+  DEPENDS ${gtclang_dependencies}
   ADDITIONAL
     SOURCE_DIR "${CMAKE_SOURCE_DIR}/../"
     MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
