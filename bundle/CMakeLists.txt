@@ -102,7 +102,7 @@ msbuild_set_download_dir()
 
 msbuild_find_package(
   PACKAGE dawn
-  REQUIRED_VARS DAWN_ROOT
+  REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${MSBUILD_DOWNLOAD_DIR}
     GIT_REPOSITORY "git@github.com:cosunae/dawn.git"
@@ -111,8 +111,6 @@ msbuild_find_package(
 )
 
 msbuild_add_dependency(NAME "Boost")
-
-message("DAWN_ROOT ${DAWN_ROOT}")
 
 set(gtclang_cmake_args -Ddawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
 
@@ -123,7 +121,7 @@ msbuild_find_package(
     SOURCE_DIR "${CMAKE_SOURCE_DIR}/../"
     MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
     CMAKE_ARGS 
-        ${gtclang_cmake_args} -DDAWN_ROOT=${DAWN_ROOT}
+        ${gtclang_cmake_args}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
