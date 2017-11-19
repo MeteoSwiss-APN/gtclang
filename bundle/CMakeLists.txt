@@ -46,8 +46,6 @@ set(MB_GIT_BRANCH "master" CACHE STRING "Branch of the dawn git repository to cl
 
 gtclang_clone_repository(NAME msbuild URL ${MB_GIT_URL} BRANCH ${MB_GIT_BRANCH} SOURCE_DIR GTCLANG_MSBUILD_SOURCE_DIR )
 
-message("WRITING INTO ${MSBUILD_SOURCE_DIR}")
-
 list(APPEND CMAKE_MODULE_PATH "${GTCLANG_MSBUILD_SOURCE_DIR}/cmake")
 include(msbuildCMakeInit)
 
