@@ -14,13 +14,15 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(msbuildExportPackage)
+
 if(NOT DEFINED(Dawn_DIR) AND DEFINED DAWN_ROOT)
   set(Dawn_DIR "${DAWN_ROOT}/cmake")
 endif()
 
 find_package(Dawn NO_MODULE REQUIRED)
 
-dawn_export_package(
+msbuild_export_package(
   NAME Dawn
   FOUND ${DAWN_FOUND} 
   VERSION "${DAWN_VERSION}" 

@@ -14,9 +14,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(msbuildExportPackage)
+
 find_package(OpenMP)
 
-dawn_export_package(
+msbuild_export_package(
   NAME OpenMP 
   FOUND ${OPENMP_FOUND} 
 )

@@ -14,6 +14,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(msbuildAddCustomDummyTarget)
+
 set(cwd ${CMAKE_CURRENT_LIST_DIR})
 
 set(directories 
@@ -35,6 +37,7 @@ list(APPEND compiler_flags -std=c++11 -O2)
 list(APPEND library_flags ${Boost_LIBRARIES})
 
 list(APPEND gridtools_flags ${compiler_flags} ${include_flags} ${library_flags})
+
 gtclang_add_integrationtest(NAME no-codegen
                             GTCLANG ${GTCLANG_EXECUTABLE}
                             DIRECTORIES ${directories}
@@ -42,7 +45,7 @@ gtclang_add_integrationtest(NAME no-codegen
 )
 
 # Add a dummy target with all the source files so that they are included in a qt creator project
-dawn_add_custom_dummy_target(NAME qt_creator_parse_project_integration_test
+msbuild_add_custom_dummy_target(NAME qt_creator_parse_project_integration_test
                              DIRECTORIES ${directories})
 
 # Codegen tests require GridTools

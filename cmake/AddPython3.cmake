@@ -14,9 +14,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(msbuildExportPackage)
+
 find_package(PythonInterp 3.4)
 
-dawn_export_package(
+msbuild_export_package(
   NAME Python3
   FOUND ${PYTHONINTERP_FOUND}
   EXECUTABLE ${PYTHON_EXECUTABLE}

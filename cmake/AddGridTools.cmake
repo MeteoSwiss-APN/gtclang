@@ -14,6 +14,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(msbuildExportPackage)
+
 find_package(GridTools QUIET)
 
 if(GridTools_FOUND)
@@ -21,9 +23,9 @@ if(GridTools_FOUND)
   set(GTCLANG_HAS_GRIDTOOLS 1)
 endif()
 
-dawn_export_package(
-  NAME GridTools
-  FOUND ${GridTools_FOUND}
-  INCLUDE_DIRS ${GRIDTOOLS_INCLUDE_DIRS} 
-  VERSION "${GridTools_VERSION}" 
-)
+#msbuild_export_package(
+#  NAME GridTools
+#  FOUND ${GridTools_FOUND}
+#  INCLUDE_DIRS ${GRIDTOOLS_INCLUDE_DIRS} 
+#  VERSION "${GridTools_VERSION}" 
+#)

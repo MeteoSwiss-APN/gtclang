@@ -14,9 +14,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-dawn_configure_file(Config.h.cmake)
+include(msbuildConfigureFile)
+include(msbuildAddLibrary)
 
-dawn_add_library(
+msbuild_configure_file(Config.h.cmake)
+
+msbuild_add_library(
   NAME GTClangSupport
   SOURCES FileUtil.cpp
           FileUtil.h

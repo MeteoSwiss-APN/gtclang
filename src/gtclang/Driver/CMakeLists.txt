@@ -14,7 +14,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-dawn_add_library(
+include(msbuildAddLibrary)
+
+msbuild_add_library(
   NAME GTClangDriver
   SOURCES CompilerInstance.cpp
           CompilerInstance.h

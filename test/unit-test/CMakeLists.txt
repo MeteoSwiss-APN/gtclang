@@ -14,7 +14,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(DawnAddUnittest)
+include(msbuildAddUnittest)
 
 set(GTCLANG_UNITTEST_EXTERNAL_LIBRARIES
   GTClangUnittestStatic
@@ -38,7 +38,7 @@ macro(gtclang_add_unittest)
     message(FATAL_ERROR "gtclang_add_unittest: invalid argument ${ARG_UNPARSED_ARGUMENTS}")
   endif()
 
-  dawn_add_unittest(
+  msbuild_add_unittest(
     NAME ${ARG_NAME}
     SOURCES ${ARG_SOURCES}
     DEPENDS ${GTCLANG_UNITTEST_EXTERNAL_LIBRARIES} gtest

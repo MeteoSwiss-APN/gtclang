@@ -14,9 +14,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
+include(msbuildExportPackage)
+
 find_package(ccache)
 
-dawn_export_package(
+msbuild_export_package(
   NAME ccache
   FOUND ${CCACHE_FOUND}
   EXECUTABLE ${CCACHE_EXECUTABLE}
