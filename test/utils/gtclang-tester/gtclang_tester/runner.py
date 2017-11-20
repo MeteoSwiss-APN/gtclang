@@ -25,7 +25,7 @@ from time import time
 
 from .config import Config
 from .error import report_info
-from .progressbar import TerminalController, ProgressBar, SimpleProgressBar
+from .progressbar import TerminalController, ProgressBar, SimpleProgressBar, EmptyProgressbar
 from .utility import executeCommand, levenshtein
 
 
@@ -48,7 +48,10 @@ class TestRunner(object):
         self.__test_time = 0
 
         try:
-            self.__progressbar = ProgressBar(self.__term, 'Tests')
+            if Config.no_progressbar:
+                self.__progressbar = EmptyProgressbar()
+            else:
+                self.__progressbar = ProgressBar(self.__term, 'Tests')
         except ValueError:
             report_info("Failed to initialize advanced progressbar")
             self.__progressbar = SimpleProgressBar('Tests  ')
