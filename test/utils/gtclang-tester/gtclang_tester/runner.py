@@ -128,6 +128,12 @@ class TestRunner(object):
                             self.add_failure(file, "EXECUTION", "%s" % e)
                             break
 
+                        # Filter ignored nodes
+                        if files.get_ignored_nodes():
+                            for node in files.get_ignored_nodes():
+                                del output_json[node]
+                                del reference_json[node]
+
                         output, reference = dumps(output_json), dumps(reference_json)
 
                         if output != reference:
