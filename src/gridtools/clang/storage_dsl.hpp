@@ -26,7 +26,6 @@ namespace gridtools {
 
 namespace clang {
 
-//struct temporary_storage;
 struct var;
 
 /**
