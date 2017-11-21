@@ -135,6 +135,8 @@ endif()
 
 msbuild_find_package(
   PACKAGE gtclang
+  FORWARD_VARS 
+    BINARY_DIR gtclang_binary_dir
   DEPENDS ${gtclang_dependencies}
   ADDITIONAL
     SOURCE_DIR "${CMAKE_SOURCE_DIR}/../"
@@ -142,5 +144,21 @@ msbuild_find_package(
     CMAKE_ARGS 
         ${gtclang_cmake_args}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+)
+
+if(NOT(gtclang_binary_dir))
+  message(FATAL_ERROR "gtclang binary dir was not defined by External_gtclang")
+endif()
+
+add_test(NAME gtclang-tests 
+  COMMAND  make test -C ${gtclang_binary_dir}
+)
+
+#We need to install something
+file(WRITE ${CMAKE_BINARY_DIR}/Conf.bundle "conf")
+
+install(
+  FILES ${CMAKE_BINARY_DIR}/Conf.bundle
+  DESTINATION bundle_conf
 )
 
