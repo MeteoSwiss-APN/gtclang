@@ -460,16 +460,19 @@ private:
         }
       }
 
-      // Add the found temporaries into the storage part of the Do-Method
-      if(!storagesAllocatedOnTheFly.empty()) {
-        registerReplacement(beforeFristDoMethod, beforeFristDoMethod, "void ");
-        std::string fulltemps = "";
-        for(const auto& varName : storagesAllocatedOnTheFly) {
-          std::cout << "A new temporary: " << varName << " was created" << std::endl;
-          fulltemps += "var " + varName + ";\n";
+      if(DoWasLexed) {
+        // Add the found temporaries into the storage part of the Do-Method
+        if(!storagesAllocatedOnTheFly.empty()) {
+          registerReplacement(beforeFristDoMethod, beforeFristDoMethod, "void ");
+          std::string fulltemps = "";
+          for(const auto& varName : storagesAllocatedOnTheFly) {
+            std::cout << "A new temporary: " << varName << " was created" << std::endl;
+            fulltemps += "var " + varName + ";\n";
+          }
+          fulltemps += "void";
+          registerReplacement(beforeFristDoMethod, beforeFristDoMethod, fulltemps);
+          storagesAllocatedOnTheFly.clear();
         }
-        fulltemps += "void";
-        registerReplacement(beforeFristDoMethod, beforeFristDoMethod, fulltemps);
       }
 
       // Update brace counter
