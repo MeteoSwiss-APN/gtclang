@@ -213,7 +213,8 @@ private:
   /// @brief Lex the body of a Do-Method
   void lexDoMethodBody(StencilKind stencilKind, const std::string& name,
                        const clang::SourceLocation& loc,
-                       const std::unordered_set<std::string>& storages) {
+                       const std::unordered_set<std::string>& storages,
+                       std::unordered_set<std::string>& storagesAllocatedOnTheFly) {
     using namespace clang;
 
     // We already lexed '{' of the body
@@ -235,7 +236,8 @@ private:
       // Replace `STORAGE[...]` with `STORAGE(...)` where STORAGE is the name of a storage of the
       // stencil or stencil function
       if(token_.is(tok::identifier) && PP_.LookAhead(0).is(tok::l_square) &&
-         storages.count(token_.getIdentifierInfo()->getName().str())) {
+         (storages.count(token_.getIdentifierInfo()->getName().str()) ||
+          storagesAllocatedOnTheFly.count(token_.getIdentifierInfo()->getName().str()))) {
         SourceLocation lSquareLoc = PP_.LookAhead(0).getLocation();
         unsigned peekedTokens = 1;
 
@@ -282,9 +284,52 @@ private:
 
         consumeTokens(peekedTokens);
       }
+      // Check for var ARG1, [ARGS...] [ = RHS];
+      // If we find [= RHS], we replace the whole list with ARGS[last] = RHS
+      // otherwise we remove the statement alltogether
+      if(token_.is(tok::identifier) && token_.getIdentifierInfo()->getName() == "var") {
+
+        unsigned peekedTokens = 0;
+        // Accumulate all identifiers up to `;`
+        std::string storagesStr;
+        if(peekAndAccumulateUntil(tok::semi, peekedTokens, storagesStr)) {
+          // Split the comma separated string
+          llvm::SmallVector<StringRef, 5> onTheFlyStorages;
+          StringRef(storagesStr).split(onTheFlyStorages, ',');
+          bool wasReplaced = false;
+          for(int i = 0; i < onTheFlyStorages.size(); ++i) {
+
+            if(i < onTheFlyStorages.size() - 1) {
+              if(onTheFlyStorages[i].str().find("=") == std::string::npos)
+                storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
+              else
+                reportError(token_.getLocation(), "bad allocation of storages");
+            } else {
+              if(onTheFlyStorages[i].str().find("=") == std::string::npos) {
+                storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
+              } else {
+                // If we find an equal, we replace the vardecl with the last allocation
+                llvm::SmallVector<StringRef, 2> equalsplit;
+                StringRef(onTheFlyStorages[i].str()).split(equalsplit, '=');
+                registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
+                                    onTheFlyStorages[i].str() + ";");
+                storagesAllocatedOnTheFly.emplace(equalsplit[0].str());
+                wasReplaced = true;
+              }
+            }
+          }
+          // If it was a vardecl only, we remove it
+          if(!wasReplaced) {
+            registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
+                                "");
+          }
+          consumeTokens(peekedTokens);
+        }
+      }
     }
 
-    // We haven't found a `return` and if we parsed a `Do` before we can replace if with `void Do`
+    // We haven't found a `return` and if we parsed a `Do` before we can replace if with `void
+    // Do`
     if(!replacementCandiates_.empty()) {
       registerReplacement(replacementCandiates_.top().first, replacementCandiates_.top().second,
                           "void Do");
@@ -309,6 +354,8 @@ private:
 
     std::unordered_set<std::string> storages;
 
+    std::unordered_set<std::string> storagesAllocatedOnTheFly;
+
     while(lexNext()) {
 
       // Update brace counter
@@ -330,9 +377,8 @@ private:
         // Get the token which describes the `storage`
         const Token& curToken = peekedTokens == 0 ? token_ : PP_.LookAhead(peekedTokens++);
 
-        if(curToken.is(tok::identifier) &&
-           (curToken.getIdentifierInfo()->getName() == "storage" ||
-            curToken.getIdentifierInfo()->getName() == "temporary_storage")) {
+        if(curToken.is(tok::identifier) && (curToken.getIdentifierInfo()->getName() == "storage" ||
+                                            curToken.getIdentifierInfo()->getName() == "var")) {
 
           // Accumulate all identifiers up to `;`
           std::string storagesStr;
@@ -354,6 +400,7 @@ private:
       //
       bool DoWasLexed = false;
       SourceLocation DoMethodLoc;
+      SourceLocation beforeFristDoMethod;
 
       // `void Do(`, `double Do(`
       if((token_.is(tok::kw_void) || token_.is(tok::kw_double) || token_.is(tok::kw_float)) &&
@@ -362,6 +409,7 @@ private:
          PP_.LookAhead(1).is(tok::l_paren)) {
 
         DoMethodLoc = PP_.LookAhead(0).getLocation();
+        beforeFristDoMethod = token_.getLocation();
         consumeTokens(2);
         DoWasLexed = true;
         lexDoMethodArgList(stencilKind, numDoMethods++, name, DoMethodLoc);
@@ -376,6 +424,7 @@ private:
         replacementCandiates_.push(std::make_pair(token_.getLocation(), token_.getLocation()));
 
         DoMethodLoc = token_.getLocation();
+        beforeFristDoMethod = token_.getLocation();
         consumeTokens(1);
         DoWasLexed = true;
         lexDoMethodArgList(stencilKind, numDoMethods++, name, DoMethodLoc);
@@ -387,7 +436,7 @@ private:
 
       // ')' is consumed by `lexDoMethodArgList`, thus just check for the next '{'
       if(DoWasLexed && token_.is(tok::l_brace)) {
-        lexDoMethodBody(stencilKind, name, DoMethodLoc, storages);
+        lexDoMethodBody(stencilKind, name, DoMethodLoc, storages, storagesAllocatedOnTheFly);
         curlyBracesNestingLevel++;
       } else {
         // `Do {`
@@ -395,7 +444,8 @@ private:
            PP_.LookAhead(0).is(tok::l_brace)) {
           DoMethodLoc = token_.getLocation();
 
-          // Replace with either `double Do` or `void Do`, this will be determined after we lexed
+          // Replace with either `double Do` or `void Do`, this will be determined after we
+          // lexed
           // the Do-Method body and know if there was a return statement.
           replacementCandiates_.push(std::make_pair(token_.getLocation(), token_.getLocation()));
 
@@ -406,8 +456,20 @@ private:
           // Replace the '{' with '(){' to fix the missing argument-list of the Do-Method
           registerReplacement(token_.getLocation(), token_.getLocation(), "() {");
 
-          lexDoMethodBody(stencilKind, name, DoMethodLoc, storages);
+          lexDoMethodBody(stencilKind, name, DoMethodLoc, storages, storagesAllocatedOnTheFly);
         }
+      }
+
+      // Add the found temporaries into the storage part of the Do-Method
+      if(!storagesAllocatedOnTheFly.empty()) {
+        registerReplacement(beforeFristDoMethod, beforeFristDoMethod, "void ");
+        std::string fulltemps = "";
+        for(const auto& varName : storagesAllocatedOnTheFly) {
+          std::cout << "A new temporary: " << varName << " was created" << std::endl;
+          fulltemps += "var " + varName + ";\n";
+        }
+        fulltemps += "void";
+        registerReplacement(beforeFristDoMethod, beforeFristDoMethod, fulltemps);
       }
 
       // Update brace counter
@@ -550,7 +612,8 @@ private:
   ///
   /// `#pragma gtclang CLAUSE_1 [, ... CLAUSE_N]`
   ///
-  /// Note that there might be cleaner ways of doing this but it is not clear if custom pragmas can
+  /// Note that there might be cleaner ways of doing this but it is not clear if custom pragmas
+  /// can
   /// be parsed in a proper way without hacking Clang. This is fairly efficient though.
   void tryLexPragmas() {
     using namespace clang;
@@ -642,7 +705,8 @@ private:
           break;
         }
 
-        // We need to know the stencil or stencil_function this pragma applies to, we thus check for
+        // We need to know the stencil or stencil_function this pragma applies to, we thus check
+        // for
         //   `stencil IDENTIFIER`
         //   `stencil_function IDENTIFIER`
         //   `struct IDENTIFIER`
