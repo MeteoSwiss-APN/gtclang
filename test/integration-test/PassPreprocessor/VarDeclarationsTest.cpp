@@ -39,7 +39,7 @@ stencil Test01 {
     vertical_region(k_start, k_end) {
       var b, c = foo;
       b = a;
-      foo = c + b;
+      foo = c[i-1] + b[i+1];
     }
   }
 };

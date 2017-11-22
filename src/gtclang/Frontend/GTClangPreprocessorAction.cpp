@@ -284,47 +284,66 @@ private:
 
         consumeTokens(peekedTokens);
       }
+
       // Check for var ARG1, [ARGS...] [ = RHS];
-      // If we find [= RHS], we replace the whole list with ARGS[last] = RHS
-      // otherwise we remove the statement alltogether
       if(token_.is(tok::identifier) && token_.getIdentifierInfo()->getName() == "var") {
 
         unsigned peekedTokens = 0;
-        // Accumulate all identifiers up to `;`
-        std::string storagesStr;
-        if(peekAndAccumulateUntil(tok::semi, peekedTokens, storagesStr)) {
-          // Split the comma separated string
-          llvm::SmallVector<StringRef, 5> onTheFlyStorages;
-          StringRef(storagesStr).split(onTheFlyStorages, ',');
-          bool wasReplaced = false;
-          for(int i = 0; i < onTheFlyStorages.size(); ++i) {
+        bool peekSuccess = false;
+        // If we are in a stencil_function, var must be double
+        if(stencilKind == SK_StencilFunction) {
+          registerReplacement(token_.getLocation(), token_.getLocation(), "double");
+          peekSuccess = peekUntil(tok::semi, peekedTokens);
+        }
+        // If we are in a stencil, it can be a temporary variable
+        // If we find [= RHS], we replace the whole list with ARGS[last] = RHS
+        // otherwise we remove the statement alltogether
+        else {
+          // Accumulate all identifiers up to `;`
+          std::string storagesStr;
+          peekSuccess = peekAndAccumulateUntil(tok::semi, peekedTokens, storagesStr);
+          if(peekSuccess) {
+            // Split the comma separated string
+            llvm::SmallVector<StringRef, 5> onTheFlyStorages;
+            StringRef(storagesStr).split(onTheFlyStorages, ',');
+            bool wasReplaced = false;
+            for(int i = 0; i < onTheFlyStorages.size(); ++i) {
 
-            if(i < onTheFlyStorages.size() - 1) {
-              if(onTheFlyStorages[i].str().find("=") == std::string::npos)
-                storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
-              else
-                reportError(token_.getLocation(), "bad allocation of storages");
-            } else {
-              if(onTheFlyStorages[i].str().find("=") == std::string::npos) {
-                storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
+              if(i < onTheFlyStorages.size() - 1) {
+                if(onTheFlyStorages[i].str().find("=") == std::string::npos)
+                  storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
+                else
+                  reportError(token_.getLocation(), "bad allocation of storages");
               } else {
-                // If we find an equal, we replace the vardecl with the last allocation
-                llvm::SmallVector<StringRef, 2> equalsplit;
-                StringRef(onTheFlyStorages[i].str()).split(equalsplit, '=');
-                registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
-                                    onTheFlyStorages[i].str() + ";");
-                storagesAllocatedOnTheFly.emplace(equalsplit[0].str());
-                wasReplaced = true;
+                if(onTheFlyStorages[i].str().find("=") == std::string::npos) {
+                  storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
+                } else {
+                  if(onTheFlyStorages[i].str().find("[") != std::string::npos ||
+                     onTheFlyStorages[i].str().find("]") != std::string::npos) {
+                    reportError(token_.getLocation(),
+                                "initialisation with offsets is not supported");
+                    break;
+                  }
+                  // If we find an equal, we replace the vardecl with the last allocation
+                  llvm::SmallVector<StringRef, 2> equalsplit;
+                  StringRef(onTheFlyStorages[i].str()).split(equalsplit, '=');
+                  registerReplacement(token_.getLocation(),
+                                      PP_.LookAhead(peekedTokens).getLocation(),
+                                      onTheFlyStorages[i].str() + ";");
+                  storagesAllocatedOnTheFly.emplace(equalsplit[0].str());
+                  wasReplaced = true;
+                }
               }
             }
+            // If it was a vardecl only, we remove it
+            if(!wasReplaced) {
+              registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
+                                  "");
+            }
           }
-          // If it was a vardecl only, we remove it
-          if(!wasReplaced) {
-            registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
-                                "");
-          }
-          consumeTokens(peekedTokens);
         }
+        if(peekSuccess)
+          consumeTokens(peekedTokens);
       }
     }
 
@@ -380,10 +399,11 @@ private:
         if(curToken.is(tok::identifier) && (curToken.getIdentifierInfo()->getName() == "storage" ||
                                             curToken.getIdentifierInfo()->getName() == "var")) {
 
-           if(stencilKind == SK_StencilFunction && curToken.getIdentifierInfo()->getName() == "temporary_storage"){
-               reportError(token_.getLocation(),"temporary storage allocated in stencil_function");
-               break;
-           }
+          if(stencilKind == SK_StencilFunction &&
+             curToken.getIdentifierInfo()->getName() == "var") {
+            reportError(token_.getLocation(), "temporary storage allocated in stencil_function");
+            break;
+          }
 
           // Accumulate all identifiers up to `;`
           std::string storagesStr;
@@ -471,7 +491,6 @@ private:
           registerReplacement(beforeFristDoMethod, beforeFristDoMethod, "void ");
           std::string fulltemps = "";
           for(const auto& varName : storagesAllocatedOnTheFly) {
-            std::cout << "A new temporary: " << varName << " was created" << std::endl;
             fulltemps += "var " + varName + ";\n";
           }
           fulltemps += "void";
