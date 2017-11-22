@@ -127,7 +127,6 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
       GIT_TAG "master" 
       MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
       CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON
-         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   )
   list(APPEND gtclang_dependencies "gridtools")
 
@@ -144,7 +143,6 @@ msbuild_find_package(
     MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
     CMAKE_ARGS 
         ${gtclang_cmake_args}
-    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
 if(NOT(gtclang_binary_dir))
