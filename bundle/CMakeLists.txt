@@ -29,7 +29,7 @@ if(NOT CMAKE_INSTALL_PREFIX)
 endif()
 
 project(gtclang-all C CXX)
-enable_tests()
+enable_testing()
 cmake_minimum_required(VERSION 3.9)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -37,9 +37,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
 include(GTClangCloneRepository)
 
-set(MB_GIT_URL "git@github.com:cosunae/msbuild.git" 
-    CACHE PATH "URL of the dawn git repository to clone")
-set(MB_GIT_BRANCH "master" CACHE STRING "Branch of the dawn git repository to clone")
+set(MB_GIT_URL "https:///github.com/cosunae/msbuild.git" 
+    CACHE PATH "URL of the msbuild git repository to clone")
+set(MB_GIT_BRANCH "master" CACHE STRING "Branch of the msbuild git repository to clone")
 
 gtclang_clone_repository(NAME msbuild URL ${MB_GIT_URL} BRANCH ${MB_GIT_BRANCH} SOURCE_DIR GTCLANG_MSBUILD_SOURCE_DIR )
 
@@ -102,7 +102,7 @@ msbuild_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${MSBUILD_DOWNLOAD_DIR}
-    GIT_REPOSITORY "git@github.com:cosunae/dawn.git"
+    GIT_REPOSITORY "https://github.com/cosunae/dawn.git"
     GIT_TAG "bundle_f" 
     MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
 )
@@ -111,7 +111,6 @@ gtclang_add_dependency(NAME "Boost")
 
 #TODO Cleanup the mess with the naming conventions
 set(gtclang_cmake_args -DDawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
-
 option(GTCLANG_ENABLE_GRIDTOOLS "Enable GridTools compilation" OFF)
 
 set(gtclang_dependencies "boost" "dawn")
