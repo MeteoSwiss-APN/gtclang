@@ -15,8 +15,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 include(msbuildExportPackage)
-
-find_package(GridTools QUIET)
+find_package(GridTools CONFIG QUIET)
 
 if(GridTools_FOUND)
   set(GRIDTOOLS_INCLUDE_DIRS "${GridTools_DIR}/include")
