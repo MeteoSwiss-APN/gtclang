@@ -105,6 +105,7 @@ msbuild_find_package(
     GIT_REPOSITORY "https://github.com/cosunae/dawn.git"
     GIT_TAG "bundle_f" 
     MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
 gtclang_add_dependency(NAME "Boost")
