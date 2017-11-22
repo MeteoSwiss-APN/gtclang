@@ -334,6 +334,11 @@ private:
            (curToken.getIdentifierInfo()->getName() == "storage" ||
             curToken.getIdentifierInfo()->getName() == "temporary_storage")) {
 
+           if(stencilKind == SK_StencilFunction && curToken.getIdentifierInfo()->getName() == "temporary_storage"){
+               reportError(token_.getLocation(),"temporary storage allocated in stencil_function");
+               break;
+           }
+
           // Accumulate all identifiers up to `;`
           std::string storagesStr;
           if(peekAndAccumulateUntil(tok::semi, peekedTokens, storagesStr)) {
