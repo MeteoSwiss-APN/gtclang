@@ -641,10 +641,10 @@ void StencilParser::parseArgument(clang::FieldDecl* arg) {
   } else if(typeStr == "var") {
 
     DAWN_LOG(INFO) << "Parsing temporary field: " << name;
-    auto SIRField = std::make_shared<dawn::sir::Field>(name, getLocation(arg));
-    SIRField->IsTemporary = true;
-    currentParserRecord_->CurrentStencilFunction->Args.emplace_back(SIRField);
-    currentParserRecord_->addArgDecl(name, arg);
+
+    reportDiagnostic(arg->getLocStart(),
+                     Diagnostics::DiagKind::err_stencilfun_invalid_argument_type)
+        << typeStr << name;
 
   } else if(typeStr == "offset") {
 
