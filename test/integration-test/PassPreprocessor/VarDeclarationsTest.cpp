@@ -21,6 +21,14 @@
 
 using namespace gridtools::clang;
 
+stencil_function bar{
+    storage a,b;
+    void Do(){
+        var d = 10;
+        a = b + d;
+    }
+};
+
 stencil Test01 {
   storage foo;
   var a;
@@ -40,6 +48,9 @@ stencil Test01 {
       var b, c = foo;
       b = a;
       foo = c[i-1] + b[i+1];
+    }
+    vertical_region(k_start, k_end) {
+        bar(foo,a);
     }
   }
 };
