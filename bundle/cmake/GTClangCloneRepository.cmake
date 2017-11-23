@@ -22,11 +22,14 @@ include(CMakeParseArguments)
 # This will make sure the repository NAME exists and, if not, will clone the branch BRANCH 
 # from the git repository given by URL.
 #
-#                NAME:STRING=<>           - Name of the repository
-#                URL:STRING=<>            - Version of the package
-#                BRANCH:STRING=<>         - Do we use the system version of the package?
-#    \param[out] SOURCE_DIR:STRING=<>     - Name of the variable that contains the source dir where
-
+# This will define the variable GTCLANG_<NAME>_SOURCE_DIR (where <NAME> is the passed NAME 
+# in all uppercase) which contains the path to the source of the repository NAME.
+#
+#    NAME:STRING=<>        - Name of the repository
+#    URL:STRING=<>         - Version of the package
+#    BRANCH:STRING=<>      - Do we use the system version of the package?
+#    VAR_SOURCE_DIR:STRING - Output variable that will be set to the path where repository was cloned
+#
 function(gtclang_clone_repository)
   set(options)
   set(one_value_args NAME URL BRANCH SOURCE_DIR)
@@ -52,7 +55,7 @@ function(gtclang_clone_repository)
   # Check if repository exists
   if(EXISTS "${source_dir}")
     set("${ARG_SOURCE_DIR}" "${source_dir}" PARENT_SCOPE)
-    message(STATUS "Using ${ARG_NAME}: ${source_dir}}")
+    message(STATUS "Setting path to ${ARG_NAME} in: ${source_dir}}")
   else()
     find_program(git_executable "git")
     if(NOT(git_executable))
