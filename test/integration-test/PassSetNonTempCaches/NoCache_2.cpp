@@ -14,20 +14,20 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-// RUN: %gtclang% %file% -write-sir -fno-codegen -o %filename%_gen.cpp
-// EXPECTED_FILE: OUTPUT:%filename%_gen.sir REFERENCE:%filename%_gen_ref.sir IGNORE:filename
-
+// RUN: %gtclang% %file% -fno-codegen -fcache-non-temp-fields -freport-cache-non-temp-fields
+// EXPECTED: PASS: PassSetNonTempCaches: NotEnoughReadsWithReadBeforeWrite : no fields cached
 #include "gridtools/clang_dsl.hpp"
 
 using namespace gridtools::clang;
+using namespace gridtools;
 
-stencil Test {
-  storage a, b;
+stencil NotEnoughReadsWithReadBeforeWrite {
+  storage field_a, field_b, field_c, field_d, field_e;
 
-  Do {
-    vertical_region(k_start, k_end)
-        b = a(i + 1) + a[i - 1] + a(i, j + 1) + a[j - 1, k] + a[k - 1] + a[j + 1, k + 1];
+  void Do() {
+    vertical_region(k_start, k_end - 1) {
+      field_b = field_a;
+      field_a[j + 1] = field_b[k + 1];
+    }
   }
 };
-
-int main() {}
