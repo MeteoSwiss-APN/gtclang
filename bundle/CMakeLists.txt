@@ -154,10 +154,12 @@ add_test(NAME gtclang-tests
 )
 
 #We need to install something
-file(WRITE ${CMAKE_BINARY_DIR}/Conf.bundle "conf")
+set(conf_bundle_filename ${CMAKE_BINARY_DIR}/gtclang-conf.bundle)
+
+file(WRITE ${conf_bundle_filename} "conf")
 
 install(
-  FILES ${CMAKE_BINARY_DIR}/Conf.bundle
+  FILES ${conf_bundle_filename}
   DESTINATION bundle_conf
 )
 
