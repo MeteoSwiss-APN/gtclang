@@ -39,10 +39,6 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${MSBUILD_ROOT}/cmake")
 
-# Locate Dawn for the CMake modules
-include(DawnCMakeInit)
-dawn_cmake_init()
-
 include(msbuildAddExecutable)
 include(msbuildAddLibrary)
 include(msbuildAddTargetCleanAll)
