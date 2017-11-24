@@ -16,6 +16,6 @@
 
 include(msbuildAddCustomDummyTarget)
 # Add a dummy target with all the source files so that they are included in a qt creator project
-msbuild_add_custom_dummy_target(NAME qt_creator_parse_project_clang
+msbuild_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectClang
                              DIRECTORIES "clang")
 

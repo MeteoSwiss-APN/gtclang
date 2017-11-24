@@ -37,11 +37,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
 include(GTClangCloneRepository)
 
-set(MB_GIT_URL "https:///github.com/cosunae/msbuild.git" 
+set(GTCLANG_MSBUILD_GIT_URL "https:///github.com/cosunae/msbuild.git" 
     CACHE PATH "URL of the msbuild git repository to clone")
-set(MB_GIT_BRANCH "master" CACHE STRING "Branch of the msbuild git repository to clone")
+set(GTCLANG_MSBUILD_GIT_BRANCH "master" CACHE STRING "Branch of the msbuild git repository to clone")
 
-gtclang_clone_repository(NAME msbuild URL ${MB_GIT_URL} BRANCH ${MB_GIT_BRANCH} SOURCE_DIR GTCLANG_MSBUILD_SOURCE_DIR )
+gtclang_clone_repository(NAME msbuild URL ${GTCLANG_MSBUILD_GIT_URL} BRANCH ${GTCLANG_MSBUILD_GIT_BRANCH} SOURCE_DIR GTCLANG_MSBUILD_SOURCE_DIR )
 
 list(APPEND CMAKE_MODULE_PATH "${GTCLANG_MSBUILD_SOURCE_DIR}/cmake")
 include(msbuildCMakeInit)
@@ -94,7 +94,7 @@ include(msbuildFindPackage)
 
 include(msbuildSetDownloadDir)
 
-# Set the default download directory (define GTCLANG_ALL_DOWNLOAD_DIR)
+# Set the default download directory (define MSBUILD_DOWNLOAD_DIR)
 msbuild_set_download_dir()
 
 msbuild_find_package(
@@ -108,7 +108,7 @@ msbuild_find_package(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
-gtclang_add_dependency(NAME "Boost")
+include("thirdparty/gtclangAddBoost")
 
 #TODO Cleanup the mess with the naming conventions
 set(gtclang_cmake_args -DDawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
@@ -132,7 +132,7 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
 
   list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
 endif()
-
+message("OPOP ${GTCLANG_MSBUILD_SOURCE_DIR}")
 msbuild_find_package(
   PACKAGE gtclang
   FORWARD_VARS 
