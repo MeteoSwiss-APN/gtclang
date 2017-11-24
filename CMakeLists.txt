@@ -32,14 +32,12 @@ project(gtclang CXX)
 cmake_minimum_required(VERSION 3.3)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-include(GTClangCloneRepository)
 
-set(MB_GIT_URL "https:///github.com/cosunae/msbuild.git"
-    CACHE PATH "URL of the gtclang git repository to clone")
-set(MB_GIT_BRANCH "master" CACHE STRING "Branch of the gtclang git repository to clone")
+if(NOT(DEFINED MSBUILD_ROOT))
+  message(FATAL_ERROR "MSBUILD_ROOT not found! Try specifying it in the environment via -DMSBUILD_ROOT=<>")
+endif()
 
-gtclang_clone_repository(NAME msbuild URL ${MB_GIT_URL} BRANCH ${MB_GIT_BRANCH})
-list(APPEND CMAKE_MODULE_PATH "${GTCLANG_MSBUILD_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${MSBUILD_ROOT}/cmake")
 
 # Locate Dawn for the CMake modules
 include(DawnCMakeInit)
