@@ -111,7 +111,7 @@ msbuild_find_package(
 include("thirdparty/gtclangAddBoost")
 
 #TODO Cleanup the mess with the naming conventions
-set(gtclang_cmake_args -DDawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
+set(gtclang_cmake_args -Ddawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
 option(GTCLANG_ENABLE_GRIDTOOLS "Enable GridTools compilation" OFF)
 
 set(gtclang_dependencies "boost" "dawn")
@@ -132,7 +132,7 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
 
   list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
 endif()
-message("OPOP ${GTCLANG_MSBUILD_SOURCE_DIR}")
+
 msbuild_find_package(
   PACKAGE gtclang
   FORWARD_VARS 
