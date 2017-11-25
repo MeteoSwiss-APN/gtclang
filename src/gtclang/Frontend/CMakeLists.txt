@@ -14,9 +14,9 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildAddLibrary)
+include(mchbuildAddLibrary)
 
-msbuild_add_library(
+mchbuild_add_library(
   NAME GTClangFrontend
   SOURCES ClangASTExprResolver.h
           ClangASTExprResolver.cpp

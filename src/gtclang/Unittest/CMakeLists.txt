@@ -14,12 +14,12 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildConfigureFile)
-include(msbuildAddLibrary)
+include(mchbuildConfigureFile)
+include(mchbuildAddLibrary)
 
-msbuild_configure_file(Config.h.cmake)
+mchbuild_configure_file(Config.h.cmake)
 
-msbuild_add_library(
+mchbuild_add_library(
   NAME GTClangUnittest
   SOURCES FileManager.cpp
           FileManager.h

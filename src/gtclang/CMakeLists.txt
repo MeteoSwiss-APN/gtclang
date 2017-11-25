@@ -14,8 +14,8 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildAddExecutable)
-include(msbuildCombineLibraries)
+include(mchbuildAddExecutable)
+include(mchbuildCombineLibraries)
 
 add_subdirectory(Support)
 add_subdirectory(Frontend)
@@ -26,7 +26,7 @@ if(GTCLANG_TESTING)
 endif()
 
 # Combine the relevant object libraries into libGTClang.a
-msbuild_combine_libraries(
+mchbuild_combine_libraries(
   NAME GTClang
   OBJECTS GTClangDriverObjects
           GTClangFrontendObjects
@@ -36,7 +36,7 @@ msbuild_combine_libraries(
 )
 
 # Link the driver
-msbuild_add_executable(
+mchbuild_add_executable(
   NAME gtclang
   SOURCES Driver/gtclang.cpp
   DEPENDS GTClangStatic
