@@ -14,7 +14,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildAddCustomDummyTarget)
+include(mchbuildAddCustomDummyTarget)
 
 set(cwd ${CMAKE_CURRENT_LIST_DIR})
 
@@ -46,7 +46,7 @@ gtclang_add_integrationtest(NAME no-codegen
 )
 
 # Add a dummy target with all the source files so that they are included in a qt creator project
-msbuild_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectIntegrationTest
+mchbuild_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectIntegrationTest
                              DIRECTORIES ${directories})
 
 # Codegen tests require GridTools
