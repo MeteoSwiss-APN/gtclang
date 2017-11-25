@@ -37,35 +37,35 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
 include(GTClangCloneRepository)
 
-set(GTCLANG_MSBUILD_GIT_URL "https:///github.com/cosunae/msbuild.git" 
-    CACHE PATH "URL of the msbuild git repository to clone")
-set(GTCLANG_MSBUILD_GIT_BRANCH "master" CACHE STRING "Branch of the msbuild git repository to clone")
+set(GTCLANG_MCHBUILD_GIT_URL "https:///github.com/cosunae/msbuild.git" 
+    CACHE PATH "URL of the mchbuild git repository to clone")
+set(GTCLANG_MCHBUILD_GIT_BRANCH "master" CACHE STRING "Branch of the mchbuild git repository to clone")
 
-gtclang_clone_repository(NAME msbuild URL ${GTCLANG_MSBUILD_GIT_URL} BRANCH ${GTCLANG_MSBUILD_GIT_BRANCH} SOURCE_DIR GTCLANG_MSBUILD_SOURCE_DIR )
+gtclang_clone_repository(NAME mchbuild URL ${GTCLANG_MCHBUILD_GIT_URL} BRANCH ${GTCLANG_MCHBUILD_GIT_BRANCH} SOURCE_DIR GTCLANG_MCHBUILD_SOURCE_DIR )
 
-list(APPEND CMAKE_MODULE_PATH "${GTCLANG_MSBUILD_SOURCE_DIR}/cmake")
-include(msbuildCMakeInit)
+list(APPEND CMAKE_MODULE_PATH "${GTCLANG_MCHBUILD_SOURCE_DIR}/cmake")
+include(mchbuildCMakeInit)
 
-include(msbuildAddTargetCleanAll)
-include(msbuildCheckInSourceBuild)
-include(msbuildGetArchitectureInfo)
-include(msbuildGetCompilerInfo)
-include(msbuildGetPlatformInfo)
-include(msbuildMakeStringPair)
-include(msbuildReportResult)
+include(mchbuildAddTargetCleanAll)
+include(mchbuildCheckInSourceBuild)
+include(mchbuildGetArchitectureInfo)
+include(mchbuildGetCompilerInfo)
+include(mchbuildGetPlatformInfo)
+include(mchbuildMakeStringPair)
+include(mchbuildReportResult)
 
 # Include all options (including all Dawn and GTClang options)
 #include(GTClangAllOptions)
 
-msbuild_get_compiler_info()
-msbuild_get_platform_info()
-msbuild_get_architecture_info()
+mchbuild_get_compiler_info()
+mchbuild_get_platform_info()
+mchbuild_get_architecture_info()
 
 # Prevent in source builds
-msbuild_check_in_source_build()
+mchbuild_check_in_source_build()
 
 # Add custom targets
-msbuild_add_target_clean_all(
+mchbuild_add_target_clean_all(
   "${CMAKE_BINARY_DIR}/prefix"
   "${CMAKE_BINARY_DIR}/thirdparty"  
   "${CMAKE_BINARY_DIR}/dawn-cmake"  
@@ -73,38 +73,38 @@ msbuild_add_target_clean_all(
   "${CMAKE_BINARY_DIR}/dawn-prefix"
   "${CMAKE_BINARY_DIR}/gtclang"
   "${CMAKE_BINARY_DIR}/gtclang-prefix"
-  "${CMAKE_BINARY_DIR}/msbuild-cmake"
+  "${CMAKE_BINARY_DIR}/mchbuild-cmake"
   "${CMAKE_BINARY_DIR}/boost"
   "${CMAKE_BINARY_DIR}/boost-prefix"
 )
 
 # Output summary of the configuration
 macro(make_config_string FIRST SECOND)
-  msbuild_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
+  mchbuild_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
   list(APPEND config_info ${out})
 endmacro()
-make_config_string("Platform" ${MSBUILD_PLATFORM_STRING})
-make_config_string("Architecture" ${MSBUILD_ARCHITECTURE_STRING})
-make_config_string("Compiler" ${MSBUILD_COMPILER_STRING})
+make_config_string("Platform" ${MCHBUILD_PLATFORM_STRING})
+make_config_string("Architecture" ${MCHBUILD_ARCHITECTURE_STRING})
+make_config_string("Compiler" ${MCHBUILD_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
-msbuild_report_result("Configuration summary" ${config_info})
+mchbuild_report_result("Configuration summary" ${config_info})
 
 include(GTClangAddDependency)
-include(msbuildFindPackage)
+include(mchbuildFindPackage)
 
-include(msbuildSetDownloadDir)
+include(mchbuildSetDownloadDir)
 
-# Set the default download directory (define MSBUILD_DOWNLOAD_DIR)
-msbuild_set_download_dir()
+# Set the default download directory (define MCHBUILD_DOWNLOAD_DIR)
+mchbuild_set_download_dir()
 
-msbuild_find_package(
+mchbuild_find_package(
   PACKAGE dawn
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
-    DOWNLOAD_DIR ${MSBUILD_DOWNLOAD_DIR}
+    DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
     GIT_REPOSITORY "https://github.com/cosunae/dawn.git"
     GIT_TAG "bundle_f" 
-    MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
+    MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
@@ -117,15 +117,15 @@ option(GTCLANG_ENABLE_GRIDTOOLS "Enable GridTools compilation" OFF)
 set(gtclang_dependencies "boost" "dawn")
 
 if(GTCLANG_ENABLE_GRIDTOOLS) 
-  msbuild_find_package(
+  mchbuild_find_package(
     PACKAGE gridtools
     REQUIRED_VARS GridTools_DIR
     DEPENDS "boost"
     ADDITIONAL
-      DOWNLOAD_DIR ${MSBUILD_DOWNLOAD_DIR}
+      DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
       GIT_REPOSITORY "git@github.com:eth-cscs/gridtools.git"
       GIT_TAG "master" 
-      MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
+      MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
       CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON
   )
   list(APPEND gtclang_dependencies "gridtools")
@@ -133,14 +133,14 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
   list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
 endif()
 
-msbuild_find_package(
+mchbuild_find_package(
   PACKAGE gtclang
   FORWARD_VARS 
     BINARY_DIR gtclang_binary_dir
   DEPENDS ${gtclang_dependencies}
   ADDITIONAL
     SOURCE_DIR "${CMAKE_SOURCE_DIR}/../"
-    MSBUILD_ROOT "${GTCLANG_MSBUILD_SOURCE_DIR}"
+    MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
     CMAKE_ARGS 
         ${gtclang_cmake_args}
 )

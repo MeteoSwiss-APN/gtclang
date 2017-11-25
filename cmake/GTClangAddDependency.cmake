@@ -22,7 +22,7 @@ include(CMakeParseArguments)
 # This will make sure the repository NAME exists and, if not, will clone the branch BRANCH 
 # from the git repository given by URL.
 #
-# This will define the variable MSBUILD_<NAME>_SOURCE_DIR (where <NAME> is the passed NAME 
+# This will define the variable MCHBUILD_<NAME>_SOURCE_DIR (where <NAME> is the passed NAME 
 # in all uppercase) which contains the path to the source of the repository NAME.
 #
 #    NAME:STRING=<>       - Name of the repository

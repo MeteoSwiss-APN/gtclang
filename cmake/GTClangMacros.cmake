@@ -61,14 +61,14 @@ macro(gtclang_set_cxx_flags)
   endif()
 
   if(GTCLANG_USE_CCACHE)
-    if(MSBUILD_COMPILER_CLANG)
+    if(MCHBUILD_COMPILER_CLANG)
       mchbuild_check_and_set_cxx_flag("-Qunused-arguments" HAVE_CLANG_UNUSED_ARGUMENTS)
       mchbuild_check_and_set_cxx_flag("-fcolor-diagnostics" HAVE_CLANG_COLOR_DIAGNOSTICS)
       mchbuild_check_and_set_cxx_flag("-Wno-undefined-var-template" 
                                      HAVE_CLANG_WNO_UNDEFINED_VAR_TEMPLATE)
     endif()
 
-    if(MSBUILD_COMPILER_GNU)
+    if(MCHBUILD_COMPILER_GNU)
       mchbuild_check_and_set_cxx_flag("-fdiagnostics-color=always" HAVE_GCC_COLOR_DIAGNOSTICS)
     endif()
   endif()

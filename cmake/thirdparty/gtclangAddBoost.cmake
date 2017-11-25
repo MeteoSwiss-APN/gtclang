@@ -33,7 +33,7 @@ mchbuild_find_package(
   COMPONENTS ${boost_components}
   REQUIRED_VARS BOOST_ROOT
   ADDITIONAL
-    DOWNLOAD_DIR ${MSBUILD_DOWNLOAD_DIR}
+    DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
     URL "http://sourceforge.net/projects/boost/files/boost/1.${_v}.0/boost_1_${_v}_0.tar.gz/download"
     URL_MD5 "7b493c08bc9557bbde7e29091f28b605" 
     BUILD_VERSION ${boost_download_version}

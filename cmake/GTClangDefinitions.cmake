@@ -41,8 +41,8 @@ if(NOT DEFINED GTCLANG_GIT_HASH OR NOT "${GTCLANG_GIT_HASH}" STREQUAL "${git_has
 endif()
 
 # Assemble full version string
-string(TOLOWER ${MSBUILD_ARCHITECTURE_STRING} architecture)
-string(TOLOWER ${MSBUILD_PLATFORM_STRING} platform)
+string(TOLOWER ${MCHBUILD_ARCHITECTURE_STRING} architecture)
+string(TOLOWER ${MCHBUILD_PLATFORM_STRING} platform)
 string(TOLOWER ${CMAKE_CXX_COMPILER_ID} compiler)
 set(compiler "${compiler}-${CMAKE_CXX_COMPILER_VERSION}")
 set(GTCLANG_FULL_VERSION 
