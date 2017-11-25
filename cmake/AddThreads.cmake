@@ -14,7 +14,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildExportPackage)
+include(mchbuildExportPackage)
 
 find_package(Threads REQUIRED)
 
@@ -28,7 +28,7 @@ elseif(CMAKE_HP_PTHREADS_INIT)
   set(threadlib "hp pthreads")
 endif()
 
-msbuild_export_package(
+mchbuild_export_package(
   NAME Threads
   FOUND ON 
   VERSION "${threadlib}"

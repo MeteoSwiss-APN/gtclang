@@ -14,11 +14,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildSetDownloadDir)
-include(msbuildFindPackage)
+include(mchbuildSetDownloadDir)
+include(mchbuildFindPackage)
 
 # Set the default download directory (define GTCLANG_ALL_DOWNLOAD_DIR)
-msbuild_set_download_dir()
+mchbuild_set_download_dir()
 
 #
 # Boost
@@ -27,7 +27,7 @@ set(boost_min_version 1.58.0)
 set(_v 63)
 set(boost_download_version 1.${_v}.0)
 
-msbuild_find_package(
+mchbuild_find_package(
   PACKAGE Boost
   PACKAGE_ARGS ${boost_min_version} 
   COMPONENTS ${boost_components}

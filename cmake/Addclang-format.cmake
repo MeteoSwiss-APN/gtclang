@@ -14,11 +14,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildExportPackage)
+include(mchbuildExportPackage)
 
 find_package(clang-format)
 
-msbuild_export_package(
+mchbuild_export_package(
   NAME clang-format
   FOUND ${CLANG-FORMAT_FOUND}
   EXECUTABLE ${CLANG-FORMAT_EXECUTABLE}

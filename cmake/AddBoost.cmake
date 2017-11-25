@@ -14,11 +14,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildExportPackage)
+include(mchbuildExportPackage)
 
 find_package(Boost 1.58 REQUIRED)
 
-msbuild_export_package(
+mchbuild_export_package(
   NAME Boost
   FOUND ${Boost_FOUND} 
   VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" 

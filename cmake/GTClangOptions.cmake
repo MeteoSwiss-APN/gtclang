@@ -14,7 +14,7 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildExportOptions)
+include(mchbuildExportOptions)
 include(CMakeDependentOption)
 
 set(BUILD_IS_NOT_RELEASE ON)
@@ -39,7 +39,7 @@ CMAKE_DEPENDENT_OPTION(GTCLANG_INTEGRATION_TESTING
 option(GTCLANG_DOCUMENTATION "Enable documentation" OFF)
 
 # Export options for meta projects
-msbuild_export_options(GTCLANG 
+mchbuild_export_options(GTCLANG 
   GTCLANG_ASSERTS 
   GTCLANG_USE_CCACHE
   GTCLANG_BUILD_EXAMPLES

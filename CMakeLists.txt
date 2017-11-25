@@ -33,33 +33,33 @@ cmake_minimum_required(VERSION 3.3)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-if(NOT(DEFINED MSBUILD_ROOT))
-  message(FATAL_ERROR "MSBUILD_ROOT not found! Try specifying it in the environment via -DMSBUILD_ROOT=<>")
+if(NOT(DEFINED MCHBUILD_ROOT))
+  message(FATAL_ERROR "MCHBUILD_ROOT not found! Try specifying it in the environment via -DMCHBUILD_ROOT=<>")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${MSBUILD_ROOT}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${MCHBUILD_ROOT}/cmake")
 
-include(msbuildAddExecutable)
-include(msbuildAddLibrary)
-include(msbuildAddTargetCleanAll)
-include(msbuildAddTargetClangFormat)
-include(msbuildCheckInSourceBuild)
-include(msbuildCombineLibraries)
-include(msbuildConfigureFile)
-include(msbuildCreatePackageString)
-include(msbuildExportPackage)
-include(msbuildGetArchitectureInfo)
-include(msbuildGetCompilerInfo)
-include(msbuildGetGitHeadRevision)
-include(msbuildGetPlatformInfo)
-include(msbuildMakeStringPair)
-include(msbuildReportResult)
-include(msbuildSetCXXStandard)
-include(msbuildAddCustomDummyTarget)
+include(mchbuildAddExecutable)
+include(mchbuildAddLibrary)
+include(mchbuildAddTargetCleanAll)
+include(mchbuildAddTargetClangFormat)
+include(mchbuildCheckInSourceBuild)
+include(mchbuildCombineLibraries)
+include(mchbuildConfigureFile)
+include(mchbuildCreatePackageString)
+include(mchbuildExportPackage)
+include(mchbuildGetArchitectureInfo)
+include(mchbuildGetCompilerInfo)
+include(mchbuildGetGitHeadRevision)
+include(mchbuildGetPlatformInfo)
+include(mchbuildMakeStringPair)
+include(mchbuildReportResult)
+include(mchbuildSetCXXStandard)
+include(mchbuildAddCustomDummyTarget)
 
-msbuild_get_compiler_info()
-msbuild_get_platform_info()
-msbuild_get_architecture_info()
+mchbuild_get_compiler_info()
+mchbuild_get_platform_info()
+mchbuild_get_architecture_info()
 
 # Include the GTClang specific options, definitions and macros
 include(GTClangOptions)
@@ -67,41 +67,41 @@ include(GTClangDefinitions)
 include(GTClangMacros)
 
 # Set C++ standard
-msbuild_set_cxx_standard(c++11)
+mchbuild_set_cxx_standard(c++11)
 
 # Set C++ flags (Note that the LLVM/Clang package might add some other flags)
 gtclang_set_cxx_flags()
 
 # Prevent in source builds
-msbuild_check_in_source_build()
+mchbuild_check_in_source_build()
 
 # Add custom targets
-msbuild_add_target_clean_all()
+mchbuild_add_target_clean_all()
 
 # Output summary of the configuration
 macro(make_config_string FIRST SECOND)
-  msbuild_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
+  mchbuild_make_string_pair(${FIRST} ": ${SECOND}" 20 out)
   list(APPEND config_info ${out})
 endmacro()
 make_config_string("gtclang version" ${GTCLANG_FULL_VERSION})
-make_config_string("Platform" ${MSBUILD_PLATFORM_STRING})
-make_config_string("Architecture" ${MSBUILD_ARCHITECTURE_STRING})
-make_config_string("Compiler" ${MSBUILD_COMPILER_STRING})
+make_config_string("Platform" ${MCHBUILD_PLATFORM_STRING})
+make_config_string("Architecture" ${MCHBUILD_ARCHITECTURE_STRING})
+make_config_string("Compiler" ${MCHBUILD_COMPILER_STRING})
 make_config_string("Build type" ${CMAKE_BUILD_TYPE})
 make_config_string("Asserts" ${GTCLANG_ASSERTS})
-msbuild_report_result("Configuration summary" ${config_info})
+mchbuild_report_result("Configuration summary" ${config_info})
 
 # Include the packages (and set the correct, libraries, includes etc.)
 foreach(package bash ccache Python3 Boost clang-format Clang Dawn GridTools OpenMP Threads)
   include("Add${package}")
-  msbuild_create_package_string(${package} info)
+  mchbuild_create_package_string(${package} info)
   list(APPEND package_info ${info})
 
   string(TOUPPER ${package} PACKAGE)
   if(${PACKAGE}_FOUND)
-    list(APPEND GTCLANG_EXTERNAL_LIBRARIES ${MSBUILD_${PACKAGE}_LIBRARIES})
-    list(APPEND GTCLANG_EXTERNAL_INCLUDE_DIRS ${MSBUILD_${PACKAGE}_INCLUDE_DIRS})
-    list(APPEND GTCLANG_EXTERNAL_DEFINITIONS ${MSBUILD_${PACKAGE}_DEFINITIONS})
+    list(APPEND GTCLANG_EXTERNAL_LIBRARIES ${MCHBUILD_${PACKAGE}_LIBRARIES})
+    list(APPEND GTCLANG_EXTERNAL_INCLUDE_DIRS ${MCHBUILD_${PACKAGE}_INCLUDE_DIRS})
+    list(APPEND GTCLANG_EXTERNAL_DEFINITIONS ${MCHBUILD_${PACKAGE}_DEFINITIONS})
   endif()
 endforeach()
 
@@ -109,7 +109,7 @@ include_directories(SYSTEM ${GTCLANG_EXTERNAL_INCLUDE_DIRS})
 add_definitions(${GTCLANG_EXTERNAL_DEFINITIONS})
 
 # Output summary of the packages
-msbuild_report_result("Package summary" ${package_info})
+mchbuild_report_result("Package summary" ${package_info})
 
 # Add clang-format target
 set(format_directories 
@@ -118,7 +118,7 @@ set(format_directories
   "${CMAKE_SOURCE_DIR}/test/unit-test"
 )
 
-msbuild_add_target_clang_format(DIRECTORIES ${format_directories} EXTENSION ".h;.cpp")
+mchbuild_add_target_clang_format(DIRECTORIES ${format_directories} EXTENSION ".h;.cpp")
 
 # Build gtclang
 include_directories(${CMAKE_SOURCE_DIR}/src)

@@ -34,7 +34,7 @@ if(NOT DEFINED GTCLANG_VERSION)
 endif()
 
 # Git version string
-msbuild_get_git_head_revision(git_refspec git_hash)
+mchbuild_get_git_head_revision(git_refspec git_hash)
 string(SUBSTRING "${git_hash}" 0 7 git_hash_short)
 if(NOT DEFINED GTCLANG_GIT_HASH OR NOT "${GTCLANG_GIT_HASH}" STREQUAL "${git_hash_short}")
   set(GTCLANG_GIT_HASH "${git_hash_short}" CACHE INTERNAL "git hash (short) of current head" FORCE)

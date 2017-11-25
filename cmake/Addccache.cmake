@@ -14,11 +14,11 @@
 ##
 ##===------------------------------------------------------------------------------------------===##
 
-include(msbuildExportPackage)
+include(mchbuildExportPackage)
 
 find_package(ccache)
 
-msbuild_export_package(
+mchbuild_export_package(
   NAME ccache
   FOUND ${CCACHE_FOUND}
   EXECUTABLE ${CCACHE_EXECUTABLE}
