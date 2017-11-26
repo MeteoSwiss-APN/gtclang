@@ -150,7 +150,7 @@ if(NOT(gtclang_binary_dir))
 endif()
 
 add_test(NAME gtclang-tests 
-  COMMAND  make test -C ${gtclang_binary_dir}
+  COMMAND  ${CMAKE_COMMAND} --build ${gtclang_binary_dir} --target test
 )
 
 #We need to install something
