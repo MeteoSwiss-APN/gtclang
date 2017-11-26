@@ -40,9 +40,7 @@ env:
   global:
     - SCRIPT_DIR=${TRAVIS_BUILD_DIR}/scripts/travis
     - CACHE_DIR=${TRAVIS_BUILD_DIR}/deps/install
-    - BOOST_VERSION=1.60.0
     - CMAKE_VERSION=3.8.1
-    - PROTOBUF_VERSION=3.4.1
 
 jobs:
   include:
@@ -111,8 +109,8 @@ jobs:
 cache:
   directories:
     - ${CACHE_DIR}/dawn
-    - ${CACHE_DIR}/boost-${BOOST_VERSION}
-    - ${CACHE_DIR}/protobuf-${PROTOBUF_VERSION}
+#    - ${CACHE_DIR}/boost-${BOOST_VERSION}
+#    - ${CACHE_DIR}/protobuf-${PROTOBUF_VERSION}
   ccache: true
   apt: true 
 

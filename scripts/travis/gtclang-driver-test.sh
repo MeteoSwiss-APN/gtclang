@@ -35,7 +35,9 @@ $CXX --version
 pushd "$(pwd)"
 
 cd bundle
-mkdir build && cd build
+mkdir build 
+cd build
+
 cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                                               \
          -DCMAKE_C_COMPILER="$CC"                                                                  \
          -DCMAKE_BUILD_TYPE="$CONFIG"                                                              \
