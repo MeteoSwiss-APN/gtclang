@@ -23,6 +23,7 @@ language: c++
 addons:
   apt:
     sources:
+      - precise
       - ubuntu-toolchain-r-test
     packages:
       - g++-5
@@ -32,10 +33,7 @@ addons:
       - clang-3.8
       - clang++-3.8
       - llvm-3.8-dev
-
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y python3.5
+      - python3.5-dev
 
 os:
   - linux
