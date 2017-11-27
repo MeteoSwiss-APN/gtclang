@@ -43,23 +43,16 @@ include(mchbuildAddExecutable)
 include(mchbuildAddLibrary)
 include(mchbuildAddTargetCleanAll)
 include(mchbuildAddTargetClangFormat)
-include(mchbuildCheckInSourceBuild)
 include(mchbuildCombineLibraries)
 include(mchbuildConfigureFile)
 include(mchbuildCreatePackageString)
 include(mchbuildExportPackage)
-include(mchbuildGetArchitectureInfo)
-include(mchbuildGetCompilerInfo)
 include(mchbuildGetGitHeadRevision)
-include(mchbuildGetPlatformInfo)
-include(mchbuildMakeStringPair)
-include(mchbuildReportResult)
 include(mchbuildSetCXXStandard)
 include(mchbuildAddCustomDummyTarget)
+include(mchbuildInit)
 
-mchbuild_get_compiler_info()
-mchbuild_get_platform_info()
-mchbuild_get_architecture_info()
+mchbuild_init()
 
 # Include the GTClang specific options, definitions and macros
 include(GTClangOptions)
@@ -71,9 +64,6 @@ mchbuild_set_cxx_standard(c++11)
 
 # Set C++ flags (Note that the LLVM/Clang package might add some other flags)
 gtclang_set_cxx_flags()
-
-# Prevent in source builds
-mchbuild_check_in_source_build()
 
 # Add custom targets
 mchbuild_add_target_clean_all()
