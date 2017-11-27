@@ -19,11 +19,13 @@ dist: trusty
 sudo: false
   
 language: c++
-
+python:
+  - "3.5"
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+
     packages:
       - g++-5
       - gcc-5
@@ -32,11 +34,6 @@ addons:
       - clang-3.8
       - clang++-3.8
       - llvm-3.8-dev
-      - python3.5-dev
-    sources:
-      - unstable
-    packages:
-      - python3.5-dev
 
 os:
   - linux
