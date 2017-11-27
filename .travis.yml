@@ -23,7 +23,7 @@ language: c++
 addons:
   apt:
     sources:
-      - precise
+      - unstable
       - ubuntu-toolchain-r-test
     packages:
       - g++-5
