@@ -76,8 +76,8 @@ mchbuild_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
-    GIT_REPOSITORY "https://github.com/cosunae/dawn.git"
-    GIT_TAG "bundle_f" 
+    GIT_REPOSITORY "https://github.com/MeteoSwiss-APN/dawn.git"
+    GIT_TAG "master" 
     MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
