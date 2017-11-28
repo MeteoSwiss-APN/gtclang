@@ -321,7 +321,8 @@ private:
               llvm::SmallVector<StringRef, 2> accumulatedDeclaration;
               StringRef(storagesStr).split(accumulatedDeclaration, '=');
               registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
-                                  accumulatedDeclaration[0].str() + " = " + accumulatedDeclaration[1].str() + ";");
+                                  accumulatedDeclaration[0].str() + " = " +
+                                      accumulatedDeclaration[1].str() + ";");
               storagesAllocatedOnTheFly.emplace(accumulatedDeclaration[0].str());
             } else {
               storagesAllocatedOnTheFly.emplace(storagesStr);
