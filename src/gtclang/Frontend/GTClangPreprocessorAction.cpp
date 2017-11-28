@@ -285,7 +285,7 @@ private:
         consumeTokens(peekedTokens);
       }
 
-      // Check for var ARG1, [ARGS...] [ = RHS];
+      // Check for var ARG1 [ = RHS];
       if(token_.is(tok::identifier) && token_.getIdentifierInfo()->getName() == "var") {
 
         unsigned peekedTokens = 0;
@@ -295,55 +295,42 @@ private:
           registerReplacement(token_.getLocation(), token_.getLocation(), "double");
           peekSuccess = peekUntil(tok::semi, peekedTokens);
         }
-        // If we are in a stencil, it can be a temporary variable
-        // If we find [= RHS], we replace the whole list with ARGS[last] = RHS
+        // If we are in a stencil, we chose (temporary) storage as the default type and let the
+        // passes promote them to local variables if needed
+        // If we find [= RHS], we replace the statement with ARG1 = RHS
         // otherwise we remove the statement alltogether
         else {
           // Accumulate all identifiers up to `;`
           std::string storagesStr;
           peekSuccess = peekAndAccumulateUntil(tok::semi, peekedTokens, storagesStr);
           if(peekSuccess) {
-            // Split the comma separated string
-            llvm::SmallVector<StringRef, 5> onTheFlyStorages;
-            StringRef(storagesStr).split(onTheFlyStorages, ',');
-            bool wasReplaced = false;
-            for(int i = 0; i < onTheFlyStorages.size(); ++i) {
-
-              if(i < onTheFlyStorages.size() - 1) {
-                if(onTheFlyStorages[i].str().find("=") == std::string::npos)
-                  storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
-                else
-                  reportError(token_.getLocation(), "bad allocation of storages");
-              } else {
-                if(onTheFlyStorages[i].str().find("=") == std::string::npos) {
-                  storagesAllocatedOnTheFly.emplace(onTheFlyStorages[i].str());
-                } else {
-                  if(onTheFlyStorages[i].str().find("[") != std::string::npos ||
-                     onTheFlyStorages[i].str().find("]") != std::string::npos) {
-                    reportError(token_.getLocation(),
-                                "initialisation with offsets is not supported");
-                    break;
-                  }
-                  // If we find an equal, we replace the vardecl with the last allocation
-                  llvm::SmallVector<StringRef, 2> equalsplit;
-                  StringRef(onTheFlyStorages[i].str()).split(equalsplit, '=');
-                  registerReplacement(token_.getLocation(),
-                                      PP_.LookAhead(peekedTokens).getLocation(),
-                                      onTheFlyStorages[i].str() + ";");
-                  storagesAllocatedOnTheFly.emplace(equalsplit[0].str());
-                  wasReplaced = true;
-                }
-              }
+            // Check for ill-defined statements
+            if(storagesStr.find(",") != std::string::npos) {
+              reportError(token_.getLocation(),
+                          "only single declarations are currently supported: expected  ; got ,");
+              return;
             }
-            // If it was a vardecl only, we remove it
-            if(!wasReplaced) {
+            if((storagesStr.find("[") != std::string::npos) ||
+               (storagesStr.find("]") != std::string::npos)) {
+              reportError(token_.getLocation(),
+                          "initialisation with offsets is not supported, used in:" + storagesStr);
+            }
+
+            // Split the string if we find an assignment
+            if(storagesStr.find("=") != std::string::npos) {
+              llvm::SmallVector<StringRef, 2> accumulatedDeclaration;
+              StringRef(storagesStr).split(accumulatedDeclaration, '=');
+              registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
+                                  accumulatedDeclaration[0].str() + " = " + accumulatedDeclaration[1].str() + ";");
+              storagesAllocatedOnTheFly.emplace(accumulatedDeclaration[0].str());
+            } else {
+              storagesAllocatedOnTheFly.emplace(storagesStr);
               registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
                                   "");
             }
+            consumeTokens(peekedTokens);
           }
         }
-        if(peekSuccess)
-          consumeTokens(peekedTokens);
       }
     }
 
@@ -401,7 +388,9 @@ private:
 
           if(stencilKind == SK_StencilFunction &&
              curToken.getIdentifierInfo()->getName() == "var") {
-            reportError(token_.getLocation(), "temporary storage allocated in stencil_function");
+            reportError(token_.getLocation(), "declaration of temporary variable 'var' in stencil "
+                                              "function " +
+                                                  name + " is not allowed");
             break;
           }
 
@@ -469,8 +458,7 @@ private:
            PP_.LookAhead(0).is(tok::l_brace)) {
           DoMethodLoc = token_.getLocation();
 
-          // Replace with either `double Do` or `void Do`, this will be determined after we
-          // lexed
+          // Replace with either `double Do` or `void Do`, this will be determined after we lexed
           // the Do-Method body and know if there was a return statement.
           replacementCandiates_.push(std::make_pair(token_.getLocation(), token_.getLocation()));
 

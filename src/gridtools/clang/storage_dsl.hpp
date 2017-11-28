@@ -26,7 +26,6 @@ namespace gridtools {
 
 namespace clang {
 
-struct var;
 
 /**
  * @brief Dummy 3-dimensional storage

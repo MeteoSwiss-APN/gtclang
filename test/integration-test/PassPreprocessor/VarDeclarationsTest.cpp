@@ -16,17 +16,16 @@
 
 // RUN: %gtclang% %file% -fno-codegen -freport-pass-preprocessor
 
-
 #include "gridtools/clang_dsl.hpp"
 
 using namespace gridtools::clang;
 
-stencil_function bar{
-    storage a,b;
-    void Do(){
-        var d = 10;
-        a = b + d;
-    }
+stencil_function bar {
+  storage a, b;
+  void Do() {
+    var d = 10;
+    a = b + d;
+  }
 };
 
 stencil Test01 {
@@ -35,22 +34,23 @@ stencil Test01 {
 
   void Do() {
     vertical_region(k_start, k_end) {
-      var b = foo;
-      var c = 10;
+      var b = foo; //  EXPECTED: %line+5%: b = foo;
+      var c = 10;  //  EXPECTED: %line+5%: c = 10;
     }
     vertical_region(k_start, k_end) {
       a = foo;
-      var d, e = foo;
-      d = 10;
+      var e = foo;
+      var d = 10;
       foo = e + d;
     }
     vertical_region(k_start, k_end) {
-      var b, c = foo;
+      var b = foo;
       b = a;
-      foo = c[i-1] + b[i+1];
+      foo = b[i - 1] + b[i + 1];
     }
     vertical_region(k_start, k_end) {
-        bar(foo,a);
+      var temp = foo; //  EXPECTED: %line+5%: temp = foo;
+      bar(foo, a);
     }
   }
 };
