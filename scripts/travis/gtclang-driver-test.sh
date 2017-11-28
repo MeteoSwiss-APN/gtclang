@@ -38,18 +38,21 @@ cd bundle
 mkdir build 
 cd build
 
+build_dir=$(pwd)
+
 export PYTHON_DIR=/opt/python/3.5.3
 
-cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                                               \
-         -DCMAKE_C_COMPILER="$CC"                                                                  \
-         -DCMAKE_BUILD_TYPE="$CONFIG"                                                              \
-         -DGTCLANG_TESTING=ON                                                                      \
-         -DGTCLANG_UNIT_TESTING=ON                                                                 \
-         -DGTCLANG_INTEGRATION_TESTING=ON                                                          \
-         -DPYTHON_EXECUTABLE="$PYTHON_DIR/bin/python3"                                             \
-         -DProtobuf_DIR=${build_dir}/protobuf-prefix/src/protobuf-build/lib/cmake/protobuf/        \
-         -DDawn_DIR=${build_dir}/dawn-prefix/src/dawn-build/prefix/dawn/cmake/                     \
+cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                                                                          \
+         -DCMAKE_C_COMPILER="$CC"                                                                                             \
+         -DCMAKE_BUILD_TYPE="$CONFIG"                                                                                         \
+         -DGTCLANG_TESTING=ON                                                                                                 \
+         -DGTCLANG_UNIT_TESTING=ON                                                                                            \
+         -DGTCLANG_INTEGRATION_TESTING=ON                                                                                     \
+         -DPYTHON_EXECUTABLE="$PYTHON_DIR/bin/python3"                                                                        \
+         -DProtobuf_DIR=${build_dir}/dawn-prefix/src/dawn-build/protobuf-prefix/src/protobuf-build/lib/cmake/protobuf/        \
+         -DDawn_DIR=${build_dir}/dawn-prefix/src/dawn-build/prefix/dawn/cmake/                                                \
       || fatal_error "failed to configure"
+
 make -j2 || fatal_error "failed to build"
 
 # Run unittests
