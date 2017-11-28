@@ -45,5 +45,4 @@ cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                            
 
 make -j2 boost || fatal_error "failed to build"
 make -j2 dawn || fatal_error "failed to build"
-make gridtools || fatal_error "failed to build"
 
