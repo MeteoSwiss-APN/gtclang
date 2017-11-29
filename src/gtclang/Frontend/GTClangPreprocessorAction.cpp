@@ -240,7 +240,7 @@ private:
       if(token_.is(tok::identifier) && PP_.LookAhead(0).is(tok::l_square) &&
          (storages.count(token_.getIdentifierInfo()->getName().str()) ||
           storagesAllocatedOnTheFly.count(token_.getIdentifierInfo()->getName().str()) ||
-          variableNametoRepoName_.count(token_.getIdentifierInfo()->getName().str()) )) {
+          variableNametoRepoName_.count(token_.getIdentifierInfo()->getName().str()))) {
         SourceLocation lSquareLoc = PP_.LookAhead(0).getLocation();
         unsigned peekedTokens = 1;
 
@@ -414,32 +414,31 @@ private:
         if(curToken.is(tok::identifier) &&
            curToken.getIdentifierInfo()->getName() == "repository") {
           if(stencilKind == SK_StencilFunction) {
-            reportError(
-                token_.getLocation(),
-                dawn::format(
-                    "Illegal Expression: Declaration of repository as stencil_function argument in '%s'.",
-                    name));
-          }
-          else{
-              std::string stored_variables = "";
-              // Accumulate all identifiers up to `;`
-              std::string repoStr;
-              if(peekAndAccumulateUntil(tok::semi, peekedTokens, repoStr)) {
+            reportError(token_.getLocation(),
+                        dawn::format("Illegal Expression: Declaration of repository as "
+                                     "stencil_function argument in '%s'.",
+                                     name));
+          } else {
+            std::string stored_variables = "";
+            // Accumulate all identifiers up to `;`
+            std::string repoStr;
+            if(peekAndAccumulateUntil(tok::semi, peekedTokens, repoStr)) {
 
-                // Split the comma separated string
-                llvm::SmallVector<StringRef, 5> allRepos;
-                StringRef(repoStr).split(allRepos, ',');
-                for(const auto& repo : allRepos){
-                    for(const auto& storageRepoPair : variableNametoRepoName_){
-                        if(storageRepoPair.second == repo.str()){
-                            stored_variables += "storage "+storageRepoPair.first+";\n";
-                        }
-                    }
+              // Split the comma separated string
+              llvm::SmallVector<StringRef, 5> allRepos;
+              StringRef(repoStr).split(allRepos, ',');
+              for(const auto& repo : allRepos) {
+                for(const auto& storageRepoPair : variableNametoRepoName_) {
+                  if(storageRepoPair.second == repo.str()) {
+                    stored_variables += "storage " + storageRepoPair.first + ";\n";
+                  }
                 }
-                registerReplacement(token_.getLocation(),PP_.LookAhead(peekedTokens).getLocation(),stored_variables);
-
-                consumeTokens(peekedTokens);
               }
+              registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
+                                  stored_variables);
+
+              consumeTokens(peekedTokens);
+            }
           }
         }
       }
@@ -544,7 +543,7 @@ private:
   /// @param[in] loc location of the repository in the code (for error messages only)
   void lexRepository(const std::string& name, const clang::SourceLocation& loc) {
     using namespace clang;
-      // Initial `{` already consumed
+    // Initial `{` already consumed
     int curlyBracesNestingLevel = 1;
     while(lexNext()) {
       // Update brace counter
