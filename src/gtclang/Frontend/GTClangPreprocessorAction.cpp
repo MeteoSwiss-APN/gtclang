@@ -419,7 +419,7 @@ private:
                                      "stencil_function argument in '%s'.",
                                      name));
           } else {
-            std::string stored_variables = "";
+            std::string storedVariables = "";
             // Accumulate all identifiers up to `;`
             std::string repoStr;
             if(peekAndAccumulateUntil(tok::semi, peekedTokens, repoStr)) {
@@ -430,12 +430,14 @@ private:
               for(const auto& repo : allRepos) {
                 for(const auto& storageRepoPair : variableNametoRepoName_) {
                   if(storageRepoPair.second == repo.str()) {
-                    stored_variables += "storage " + storageRepoPair.first + ";\n";
+                    storedVariables += "storage " + storageRepoPair.first + ";\n";
                   }
                 }
               }
+              if(!storedVariables.empty() && storedVariables[storedVariables.length()-1 == '\n'])
+                  storedVariables.erase(storedVariables.length()-1);
               registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
-                                  stored_variables);
+                                  storedVariables);
 
               consumeTokens(peekedTokens);
             }
