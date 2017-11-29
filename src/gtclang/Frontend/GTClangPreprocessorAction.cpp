@@ -434,8 +434,8 @@ private:
                   }
                 }
               }
-              if(!storedVariables.empty() && storedVariables[storedVariables.length()-1 == '\n'])
-                  storedVariables.erase(storedVariables.length()-1);
+              if(!storedVariables.empty() && storedVariables[storedVariables.length() - 1 == '\n'])
+                storedVariables.erase(storedVariables.length() - 1);
               registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
                                   storedVariables);
 
