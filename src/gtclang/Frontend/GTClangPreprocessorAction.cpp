@@ -59,6 +59,8 @@ class GTClangLexer {
   /// determine the return-type of Do methods)
   std::stack<std::pair<clang::SourceLocation, clang::SourceLocation>> replacementCandiates_;
 
+  std::unordered_map<std::string, std::string> variableNametoRepoName_;
+
 private:
   enum StencilKind { SK_Invalid, SK_Stencil, SK_StencilFunction };
 
@@ -237,7 +239,8 @@ private:
       // stencil or stencil function
       if(token_.is(tok::identifier) && PP_.LookAhead(0).is(tok::l_square) &&
          (storages.count(token_.getIdentifierInfo()->getName().str()) ||
-          storagesAllocatedOnTheFly.count(token_.getIdentifierInfo()->getName().str()))) {
+          storagesAllocatedOnTheFly.count(token_.getIdentifierInfo()->getName().str()) ||
+          variableNametoRepoName_.count(token_.getIdentifierInfo()->getName().str()) )) {
         SourceLocation lSquareLoc = PP_.LookAhead(0).getLocation();
         unsigned peekedTokens = 1;
 
@@ -408,6 +411,37 @@ private:
             consumeTokens(peekedTokens);
           }
         }
+        if(curToken.is(tok::identifier) &&
+           curToken.getIdentifierInfo()->getName() == "repository") {
+          if(stencilKind == SK_StencilFunction) {
+            reportError(
+                token_.getLocation(),
+                dawn::format(
+                    "Illegal Expression: Declaration of repository as stencil_function argument in '%s'.",
+                    name));
+          }
+          else{
+              std::string stored_variables = "";
+              // Accumulate all identifiers up to `;`
+              std::string repoStr;
+              if(peekAndAccumulateUntil(tok::semi, peekedTokens, repoStr)) {
+
+                // Split the comma separated string
+                llvm::SmallVector<StringRef, 5> allRepos;
+                StringRef(repoStr).split(allRepos, ',');
+                for(const auto& repo : allRepos){
+                    for(const auto& storageRepoPair : variableNametoRepoName_){
+                        if(storageRepoPair.second == repo.str()){
+                            stored_variables += "storage "+storageRepoPair.first+";\n";
+                        }
+                    }
+                }
+                registerReplacement(token_.getLocation(),PP_.LookAhead(peekedTokens).getLocation(),stored_variables);
+
+                consumeTokens(peekedTokens);
+              }
+          }
+        }
       }
 
       //
@@ -505,6 +539,76 @@ private:
     }
   }
 
+  /// @brief lexRepository lexes the repository and adds all the variables to to the map
+  /// @param[in] name of the repository to be lexed (for error messages only)
+  /// @param[in] loc location of the repository in the code (for error messages only)
+  void lexRepository(const std::string& name, const clang::SourceLocation& loc) {
+    using namespace clang;
+      // Initial `{` already consumed
+    int curlyBracesNestingLevel = 1;
+    while(lexNext()) {
+      // Update brace counter
+      if(token_.is(tok::l_brace) || token_.is(tok::r_brace)) {
+        curlyBracesNestingLevel += token_.is(tok::l_brace);
+        curlyBracesNestingLevel -= token_.is(tok::r_brace);
+        if(curlyBracesNestingLevel == 0)
+          break;
+        continue;
+      }
+      // Lex `storage IDENTIFIER;` or `storage IDENTIFIER_1, ... IDENTIFIER_N;`
+      if(token_.is(tok::identifier)) {
+        unsigned peekedTokens = 0;
+
+        // Consume gridtools::clang:: of the storage if necessary
+        peekNamespaces({"gridtools", "clang"}, peekedTokens);
+
+        // Get the token which describes the `storage`
+        const Token& curToken = peekedTokens == 0 ? token_ : PP_.LookAhead(peekedTokens++);
+
+        if(curToken.is(tok::identifier) && curToken.getIdentifierInfo()->getName() == "storage") {
+          // Accumulate all identifiers up to `;`
+          std::string storagesStr;
+          if(peekAndAccumulateUntil(tok::semi, peekedTokens, storagesStr)) {
+
+            // Split the comma separated string
+            llvm::SmallVector<StringRef, 5> curStorages;
+            StringRef(storagesStr).split(curStorages, ',');
+            for(const auto& storage : curStorages) {
+              if(variableNametoRepoName_.count(storage.str()) == 0) {
+                variableNametoRepoName_.emplace(storage.str(), name);
+              } else {
+                reportError(token_.getLocation(),
+                            dawn::format("redeclaration of already declared storage '%s' in "
+                                         "repository '%s', previously declared in repository '%s'",
+                                         storage.str(), name,
+                                         variableNametoRepoName_.find(storage.str())->second));
+              }
+            }
+            consumeTokens(peekedTokens);
+          }
+        } else if(curToken.is(tok::identifier) &&
+                  curToken.getIdentifierInfo()->getName() == "var") {
+          reportError(
+              token_.getLocation(),
+              dawn::format(
+                  "declaration of temporary variable 'var' in repository %s is not allowed", name));
+        } else {
+          reportError(
+              token_.getLocation(),
+              dawn::format("Ill-formed repository %s, only definition of storages allowed", name));
+        }
+      } else if(!token_.is(tok::semi)) {
+        reportError(
+            token_.getLocation(),
+            dawn::format("Ill-formed repository %s, only definition of storages allowed", name));
+      }
+    }
+    if(curlyBracesNestingLevel != 0) {
+      reportError(loc, dawn::format("unbalanced brace '%s' detected in repository '%s'",
+                                    (curlyBracesNestingLevel > 0 ? "}" : "{"), name));
+    }
+  }
+
   /// @brief Try to lex stencil (or stencil function)
   void tryLexStencils() {
     using namespace clang;
@@ -583,6 +687,25 @@ private:
           registerReplacement(token_.getLocation(), tokenLBrace.getLocation(),
                               "struct globals : public gridtools::clang::globals_impl<globals> {");
           consumeTokens(peekedTokens);
+        } else if(identifierInfo->getName() == "repository") {
+          // read the register's name
+          const Token& tokenIdentifier = PP_.LookAhead(peekedTokens++);
+          std::string identifier;
+          if(tokenIdentifier.is(tok::identifier) && tokenIdentifier.getIdentifierInfo())
+            identifier = tokenIdentifier.getIdentifierInfo()->getName();
+          else
+            continue;
+
+          // Check for `{`
+          const Token& tokenLBrace = PP_.LookAhead(peekedTokens++);
+          if(!tokenLBrace.is(tok::l_brace))
+            continue;
+          registerReplacement(token_.getLocation(), tokenLBrace.getLocation(),
+                              dawn::format("struct %s {", identifier));
+
+          consumeTokens(peekedTokens);
+
+          lexRepository(identifier, token_.getLocation());
         }
 
         if(stencilKind != SK_Invalid) {
