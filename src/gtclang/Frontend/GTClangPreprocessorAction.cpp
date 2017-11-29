@@ -628,8 +628,7 @@ private:
   ///
   /// `#pragma gtclang CLAUSE_1 [, ... CLAUSE_N]`
   ///
-  /// Note that there might be cleaner ways of doing this but it is not clear if custom pragmas
-  /// can
+  /// Note that there might be cleaner ways of doing this but it is not clear if custom pragmas can
   /// be parsed in a proper way without hacking Clang. This is fairly efficient though.
   void tryLexPragmas() {
     using namespace clang;
