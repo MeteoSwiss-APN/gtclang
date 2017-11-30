@@ -147,7 +147,7 @@ class Parser(object):
 
     def __parse_line_with_number(self, line, linenumber):
         """ Parse a line with optional expresion evaluation """
-        pattern = re.search('^(%line(([+-]{1})([0-9]*))?%){1}.*$', line)
+        pattern = re.search('^.*(%line(([+-]){1}([0-9]*))?%){1}.*$', line)
         if not pattern:
             return line
 
