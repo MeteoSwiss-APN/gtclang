@@ -105,7 +105,6 @@ mchbuild_report_result("Package summary" ${package_info})
 set(format_directories 
   "${CMAKE_SOURCE_DIR}/src"
   "${CMAKE_SOURCE_DIR}/test/unit-test"
-#  "${CMAKE_SOURCE_DIR}/test/integration-test"
 )
 
 mchbuild_add_target_clang_format(DIRECTORIES ${format_directories} EXTENSION ".h;.cpp")

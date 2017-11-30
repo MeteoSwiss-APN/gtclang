@@ -145,32 +145,22 @@ class Parser(object):
     
 
     def __parse_line_with_number(self, line, linenumber):
-        found = line.find("%line")
-        if found == -1:
+        """ Parse a line with optional expresion evaluation """
+        pattern = re.search('^(%line(([+-]{1})([0-9]*))?%){1}.*$', line)
+        if not pattern:
             return line
-        char = -1
-        words  = line.split()
-        for word in words:
-            char += len(word)
-            if char >= found :
-                match = word
-                break
-        splits = match.split("+")
-        if len(splits) == 1:
-            splits = match.split("-")
-        else:
-            number = splits[1][:-2]
-            line = line.replace(match, str(linenumber+int(number))+":")
-        if len(splits) == 1:
-            found = line.find("%line%")
-            if found == -1:
-                report_fatal_error("Bad line-stmt in " +line)
-            line = line.replace("%line%", str(linenumber))
-        else:
-            number = splits[1][:-2]
-            line = line.replace(match, str(linenumber-int(number))+":")
 
-        return line
+        expr = pattern.group(2)
+        op = pattern.group(3)
+        value = pattern.group(4)
+       
+        if expr:
+            replacement = str(linenumber + int(value) if op == '+' else linenumber - int(value))
+        else:
+            replacement = str(linenumber)
+
+        return line.replace(pattern.group(1), replacement)
+
 
 
     def __substitute_keywords(self, line, linenumber):

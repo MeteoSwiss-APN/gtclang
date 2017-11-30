@@ -415,7 +415,7 @@ private:
            curToken.getIdentifierInfo()->getName() == "repository") {
           if(stencilKind == SK_StencilFunction) {
             reportError(token_.getLocation(),
-                        dawn::format("Illegal Expression: Declaration of repository as "
+                        dawn::format("illegal Expression: Declaration of repository as "
                                      "stencil_function argument in '%s'.",
                                      name));
           } else {
@@ -434,7 +434,7 @@ private:
                   }
                 }
               }
-              if(!storedVariables.empty() && storedVariables[storedVariables.length() - 1 == '\n'])
+              if(!storedVariables.empty() && storedVariables[storedVariables.length() - 1] == '\n')
                 storedVariables.erase(storedVariables.length() - 1);
               registerReplacement(token_.getLocation(), PP_.LookAhead(peekedTokens).getLocation(),
                                   storedVariables);
@@ -596,7 +596,7 @@ private:
         } else {
           reportError(
               token_.getLocation(),
-              dawn::format("Ill-formed repository %s, only definition of storages allowed", name));
+              dawn::format("ill-formed repository %s, only definition of storages allowed", name));
         }
       } else if(!token_.is(tok::semi)) {
         reportError(
@@ -689,7 +689,7 @@ private:
                               "struct globals : public gridtools::clang::globals_impl<globals> {");
           consumeTokens(peekedTokens);
         } else if(identifierInfo->getName() == "repository") {
-          // read the register's name
+          // read the repository's name
           const Token& tokenIdentifier = PP_.LookAhead(peekedTokens++);
           std::string identifier;
           if(tokenIdentifier.is(tok::identifier) && tokenIdentifier.getIdentifierInfo())
@@ -752,8 +752,7 @@ private:
   ///
   /// `#pragma gtclang CLAUSE_1 [, ... CLAUSE_N]`
   ///
-  /// Note that there might be cleaner ways of doing this but it is not clear if custom pragmas
-  /// can
+  /// Note that there might be cleaner ways of doing this but it is not clear if custom pragmas can
   /// be parsed in a proper way without hacking Clang. This is fairly efficient though.
   void tryLexPragmas() {
     using namespace clang;
