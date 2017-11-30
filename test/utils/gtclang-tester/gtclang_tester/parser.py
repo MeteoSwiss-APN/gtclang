@@ -17,6 +17,7 @@
 ##===------------------------------------------------------------------------------------------===##
 
 from os import path, listdir
+import re
 from re import compile
 from re import split
 from tempfile import mkdtemp
