@@ -601,7 +601,7 @@ private:
       } else if(!token_.is(tok::semi)) {
         reportError(
             token_.getLocation(),
-            dawn::format("Ill-formed repository %s, only definition of storages allowed", name));
+            dawn::format("ill-formed repository %s, only definition of storages allowed", name));
       }
     }
     if(curlyBracesNestingLevel != 0) {
