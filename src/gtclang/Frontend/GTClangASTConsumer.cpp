@@ -126,12 +126,14 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   dawn::DawnCompiler::CodeGenKind codeGen = dawn::DawnCompiler::CG_GTClang;
   if(context_->getOptions().Backend == "gridtools")
     codeGen = dawn::DawnCompiler::CG_GTClang;
-  else if(context_->getOptions().Backend == "c++")
+  else if(context_->getOptions().Backend == "c++-naive")
     codeGen = dawn::DawnCompiler::CG_GTClangNaiveCXX;
+  else if(context_->getOptions().Backend == "c++-opt")
+    codeGen = dawn::DawnCompiler::CG_GTClangOptCXX;
   else {
     context_->getDiagnostics().report(Diagnostics::err_invalid_option)
         << ("-backend=" + context_->getOptions().Backend)
-        << dawn::RangeToString(", ", "", "")(std::vector<std::string>{"gridtools", "c++"});
+        << dawn::RangeToString(", ", "", "")(std::vector<std::string>{"gridtools", "c++-naive", "c++-opt"});
   }
 
   // Compile the SIR to GridTools
