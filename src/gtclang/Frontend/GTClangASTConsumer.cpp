@@ -138,7 +138,7 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
 
   // Compile the SIR to GridTools
   dawn::DawnCompiler Compiler(makeDAWNOptions(context_->getOptions()).get());
-  std::unique_ptr<dawn::TranslationUnit> DawnTranslationUnit = Compiler.compile(SIR.get(), codeGen);
+  std::unique_ptr<dawn::codegen::TranslationUnit> DawnTranslationUnit = Compiler.compile(SIR.get(), codeGen);
 
   // Report diagnostics from Dawn
   if(Compiler.getDiagnostics().hasDiags()) {
