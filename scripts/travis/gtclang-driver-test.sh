@@ -54,7 +54,7 @@ cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                            
 
 make -j2 || fatal_error "failed to build"
 
-bash gtclang-tester-no-codegen.sh
+bash ${build_dir}/gtclang-tester-no-codegen.sh
 
 # Run unittests
 ctest -V -C ${CONFIG} --output-on-failure --force-new-ctest-process                                   \
