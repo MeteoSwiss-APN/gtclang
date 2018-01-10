@@ -40,7 +40,6 @@ cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                            
          -DGTCLANG_TESTING=ON                                                                      \
          -DGTCLANG_UNIT_TESTING=ON                                                                 \
          -DGTCLANG_INTEGRATION_TESTING=ON                                                          \
-         -DPYTHON_EXECUTABLE="$PYTHON_DIR/bin/python3"                                             \
       || fatal_error "failed to configure"
 
 make -j2 boost || fatal_error "failed to build"
