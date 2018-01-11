@@ -40,7 +40,7 @@ cd build
 
 build_dir=$(pwd)
 
-export PYTHON_DIR=/opt/python/3.5.3
+export PYTHON_DIR=$(which python3.5)
 
 cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                                                                          \
          -DCMAKE_C_COMPILER="$CC"                                                                                             \
