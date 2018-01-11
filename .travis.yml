@@ -23,7 +23,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-
+      - deadsnakes
     packages:
       - python3.5
 
