@@ -31,6 +31,7 @@ set(directories
   ${cwd}/PassTemporaryType
   ${cwd}/PassPreprocessor
   ${cwd}/PassSetNonTempCaches
+  ${cwd}/PassSetBoundaryCondition
   ${cwd}/SIR
 )
 
