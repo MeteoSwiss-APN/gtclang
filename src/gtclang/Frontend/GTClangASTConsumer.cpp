@@ -133,12 +133,14 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   else {
     context_->getDiagnostics().report(Diagnostics::err_invalid_option)
         << ("-backend=" + context_->getOptions().Backend)
-        << dawn::RangeToString(", ", "", "")(std::vector<std::string>{"gridtools", "c++-naive", "c++-opt"});
+        << dawn::RangeToString(", ", "",
+                               "")(std::vector<std::string>{"gridtools", "c++-naive", "c++-opt"});
   }
 
   // Compile the SIR to GridTools
   dawn::DawnCompiler Compiler(makeDAWNOptions(context_->getOptions()).get());
-  std::unique_ptr<dawn::codegen::TranslationUnit> DawnTranslationUnit = Compiler.compile(SIR.get(), codeGen);
+  std::unique_ptr<dawn::codegen::TranslationUnit> DawnTranslationUnit =
+      Compiler.compile(SIR.get(), codeGen);
 
   // Report diagnostics from Dawn
   if(Compiler.getDiagnostics().hasDiags()) {
@@ -215,6 +217,11 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
       context_->getDiagnostics().report(Diagnostics::err_fs_error)
           << dawn::format("unable to replace globals code at: %s",
                           globalsParser.getRecordDecl()->getLocation().printToString(SM));
+  }
+
+  // Replace interval
+  for(const clang::VarDecl* a : visitor_->getIntervalDecls()) {
+    rewriter.ReplaceText(a->getSourceRange(), "");
   }
 
   // Remove the code from stencil-functions
