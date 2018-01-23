@@ -54,7 +54,6 @@ cmake .. -DCMAKE_CXX_COMPILER="$CXX"                                            
 
 make -j2 || fatal_error "failed to build"
 
-
 # Run unittests
 ctest -V -C ${CONFIG} --output-on-failure --force-new-ctest-process                                   \
      || fatal_error "failed to run tests"
