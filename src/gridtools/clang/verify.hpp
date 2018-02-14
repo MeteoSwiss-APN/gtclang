@@ -37,10 +37,70 @@ public:
   void for_each(FunctorType&& functor, StorageTypes&... storages) const {
     for_each_impl(std::forward<FunctorType>(functor), storages...);
   }
-
   template <class FunctorType, class... StorageTypes>
   void for_each_boundary(FunctorType&& functor, StorageTypes&... storages) const {
     for_each_boundary_impl(std::forward<FunctorType>(functor), storages...);
+  }
+  template < class StorageType1, class StorageType2 >
+  bool verify(StorageType1 &storage1, StorageType2 &storage2, int max_erros = 10) const {
+      using namespace gridtools;
+
+      storage1.sync();
+      storage2.sync();
+
+      auto meta_data_1 = *storage1.get_storage_info_ptr();
+      auto meta_data_2 = *storage2.get_storage_info_ptr();
+
+      const uint_t idim1 = meta_data_1.template unaligned_dim< 0 >();
+      const uint_t jdim1 = meta_data_1.template unaligned_dim< 1 >();
+      const uint_t kdim1 = meta_data_1.template unaligned_dim< 2 >();
+
+      const uint_t idim2 = meta_data_2.template unaligned_dim< 0 >();
+      const uint_t jdim2 = meta_data_2.template unaligned_dim< 1 >();
+      const uint_t kdim2 = meta_data_2.template unaligned_dim< 2 >();
+
+      auto storage1_v = make_host_view(storage1);
+      auto storage2_v = make_host_view(storage2);
+
+      // Check dimensions
+      auto check_dim = [&](uint_t dim1, uint_t dim2, uint_t size, const char *dimstr) {
+          if (dim1 != dim2 || dim1 < size) {
+              std::cerr << "dimension \"" << dimstr << "\" missmatch in storage pair \""
+                        << storage1.name() << "\" : \"" << storage2.name() << "\"\n";
+              std::cerr << "  " << dimstr << "-dim storage1: " << dim1 << "\n";
+              std::cerr << "  " << dimstr << "-dim storage2: " << dim2 << "\n";
+              std::cerr << "  " << dimstr << "-size domain: " << size << "\n";
+              return false;
+          }
+          return true;
+      };
+
+      check_dim(idim1, idim2, m_domain.isize(), "i");
+      check_dim(jdim1, jdim2, m_domain.jsize(), "j");
+      check_dim(kdim1, kdim2, m_domain.ksize(), "k");
+
+      bool verified = true;
+
+      for (int i = m_domain.iminus(); i < (m_domain.isize() - m_domain.iplus()); ++i)
+          for (int j = m_domain.jminus(); j < (m_domain.jsize() - m_domain.jplus()); ++j)
+              for (int k = m_domain.kminus(); k < (m_domain.ksize() - m_domain.kplus());
+                   ++k) {
+                  typename StorageType1::data_t value1 = storage1_v(i, j, k);
+                  typename StorageType2::data_t value2 = storage2_v(i, j, k);
+                  if (!compare_below_threashold(value1, value2, m_precision)) {
+                      if (--max_erros >= 0) {
+                          std::cerr
+                              << "( " << i << ", " << j << ", " << k << " ) : "
+                              << " " << storage1.name() << " = " << value1 << " ; "
+                              << " " << storage2.name() << " = " << value2
+                              << "  error: " << std::fabs((value2 - value1) / (value2))
+                              << std::endl;
+                      }
+                      verified = false;
+                  }
+              }
+
+      return verified;
   }
 
   template <class ValueType, class... StorageTypes>
@@ -77,7 +137,8 @@ public:
   }
 
   template <class StorageType1, class StorageType2>
-  bool verify(StorageType1& storage1, StorageType2& storage2, int max_erros = 10) const {
+  bool 
+    (StorageType1& storage1, StorageType2& storage2, int max_erros = 10) const {
     using namespace gridtools;
 
     storage1.sync();
