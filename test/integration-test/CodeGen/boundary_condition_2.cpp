@@ -12,36 +12,25 @@
 //  This file is distributed under the MIT License (MIT).
 //  See LICENSE.txt for details.
 //
-//===------------------------------------------------------------------------------------------===//
-// RUN: %gtclang% %file% -fno-codegen -fsplit-stencils -freport-bc -max-fields=2
-// EXPECTED: PASS: PassSetBoundaryCondition: Test01 : Boundary Condition for field 'foo' inserted
+//===-------------------------------------------------------------------------------------------===//
 #include "gridtools/clang_dsl.hpp"
-
 using namespace gridtools::clang;
 
-globals {
-  double glob_bar;
-  double glob_foo;
+stencil_function to_field {
+  storage a, b;
+  Do { a = b; }
 };
 
-stencil_function zero {
-  storage a;
-  Do { a = 0; }
-};
+globals { double in_glob = 12; };
 
-stencil Test01 {
-  storage foo;
-  storage bar;
-  storage fooo;
-  storage barr, test;
+stencil split_stencil {
+  storage in, out, bcfield;
 
-  boundary_condition(zero(), foo);
-
+  boundary_condition(to_field(), in, bcfield);
   void Do() {
     vertical_region(k_start, k_end) {
-      foo = bar[i + 1];
-      bar = foo[i - 1] + glob_foo;
-      // mytest(fooo, barr, zero(foo, bar));
+      in = out[j + 1];
+      out = in[j - 1] + in_glob;
     }
   }
 };
