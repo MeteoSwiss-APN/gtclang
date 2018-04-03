@@ -122,6 +122,18 @@ foreach(example ${codegen_examples})
     set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
 
     add_test(NAME CTest-${example}_benchmarks COMMAND $<TARGET_FILE:${example}_benchmarks> 12 12 10 )
+
+    if(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
+      add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cpp" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
+      target_include_directories(${example}_benchmarks_cuda PUBLIC ${include_dirs})
+      #TODO mchbuild_add_unittest does not work here since the DEPENDS argument not only makes a dependency but also links against them
+      add_dependencies(${example}_benchmarks_cuda gtclang)
+      target_link_libraries(${example}_benchmarks_cuda ${GTCLANG_UNITTEST_EXTERNAL_LIBRARIES} gtest)
+      target_compile_definitions(${example}_benchmarks_cuda PUBLIC -DGRIDTOOLS_CLANG_CUDA)
+
+      add_test(NAME CTest-${example}_benchmarks_cuda COMMAND $<TARGET_FILE:${example}_benchmarks_cuda> 12 12 10 )
+    endif(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
+
 endforeach()
 
 gtclang_add_codegentest(NAME codegen-only
