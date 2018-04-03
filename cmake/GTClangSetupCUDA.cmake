@@ -6,9 +6,7 @@ endmacro()
 
 macro( gtclang_setup_CUDA )
 
-message("UU")
   find_package( CUDA 8.0 REQUIRED )
-message(KK)
   message( STATUS "CUDA detected: " ${CUDA_VERSION} )
 
   set( CUDA_PROPAGATE_HOST_FLAGS ON )
