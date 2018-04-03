@@ -27,6 +27,9 @@ option(GTCLANG_ASSERTS "Enable asserts" ${BUILD_IS_NOT_RELEASE})
 option(GTCLANG_USE_CCACHE "Use compile cache (ccache)" ON)
 option(GTCLANG_BUILD_EXAMPLES "Build examples (requires boost, gridtools and OpenMP/CUDA)" ON)
 option(GTCLANG_BUILD_EXAMPLES_WITH_GPU "Use the gpu (CUDA) backend when compiling gridtools" OFF)
+if(GTCLANG_BUILD_EXAMPLES_WITH_GPU) 
+  set(GPU_DEVICE "P100" CACHE TYPE STRING)
+endif(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
 
 # Testing
 option(GTCLANG_TESTING "Enable testing" ON)
