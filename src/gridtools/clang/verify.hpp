@@ -178,7 +178,7 @@ namespace gridtools {
                         }
                     }
                 }
-                storage_v.sync();
+                storage.sync();
             }
 
             template < class FunctorType, class StorageType >
@@ -257,7 +257,7 @@ namespace gridtools {
                         }
                     }
                 }
-                storage_v.sync();
+                storage.sync();
             }
 
             template < class FunctorType, class StorageType >
