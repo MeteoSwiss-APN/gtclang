@@ -82,6 +82,8 @@ mchbuild_find_package(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
+
+message("POST ${dawn_DIR}")
 include("thirdparty/gtclangAddBoost")
 
 #TODO Cleanup the mess with the naming conventions
