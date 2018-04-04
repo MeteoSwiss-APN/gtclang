@@ -17,7 +17,6 @@
 include(mchbuildExportPackage)
 
 if(NOT DEFINED(dawn_DIR) AND DEFINED DAWN_ROOT)
-message("KKK ${DAWN_ROOT}")
   set(dawn_DIR "${DAWN_ROOT}/cmake")
 endif()
 find_package(dawn NO_MODULE REQUIRED)
