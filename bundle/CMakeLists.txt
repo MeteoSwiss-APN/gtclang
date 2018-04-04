@@ -83,7 +83,6 @@ mchbuild_find_package(
 )
 
 
-message("POST ${dawn_DIR}")
 include("thirdparty/gtclangAddBoost")
 
 #TODO Cleanup the mess with the naming conventions
