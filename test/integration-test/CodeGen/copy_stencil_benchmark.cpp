@@ -35,6 +35,8 @@ TEST(copy_stencil, test) {
   cxxnaive::copy_stencil copy_naive(dom, in, out_naive);
 
   copy_gt.run();
+
+  in.sync();
   copy_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
