@@ -35,6 +35,7 @@ TEST(globals_stencil, test) {
   cxxnaive::globals::get().var_runtime = 1;
 
   gridtools::globals_stencil globals_gt(dom, in, out_gt);
+  verif.sync_storages(in);
   cxxnaive::globals_stencil globals_naive(dom, in, out_naive);
 
   globals_gt.run();

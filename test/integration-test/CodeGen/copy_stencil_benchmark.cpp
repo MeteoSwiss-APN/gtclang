@@ -32,6 +32,7 @@ TEST(copy_stencil, test) {
   verif.fill(-1.0, out_gt, out_naive);
 
   gridtools::copy_stencil copy_gt(dom, in, out_gt);
+  verif.sync_storages(in);
   cxxnaive::copy_stencil copy_naive(dom, in, out_naive);
 
   copy_gt.run();

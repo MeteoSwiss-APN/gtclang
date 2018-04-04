@@ -124,14 +124,15 @@ foreach(example ${codegen_examples})
     add_test(NAME CTest-${example}_benchmarks COMMAND $<TARGET_FILE:${example}_benchmarks> 12 12 10 )
 
     if(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
-      set_source_files_properties("${cwd}/CodeGen/${example}_benchmark.cpp" PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ )
-
-      cuda_add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cpp" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
+      cuda_add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
 
       target_include_directories(${example}_benchmarks_cuda PUBLIC ${include_dirs})
-      add_dependencies(${example}_benchmarks_cuda gtclang)
+      add_dependencies(${example}_benchmarks_cuda gtclang ${example}_benchmarks)
       target_link_libraries(${example}_benchmarks_cuda gtest ${CUDA_CUDART_LIBRARY})
       target_compile_definitions(${example}_benchmarks_cuda PUBLIC -DGRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
+
+      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_gridtools.cpp)
+      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
 
       add_test(NAME CTest-${example}_benchmarks_cuda COMMAND $<TARGET_FILE:${example}_benchmarks_cuda> 12 12 10 )
     endif(GTCLANG_BUILD_EXAMPLES_WITH_GPU)

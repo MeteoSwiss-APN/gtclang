@@ -84,6 +84,17 @@ namespace gridtools {
                 boundary_fill_impl(value, storages...);
             }
 
+            template < class StorageType >
+            void sync_storages(StorageType &storage) const {
+                storage.sync();
+            }
+
+            template < class StorageType, class... StorageTypes >
+            void sync_storages(StorageType &storage, StorageTypes... storages) const {
+                storage.sync();
+                sync_storages(storages...);
+            }
+
             template < class StorageType1, class StorageType2 >
             bool verify(StorageType1 &storage1, StorageType2 &storage2, int max_erros = 10) const {
                 using namespace gridtools;

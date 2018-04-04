@@ -36,6 +36,7 @@ TEST(coriolis_stencil, test) {
   verif.fillMath(5.0, 1.2, 1.3, 1.7, 2.2, 3.5, v_nnow);
 
   gridtools::coriolis_stencil coriolis_gt(dom, u_tens_gt, u_nnow, v_tens_gt, v_nnow, fc);
+  verif.sync_storages(u_nnow, v_nnow, fc);
   cxxnaive::coriolis_stencil coriolis_cxxnaive(dom, u_tens_cxxnaive, u_nnow, v_tens_cxxnaive, v_nnow, fc);
 
   coriolis_gt.run();
