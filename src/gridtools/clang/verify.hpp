@@ -141,7 +141,7 @@ public:
 
     auto storage_v = make_host_view(storage);
     std::cout << "==============================================\n";
-    std::cout << "printing Storage" << storage.name() << "\n";
+    std::cout << "printing Storage " << storage.name() << "\n";
     std::cout << "==============================================\n";
     for(int k = m_domain.kminus(); k < (m_domain.ksize() - m_domain.kplus()); ++k) {
       std::cout << "Level " << k << "\n";
