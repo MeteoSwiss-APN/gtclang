@@ -50,10 +50,10 @@ mkdir -p $build_dir
 cd $build_dir
 
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${build_type} -DCMAKE_CXX_COMPILER=`which g++` -DCMAKE_C_COMPILER=`which gcc` -DBOOST_ROOT=${BOOST_DIR} -DGTCLANG_ENABLE_GRIDTOOLS=ON \
-        -DProtobuf_DIR=/scratch/cosuna/software/protobuf/3.4.0/lib/cmake/protobuf/  -DLLVM_ROOT=/scratch/cosuna/software/clang/clang-3.8.1/install/ -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES=--gres=gpu:1 -DGTCLANG_SLURM_PARTITION=debug" 
+        -DProtobuf_DIR=/scratch/cosuna/software/protobuf/3.4.0/lib/cmake/protobuf/  -DLLVM_ROOT=/scratch/cosuna/software/clang/clang-3.8.1/install/" 
 
 if [ "$ENABLE_GPU" = true ]; then
-  CMAKE_ARGS="${CMAKE_ARGS} -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON"
+  CMAKE_ARGS="${CMAKE_ARGS} -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES=--gres=gpu:1 -DGTCLANG_SLURM_PARTITION=debug -DGPU_DEVICE=K80"
 fi
 
 if [ -z ${INSTALL_DIR} ]; then
