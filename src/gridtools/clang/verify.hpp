@@ -56,7 +56,7 @@ public:
           // 8,2,1.5,1.5,2,4
           double x = i / (gridtools::float_type)dims[0];
           double y = j / (gridtools::float_type)dims[1];
-          return k*10e-3 +
+          return k * 10e-3 +
                  (gridtools::float_type)a *
                      ((gridtools::float_type)b + cos(pi * (x + (gridtools::float_type)c * y)) +
                       sin((gridtools::float_type)d * pi * (x + (gridtools::float_type)e * y))) /
@@ -73,6 +73,17 @@ public:
   template <class ValueType, class... StorageTypes>
   void fill_boundaries(ValueType value, StorageTypes&... storages) const {
     boundary_fill_impl(value, storages...);
+  }
+
+  template <class StorageType>
+  void sync_storages(StorageType& storage) const {
+    storage.sync();
+  }
+
+  template <class StorageType, class... StorageTypes>
+  void sync_storages(StorageType& storage, StorageTypes... storages) const {
+    storage.sync();
+    sync_storages(storages...);
   }
 
   template <class StorageType1, class StorageType2>
@@ -133,13 +144,14 @@ public:
 
     return verified;
   }
+
   template <class StorageType>
   void printStorage(StorageType storage) {
     using namespace gridtools;
 
     storage.sync();
 
-    auto storage_v = make_host_view< access_mode::ReadOnly >(storage);
+    auto storage_v = make_host_view<access_mode::ReadOnly>(storage);
     std::cout << "==============================================\n";
     std::cout << "printing Storage " << storage.name() << "\n";
     std::cout << "==============================================\n";
@@ -187,6 +199,7 @@ private:
         }
       }
     }
+    storage.sync();
   }
 
   template <class FunctorType, class StorageType>
@@ -253,6 +266,7 @@ private:
         }
       }
     }
+    storage.sync();
   }
 
   template <class FunctorType, class StorageType>
