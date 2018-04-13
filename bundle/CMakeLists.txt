@@ -92,7 +92,6 @@ option(GTCLANG_ENABLE_GRIDTOOLS "Enable GridTools compilation" OFF)
 
 set(gtclang_dependencies "boost" "dawn")
 
-message("MOD ${CMAKE_MODULE_PATH}")
 if(GTCLANG_ENABLE_GRIDTOOLS) 
   mchbuild_find_package(
     PACKAGE GridTools
