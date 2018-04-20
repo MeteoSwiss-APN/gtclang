@@ -19,7 +19,7 @@ function help {
   echo -e "-i sets the installation directory"
   echo -e "-g gpu build" 
   echo -e "-h Shows this help"
-  echo -e "-d path to dawn"
+  echo -e "-d <path> path to dawn"
   exit 1
 }
 
