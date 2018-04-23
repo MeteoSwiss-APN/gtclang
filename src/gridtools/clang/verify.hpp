@@ -121,9 +121,9 @@ public:
     };
 
     bool verified = true;
-    verified *= check_dim(idim1, idim2, m_domain.isize(), "i");
-    verified *= check_dim(jdim1, jdim2, m_domain.jsize(), "j");
-    verified *= check_dim(kdim1, kdim2, m_domain.ksize(), "k");
+    verified &= check_dim(idim1, idim2, m_domain.isize(), "i");
+    verified &= check_dim(jdim1, jdim2, m_domain.jsize(), "j");
+    verified &= check_dim(kdim1, kdim2, m_domain.ksize(), "k");
     if(verified==false){
         return verified;
     }
