@@ -37,7 +37,6 @@ TEST(globals_stencil, test) {
   gridtools::globals_stencil globals_gt(dom, in, out_gt);
   cxxnaive::globals_stencil globals_naive(dom, in, out_naive);
 
-  globals_gt.run();
   globals_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
