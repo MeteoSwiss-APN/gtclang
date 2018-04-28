@@ -27,6 +27,8 @@ using namespace dawn;
 namespace sdesctest {
 
 void test_01_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_runtime == 1) {
@@ -41,6 +43,9 @@ void test_01_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_02_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_compiletime == 2) {
@@ -54,6 +59,9 @@ void test_02_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_03_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_runtime == 1) {
@@ -69,6 +77,9 @@ void test_03_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_04_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_compiletime == 2) {
@@ -93,6 +104,9 @@ void test_04_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_05_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_compiletime == 2) {
@@ -109,6 +123,9 @@ void test_05_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_06_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_compiletime == 2) {
@@ -125,6 +142,9 @@ void test_06_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_07_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_compiletime == 2) {
@@ -145,6 +165,9 @@ void test_07_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_08_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_compiletime == 2) {
@@ -158,6 +181,9 @@ void test_08_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_09_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   if(cxxnaive::globals::get().var_compiletime == 2) {
