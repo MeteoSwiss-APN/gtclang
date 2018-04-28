@@ -26,6 +26,9 @@ using namespace dawn;
 
 namespace sftest {
 void test_01_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -37,6 +40,9 @@ void test_01_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_02_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -48,6 +54,9 @@ void test_02_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_03_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -60,6 +69,9 @@ void test_03_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
 }
 
 void test_06_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -71,6 +83,9 @@ void test_06_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_07_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
