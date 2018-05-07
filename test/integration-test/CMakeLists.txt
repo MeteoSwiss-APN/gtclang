@@ -95,6 +95,12 @@ foreach(example ${codegen_examples})
     GET_COMPILER_FLAGS(${example} flags)
     set(config_str "${config_str}" "${flags}")
 
+    if(${example} STREQUAL "boundary_condition" OR ${example} STREQUAL "boundary_condition_2")
+        set(debug_str "")
+    else()
+        set(debug_str "-fdebug")
+    endif()
+
     file(MAKE_DIRECTORY "${cwd}/CodeGen/generated/")
 
     # Add make target
@@ -104,7 +110,7 @@ foreach(example ${codegen_examples})
     )
 
     add_custom_command(OUTPUT ${cwd}/CodeGen/generated/${example}_c++-naive.cpp
-      COMMAND $<TARGET_FILE:gtclang> "-backend=c++-naive" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_c++-naive.cpp"  "${cwd}/CodeGen/${example}.cpp"
+      COMMAND $<TARGET_FILE:gtclang> "-backend=c++-naive" ${debug_str} ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_c++-naive.cpp"  "${cwd}/CodeGen/${example}.cpp"
       DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
     )
 
