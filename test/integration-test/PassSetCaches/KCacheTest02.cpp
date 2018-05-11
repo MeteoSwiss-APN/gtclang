@@ -15,8 +15,9 @@
 //===------------------------------------------------------------------------------------------===//
 
 // RUN: %gtclang% %file% -fno-codegen -fuse-kcaches -freport-pass-set-caches
-// EXPECTED: PASS: PassSetCaches: Test: MS0: tmp:K:epflush
-// EXPECTED: PASS: PassSetCaches: Test: MS1: tmp:K:bpfill
+// EXPECTED: PASS: PassSetCaches: Test: MS0: tmp:K:fill_and_flush
+// EXPECTED: PASS: PassSetCaches: Test: MS1: b:K:fill
+// EXPECTED: PASS: PassSetCaches: Test: MS1: tmp:K:fill
 
 #include "gridtools/clang_dsl.hpp"
 
