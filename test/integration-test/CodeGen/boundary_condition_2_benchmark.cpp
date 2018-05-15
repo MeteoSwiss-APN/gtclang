@@ -41,7 +41,6 @@ TEST(split_stencil, test) {
   gridtools::split_stencil swapconst_gt(dom, in_gt, out_gt, bc_field);
   cxxnaive::split_stencil swapconst_naive(dom, in_naive, out_naive, bc_field);
 
-  swapconst_gt.run();
   swapconst_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));

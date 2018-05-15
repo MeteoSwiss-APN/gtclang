@@ -47,7 +47,6 @@ TEST(hori_diff_type2_stencil, test) {
   gridtools::hori_diff_type2_stencil hd_gt(dom, u_out_gt, u, crlato, crlatu, hdmask);
   cxxnaive::hori_diff_type2_stencil hd_naive(dom, u_out_naive, u, crlato, crlatu, hdmask);
 
-  hd_gt.run();
   hd_naive.run();
 
   ASSERT_TRUE(verif.verify(u_out_gt, u_out_naive));

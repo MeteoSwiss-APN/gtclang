@@ -33,8 +33,6 @@ TEST(intervals_stencil, test) {
 
   gridtools::intervals_stencil intervals_stencil_gt(dom, in, out_gt);
   cxxnaive::intervals_stencil intervals_stencil_naive(dom, in, out_naive);
-
-  intervals_stencil_gt.run();
   intervals_stencil_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
