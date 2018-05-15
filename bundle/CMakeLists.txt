@@ -100,8 +100,8 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
     DEPENDS "boost"
     ADDITIONAL
       DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
-      GIT_REPOSITORY "git@github.com:cosunae/gridtools.git"
-      GIT_TAG "fix_fill_and_flush" 
+      GIT_REPOSITORY "git@github.com:twicki/gridtools.git"
+      GIT_TAG "Fix-Version" 
       MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
       CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON
   )
