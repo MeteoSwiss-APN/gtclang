@@ -183,21 +183,17 @@ public:
 
   template <typename GTStencil>
   void runBenchmarks(GTStencil& computation, int niter = 10) {
-    for(auto stencil : computation.get_stencils()) {
-      stencil->reset_meter();
-    }
+    computation.reset_meters();
 
     for(int i = 0; i < niter; ++i) {
       computation.run();
     }
 
-    for(auto stencil : computation.get_stencils()) {
-      double time = stencil->get_meter();
-      std::cout << "\033[0;33m"
-                << "[  output  ] "
-                << "\033[0;0m"
-                << "Time " << time << std::endl;
-    }
+    std::string results = computation.get_meters();
+    results.pop_back();
+    std::cout << "\033[0;33m"
+              << "[  output  ] "
+              << "\033[0;0m " << results << std::endl;
   }
 
 private:
