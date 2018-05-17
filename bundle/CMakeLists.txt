@@ -77,8 +77,8 @@ mchbuild_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
-    GIT_REPOSITORY "git@github.com:cosunae/dawn.git"
-    GIT_TAG "fix_kcaches_again" 
+    GIT_REPOSITORY "git@github.com:twicki/dawn.git"
+    GIT_TAG "merge_kcache_new_codegen" 
     MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
@@ -100,8 +100,8 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
     DEPENDS "boost"
     ADDITIONAL
       DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
-      GIT_REPOSITORY "git@github.com:twicki/gridtools.git"
-      GIT_TAG "Fix-Version" 
+      GIT_REPOSITORY "git@github.com:cosunae/gridtools.git"
+      GIT_TAG "kcache_range" 
       MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
       CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON -DENABLE_PERFORMANCE_METERS=ON
   )
