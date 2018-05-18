@@ -35,7 +35,7 @@ TEST(split_stencil, test) {
                 GRIDTOOLS_CLANG_HALO_EXTEND, GRIDTOOLS_CLANG_HALO_EXTEND, 0, 0);
   verifier verif(dom);
 
-  meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize());
+  meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
   storage_t in_naive(meta_data, "in-naive"), in_gt(meta_data, "in-gt"), out_gt(meta_data, "out-gt"),
       out_naive(meta_data, "out-naive");
 
@@ -46,6 +46,7 @@ TEST(split_stencil, test) {
   gridtools::split_stencil copy_gt(dom, in_gt, out_gt);
   cxxnaive::split_stencil copy_naive(dom, in_naive, out_naive);
 
+  copy_gt.run();
   copy_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));

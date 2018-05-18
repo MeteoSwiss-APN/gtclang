@@ -32,7 +32,7 @@ TEST(hd_smagorinsky, test) {
 
   verifier verif(dom);
 
-  meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize());
+  meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
   meta_data_j_t meta_data_j(1, dom.jsize(), 1);
   meta_data_scalar_t meta_data_scalar(1, 1, 1);
 
@@ -77,6 +77,7 @@ TEST(hd_smagorinsky, test) {
       dom, u_out_naive, v_out_naive, u_in, v_in, hdmaskvel, crlavo, crlavu, crlato, crlatu, acrlat0,
       eddlon, eddlat, tau_smag, weight_smag);
 
+  hd_smagorinsky_gt.run();
   hd_smagorinsky_naive.run();
 
   ASSERT_TRUE(verif.verify(u_out_gt, u_out_naive));
