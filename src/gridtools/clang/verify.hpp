@@ -182,7 +182,7 @@ public:
   }
 
   template <typename GTStencil>
-  void runBenchmarks(GTStencil& computation, int niter = 10) {
+  void runBenchmarks(GTStencil& computation, int niter = 100) {
     computation.reset_meters();
 
     for(int i = 0; i < niter; ++i) {
