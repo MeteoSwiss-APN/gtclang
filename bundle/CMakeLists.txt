@@ -108,6 +108,8 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
   list(APPEND gtclang_dependencies "gridtools")
 
   list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
+else()
+  list(APPEND gtclang_cmake_args -DGTCLANG_BUILD_EXAMPLES=OFF)
 endif()
 
 mchbuild_find_package(
