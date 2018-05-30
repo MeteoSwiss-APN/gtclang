@@ -30,7 +30,7 @@ namespace clang {
 class verifier {
 public:
   verifier(const domain& dom,
-           double precision = std::is_same<gridtools::float_type, double>::value ? 1e-12 : 1e-6)
+           double precision = std::is_same<gridtools::float_type, double>::value ? 1e-10 : 1e-6)
       : m_domain(dom), m_precision(precision) {}
 
   template <class FunctorType, class... StorageTypes>
