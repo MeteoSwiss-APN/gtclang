@@ -42,10 +42,8 @@ while getopts i:gd: flag; do
 done
 
 if [ ${myhost} == "kesch" ]; then
-  BOOST_DIR="/scratch/jenkins/workspace/boost_build/boost_version/1.67.0/slave/kesch/boost_1_67_0/"
   PROTOBUFDIR="/scratch/jenkins/workspace/protobuf/slave/kesch/install/lib64/cmake/protobuf/"
 elif [ ${myhost} == "daint" ]; then
-  BOOST_DIR="/scratch/snx3000/jenkins/workspace/boost_build/boost_version/1.67.0/slave/daint/boost_1_67_0/"
   PROTOBUFDIR="/scratch/snx3000/jenkins/workspace/protobuf/slave/daint/install/lib64/cmake/protobuf/"
 else
   echo" Error Machine not found: ${myhost}"
@@ -58,8 +56,8 @@ build_dir=${base_dir}/bundle/build
 mkdir -p $build_dir
 cd $build_dir
 
-CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${build_type} -DCMAKE_CXX_COMPILER=`which g++` -DCMAKE_C_COMPILER=`which gcc` -DBOOST_ROOT=${BOOST_DIR} -DGTCLANG_ENABLE_GRIDTOOLS=ON \
-        -DProtobuf_DIR=${PROTOBUFDIR}  -DLLVM_ROOT=/scratch/cosuna/software/clang/clang-3.8.1/install/" 
+CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${build_type} -DBOOST_ROOT=${BOOST_DIR} -DGTCLANG_ENABLE_GRIDTOOLS=ON \
+        -DProtobuf_DIR=${PROTOBUFDIR}  -DLLVM_ROOT=${LLVM_DIR}" 
 
 if [ "$ENABLE_GPU" = true ]; then
   CMAKE_ARGS="${CMAKE_ARGS} -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES=--gres=gpu:1 -DGTCLANG_SLURM_PARTITION=debug -DGPU_DEVICE=K80"
@@ -75,7 +73,7 @@ else
   cmake ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}  ../
 fi
 
-make -j2 install
+make -j2 install VERBOSE=1
 
 # Run unittests
 ctest -VV -C ${build_type} --output-on-failure --force-new-ctest-process  
