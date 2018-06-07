@@ -10,3 +10,5 @@ export CXX=`which g++`
 export CC=`which gcc`
 export BOOST_DIR=/project/c14/install/kesch/boost/boost_1_67_0/
 export LLVM_DIR=/scratch/cosuna/software/clang/clang-3.8.1/install/
+
+export SLURM_RESOURCES="--gres=gpu:1"

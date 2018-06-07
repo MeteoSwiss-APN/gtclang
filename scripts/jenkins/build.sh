@@ -6,6 +6,14 @@ BASEPATH_SCRIPT=$(dirname "${0}")
 source ${BASEPATH_SCRIPT}/machine_env.sh
 source ${BASEPATH_SCRIPT}/env_${myhost}.sh
 
+
+if [ -z ${SLURM_RESOURCES+x} ]; then 
+  echo "SLURM_RESOURCES is unset"
+fi
+if [ -z ${myhost+x} ]; then
+  echo "myhost is unset"
+fi
+
 SCRIPT=`basename $0`
 
 function help {
@@ -60,7 +68,7 @@ CMAKE_ARGS="-DCMAKE_BUILD_TYPE=${build_type} -DBOOST_ROOT=${BOOST_DIR} -DGTCLANG
         -DProtobuf_DIR=${PROTOBUFDIR}  -DLLVM_ROOT=${LLVM_DIR}" 
 
 if [ "$ENABLE_GPU" = true ]; then
-  CMAKE_ARGS="${CMAKE_ARGS} -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES=--gres=gpu:1 -DGTCLANG_SLURM_PARTITION=debug -DGPU_DEVICE=K80"
+  CMAKE_ARGS="${CMAKE_ARGS} -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES=\"${SLURM_RESOURCES}\" -DGTCLANG_SLURM_PARTITION=debug -DGPU_DEVICE=K80"
 fi
 
 if [ ! -z ${DAWN_PATH} ]; then
@@ -73,7 +81,7 @@ else
   cmake ${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}  ../
 fi
 
-make -j2 install VERBOSE=1
+nice make -j6 install VERBOSE=1
 
 # Run unittests
 ctest -VV -C ${build_type} --output-on-failure --force-new-ctest-process  
