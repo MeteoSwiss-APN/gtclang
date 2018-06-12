@@ -32,9 +32,10 @@ TEST(coriolis_stencil, test) {
   storage_t v_tens_gt(meta_data, "v_tens_gt"), v_tens_cxxnaive(meta_data, "v_tens_cxxnaive");
   storage_t u_nnow(meta_data, "u_nnow"), v_nnow(meta_data, "v_nnow"), fc(meta_data, "fc");
 
-  verif.fill(-1.0, u_tens_gt, v_tens_gt, fc, u_tens_cxxnaive, v_tens_cxxnaive);
+  verif.fill(-1.0, u_tens_gt, v_tens_gt, u_tens_cxxnaive, v_tens_cxxnaive);
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, u_nnow);
   verif.fillMath(5.0, 1.2, 1.3, 1.7, 2.2, 3.5, v_nnow);
+  verif.fillMath(2.0, 1.3, 1.4, 1.6, 2.1, 3.0, fc);
 
   gridtools::coriolis_stencil coriolis_gt(dom, u_tens_gt, u_nnow, v_tens_gt, v_nnow, fc);
   cxxnaive::coriolis_stencil coriolis_cxxnaive(dom, u_tens_cxxnaive, u_nnow, v_tens_cxxnaive,
