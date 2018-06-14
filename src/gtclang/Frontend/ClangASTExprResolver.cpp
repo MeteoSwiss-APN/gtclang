@@ -24,6 +24,7 @@
 #include "gtclang/Frontend/StencilParser.h"
 #include "gtclang/Support/Logger.h"
 #include "gtclang/Support/StringUtil.h"
+#include "gtclang/Support/ASTUtils.h"
 #include "clang/AST/AST.h"
 #include <sstream>
 #include <stack>
@@ -86,7 +87,8 @@ public:
     scope_.push(llvm::make_unique<Scope>());
     scope_.top()->Kind = FK_StencilFunction;
 
-    std::string callee = expr->getConstructor()->getNameAsString();
+    std::string callee = getClassNameFromConstructExpr(expr);
+
     scope_.top()->DAWNFunCallExpr =
         std::make_shared<dawn::StencilFunCallExpr>(callee, resolver_->getSourceLocation(expr));
     scope_.top()->ClangCXXConstructExpr = expr;
@@ -137,6 +139,9 @@ public:
   /// @brief Add an argument to the current stencil function
   std::shared_ptr<dawn::Expr> addArgument(clang::Expr* expr,
                                           const std::shared_ptr<dawn::Expr>& arg) {
+    // ignore implicit nodes
+    expr = expr->IgnoreImplicit();
+
     DAWN_ASSERT(isActive() && scope_.top()->DAWNFunCallExpr);
 
     if(scope_.top()->ArgumentsToSkip != 0) {
@@ -242,7 +247,7 @@ private:
       auto* ClangCXXConstructExpr = scope_.top()->ClangCXXConstructExpr;
       resolver_->reportDiagnostic(ClangCXXConstructExpr->getLocation(),
                                   Diagnostics::err_stencilfun_invalid_call)
-          << ClangCXXConstructExpr->getConstructor()->getNameAsString()
+          << getClassNameFromConstructExpr(ClangCXXConstructExpr)
           << ClangCXXConstructExpr->getSourceRange();
       scope_.top()->DiagnosticIssued = true;
       return true;
@@ -252,6 +257,9 @@ private:
 
   /// @brief Check if types of arguments match
   void checkTypeOfArgumentMatches(clang::Expr* expr, dawn::Expr* parsedArg) {
+    // ignore implicit nodes
+    expr = expr->IgnoreImplicit();
+
     int curIndex = scope_.top()->DAWNFunCallExpr->getArguments().size() - 1;
 
     // To many arguments.. we diagnose that later
@@ -492,6 +500,8 @@ private:
 
   void resolve(clang::Expr* expr) {
     using namespace clang;
+    // ignore implicit nodes
+    expr = expr->IgnoreImplicit();
 
     if(CXXOperatorCallExpr* e = dyn_cast<CXXOperatorCallExpr>(expr))
       return resolve(e);
@@ -605,6 +615,8 @@ public:
 private:
   void resolve(clang::Expr* expr) {
     using namespace clang;
+    // ignore implicit nodes
+    expr = expr->IgnoreImplicit();
 
     if(CXXOperatorCallExpr* e = dyn_cast<CXXOperatorCallExpr>(expr))
       return resolve(e);
@@ -813,6 +825,8 @@ dawn::SourceLocation ClangASTExprResolver::getSourceLocation(clang::Decl* decl) 
 
 std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::Expr* expr) {
   using namespace clang;
+  // ignore implicit nodes
+  expr = expr->IgnoreImplicit();
 
   if(ArraySubscriptExpr* e = dyn_cast<ArraySubscriptExpr>(expr))
     return resolve(e);
@@ -949,7 +963,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXOperatorCall
 }
 
 std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXConstructExpr* expr) {
-  if(StorageResolver::isaStorage(expr->getConstructor()->getNameAsString()) &&
+  if(StorageResolver::isaStorage(getClassNameFromConstructExpr(expr)) &&
      expr->getNumArgs() == 1) {
     // This is an access to a storage e.g `u = ...`
     return resolve(expr->getArg(0));
@@ -1158,6 +1172,8 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolveAssignmentOp(clang::Exp
 
 dawn::BuiltinTypeID ClangASTExprResolver::resolveBuiltinType(clang::Expr* expr) {
   using namespace clang;
+  // ignore implicit nodes
+  expr = expr->IgnoreImplicit();
 
   // Resolve C-Style casting
   if(currentCStyleCastExpr_) {

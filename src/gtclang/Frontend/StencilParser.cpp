@@ -25,6 +25,7 @@
 #include "gtclang/Frontend/GTClangContext.h"
 #include "gtclang/Frontend/GlobalVariableParser.h"
 #include "gtclang/Support/FileUtil.h"
+#include "gtclang/Support/ASTUtils.h"
 #include "clang/AST/AST.h"
 #include <numeric>
 
@@ -133,6 +134,8 @@ private:
 
   void resolve(clang::Expr* expr) {
     using namespace clang;
+    // ignore implicit nodes
+    expr = expr->IgnoreImplicit();
 
     if(CXXOperatorCallExpr* e = dyn_cast<CXXOperatorCallExpr>(expr))
       return resolve(e);
@@ -319,6 +322,8 @@ private:
 
   void resolve(clang::Expr* expr) {
     using namespace clang;
+    // ignore implicit nodes
+    expr = expr->IgnoreImplicit();
 
     if(CXXConstructExpr* e = dyn_cast<CXXConstructExpr>(expr))
       return resolve(e);
@@ -378,7 +383,7 @@ private:
 
   void resolve(clang::CXXTemporaryObjectExpr* expr) {
     DAWN_ASSERT(functor_.empty());
-    functor_ = expr->getConstructor()->getNameAsString();
+    functor_ = getClassNameFromConstructExpr(expr);
 
     // Check the stencil function exists
     if(!parser_->hasStencilFunction(functor_)) {
@@ -418,6 +423,8 @@ private:
 
   void resolve(clang::Expr* expr) {
     using namespace clang;
+    // ignore implicit nodes
+    expr = expr->IgnoreImplicit();
 
     // Has to be before `CXXConstructExpr`
     if(CXXTemporaryObjectExpr* e = dyn_cast<CXXTemporaryObjectExpr>(expr))
@@ -724,6 +731,9 @@ void StencilParser::parseStencilFunctionDoMethod(clang::CXXMethodDecl* DoMethod)
 
       // DoMethod is a CompoundStmt, start iterating
       for(Stmt* stmt : bodyStmt->body()) {
+        // ignore implicit nodes
+        stmt = stmt->IgnoreImplicit();
+
         // Stmt is a range-based for loop which corresponds to a vertical region (not allowed here!)
         if(isa<CXXForRangeStmt>(stmt)) {
           reportDiagnostic(stmt->getLocStart(),
@@ -771,6 +781,8 @@ void StencilParser::parseStencilDoMethod(clang::CXXMethodDecl* DoMethod) {
 
       // DoMethod is a CompoundStmt, start iterating
       for(Stmt* stmt : bodyStmt->body()) {
+        // ignore implicit nodes
+        stmt = stmt->IgnoreImplicit();
 
         if(CXXForRangeStmt* s = dyn_cast<CXXForRangeStmt>(stmt)) {
           // stmt is a range-based for loop which corresponds to a VerticalRegion
@@ -778,7 +790,7 @@ void StencilParser::parseStencilDoMethod(clang::CXXMethodDecl* DoMethod) {
 
         } else if(CXXConstructExpr* s = dyn_cast<CXXConstructExpr>(stmt)) {
 
-          if(s->getConstructor()->getNameAsString() == "boundary_condition")
+          if(getClassNameFromConstructExpr(s) == "boundary_condition")
             // stmt is a declaration of a boundary condition
             stencilDescAst->getRoot()->push_back(parseBoundaryCondition(s));
           else
@@ -817,7 +829,8 @@ void StencilParser::parseStencilDoMethod(clang::CXXMethodDecl* DoMethod) {
 
 std::shared_ptr<dawn::StencilCallDeclStmt>
 StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
-  std::string callee = stencilCall->getConstructor()->getNameAsString();
+  
+  std::string callee = getClassNameFromConstructExpr(stencilCall);
 
   DAWN_LOG(INFO)
       << "Parsing stencil-call at "
@@ -938,9 +951,13 @@ StencilParser::parseVerticalRegion(clang::CXXForRangeStmt* verticalRegion) {
 
     if(CompoundStmt* compoundStmt = dyn_cast<CompoundStmt>(verticalRegion->getBody())) {
       // Case for(...) { XXX }
-      for(Stmt* stmt : compoundStmt->body())
+      for(Stmt* stmt : compoundStmt->body()) {
+        // ignore implicit nodes
+        stmt = stmt->IgnoreImplicit();
+
         SIRBlockStmt->insert_back(
             stmtResolver.resolveStmt(stmt, ClangASTStmtResolver::AK_StencilBody));
+      }
 
     } else {
       // Case for(...) XXX
@@ -966,7 +983,7 @@ StencilParser::parseBoundaryCondition(clang::CXXConstructExpr* boundaryCondition
   using namespace clang;
   using namespace llvm;
 
-  DAWN_ASSERT(boundaryCondition->getConstructor()->getNameAsString() == "boundary_condition");
+  DAWN_ASSERT(getClassNameFromConstructExpr(boundaryCondition) == "boundary_condition");
 
   DAWN_LOG(INFO) << "Parsing boundary-condition at "
                  << getFilename(boundaryCondition->getLocation().printToString(
@@ -1013,6 +1030,8 @@ StencilParser::parseBoundaryConditions(clang::CXXMethodDecl* allBoundaryConditio
   // they all share the same signature:
   //    boundary_condition(functor(), Field [, arguments...]);
   for(Stmt* stmt : bodyStmt->body()) {
+    // ignore implicit nodes
+    stmt = stmt->IgnoreImplicit();
     if(CXXTemporaryObjectExpr* temporary = dyn_cast<CXXTemporaryObjectExpr>(stmt)) {
       if(CXXConstructExpr* e = dyn_cast<CXXConstructExpr>(temporary)) {
         // Resolve the statement

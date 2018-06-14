@@ -50,6 +50,8 @@ const std::vector<std::shared_ptr<dawn::Stmt>>& ClangASTStmtResolver::getStateme
 
 void ClangASTStmtResolver::resolve(clang::Stmt* stmt) {
   using namespace clang;
+  // skip implicit nodes
+  stmt = stmt->IgnoreImplicit();
 
   if(BinaryOperator* s = dyn_cast<BinaryOperator>(stmt))
     resolve(s);
