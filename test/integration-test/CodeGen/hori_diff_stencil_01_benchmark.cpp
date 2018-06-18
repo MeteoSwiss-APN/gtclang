@@ -18,9 +18,9 @@
 
 #include <gtest/gtest.h>
 #include "test/integration-test/CodeGen/Options.hpp"
-#include "gridtools/clang/verify.hpp"
 #include "test/integration-test/CodeGen/generated/hori_diff_stencil_01_gridtools.cpp"
 #include "test/integration-test/CodeGen/generated/hori_diff_stencil_01_c++-naive.cpp"
+#include "gridtools/clang/verify.hpp"
 
 using namespace dawn;
 TEST(hori_diff_stencil_01, test) {
