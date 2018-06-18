@@ -15,10 +15,10 @@
 //===------------------------------------------------------------------------------------------===//
 #define GRIDTOOLS_CLANG_GENERATED 1
 #define GRIDTOOLS_CLANG_HALO_EXTEND 3
-#include "gridtools/clang/verify.hpp"
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/boundary_condition_2_c++-naive.cpp"
 #include "test/integration-test/CodeGen/generated/boundary_condition_2_gridtools.cpp"
+#include "gridtools/clang/verify.hpp"
 #include <gtest/gtest.h>
 
 using namespace dawn;

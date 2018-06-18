@@ -16,9 +16,9 @@
 #define GRIDTOOLS_CLANG_GENERATED 1
 #include <gtest/gtest.h>
 #include "test/integration-test/CodeGen/Options.hpp"
-#include "gridtools/clang/verify.hpp"
 #include "test/integration-test/CodeGen/generated/coriolis_stencil_gridtools.cpp"
 #include "test/integration-test/CodeGen/generated/coriolis_stencil_c++-naive.cpp"
+#include "gridtools/clang/verify.hpp"
 
 using namespace dawn;
 TEST(coriolis_stencil, test) {
