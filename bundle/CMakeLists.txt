@@ -71,6 +71,9 @@ include(mchbuildSetDownloadDir)
 # Set the default download directory (define MCHBUILD_DOWNLOAD_DIR)
 mchbuild_set_download_dir()
 
+include("thirdparty/gtclangAddBoost")
+set(dawn_cmake_args -DBOOST_ROOT=${BOOST_ROOT} -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>)
+
 mchbuild_find_package(
   PACKAGE dawn
   NO_DEFAULT_PATH
@@ -80,11 +83,9 @@ mchbuild_find_package(
     GIT_REPOSITORY "git@github.com:twicki/dawn.git"
     GIT_TAG "merge_kcache_new_codegen" 
     MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    CMAKE_ARGS ${dawn_cmake_args}
 )
 
-
-include("thirdparty/gtclangAddBoost")
 
 #TODO Cleanup the mess with the naming conventions
 set(gtclang_cmake_args -Ddawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
@@ -92,7 +93,6 @@ option(GTCLANG_ENABLE_GRIDTOOLS "Enable GridTools compilation" OFF)
 
 set(gtclang_dependencies "boost" "dawn")
 
-message("MOD ${CMAKE_MODULE_PATH}")
 if(GTCLANG_ENABLE_GRIDTOOLS) 
   mchbuild_find_package(
     PACKAGE GridTools
