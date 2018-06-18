@@ -18,9 +18,9 @@
 
 #include <gtest/gtest.h>
 #include "test/integration-test/CodeGen/Options.hpp"
-#include "gridtools/clang/verify.hpp"
 #include "test/integration-test/CodeGen/generated/stencil_desc_ast_gridtools.cpp"
 #include "test/integration-test/CodeGen/generated/stencil_desc_ast_c++-naive.cpp"
+#include "gridtools/clang/verify.hpp"
 
 using namespace dawn;
 

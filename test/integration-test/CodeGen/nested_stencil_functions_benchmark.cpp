@@ -18,9 +18,9 @@
 
 #include <gtest/gtest.h>
 #include "test/integration-test/CodeGen/Options.hpp"
-#include "gridtools/clang/verify.hpp"
 #include "test/integration-test/CodeGen/generated/nested_stencil_functions_gridtools.cpp"
 #include "test/integration-test/CodeGen/generated/nested_stencil_functions_c++-naive.cpp"
+#include "gridtools/clang/verify.hpp"
 
 using namespace dawn;
 namespace nsftest {
