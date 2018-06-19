@@ -22,8 +22,7 @@
 namespace gtclang {
 
 std::string getClassNameFromConstructExpr(clang::CXXConstructExpr* expr) {
-    clang::CXXRecordDecl* recDecl = expr->getConstructor()->getParent();
-    return recDecl->getNameAsString();
+  clang::CXXRecordDecl* recDecl = expr->getConstructor()->getParent();
+  return recDecl->getNameAsString();
 }
-
 }

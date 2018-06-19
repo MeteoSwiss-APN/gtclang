@@ -22,9 +22,9 @@
 #include "dawn/Support/StringUtil.h"
 #include "gtclang/Frontend/GTClangContext.h"
 #include "gtclang/Frontend/StencilParser.h"
+#include "gtclang/Support/ASTUtils.h"
 #include "gtclang/Support/Logger.h"
 #include "gtclang/Support/StringUtil.h"
-#include "gtclang/Support/ASTUtils.h"
 #include "clang/AST/AST.h"
 #include <sstream>
 #include <stack>
@@ -140,7 +140,7 @@ public:
   std::shared_ptr<dawn::Expr> addArgument(clang::Expr* expr,
                                           const std::shared_ptr<dawn::Expr>& arg) {
     // ignore implicit nodes
-    expr = expr->IgnoreImplicit();
+    expr = skipAllImplicitNodes(expr);
 
     DAWN_ASSERT(isActive() && scope_.top()->DAWNFunCallExpr);
 
@@ -258,7 +258,7 @@ private:
   /// @brief Check if types of arguments match
   void checkTypeOfArgumentMatches(clang::Expr* expr, dawn::Expr* parsedArg) {
     // ignore implicit nodes
-    expr = expr->IgnoreImplicit();
+    expr = skipAllImplicitNodes(expr);
 
     int curIndex = scope_.top()->DAWNFunCallExpr->getArguments().size() - 1;
 
@@ -453,9 +453,7 @@ public:
         } else {
 
           // If it is not an integer literal, it may still be a constant integer expression
-          Expr* arg1 = expr->getArg(1);
-          if(ImplicitCastExpr* castExpr = dyn_cast<ImplicitCastExpr>(arg1))
-            arg1 = castExpr->getSubExpr();
+          Expr* arg1 = skipAllImplicitNodes(expr->getArg(1));
 
           DeclRefExpr* var = dyn_cast<DeclRefExpr>(arg1);
           llvm::APSInt res;
@@ -494,22 +492,14 @@ public:
 private:
   void resolve(clang::CXXConstructExpr* expr) { return resolve(expr->getArg(0)); }
 
-  void resolve(clang::ImplicitCastExpr* expr) { return resolve(expr->getSubExpr()); }
-
-  void resolve(clang::MaterializeTemporaryExpr* expr) { return resolve(expr->GetTemporaryExpr()); }
-
   void resolve(clang::Expr* expr) {
     using namespace clang;
     // ignore implicit nodes
-    expr = expr->IgnoreImplicit();
+    expr = skipAllImplicitNodes(expr);
 
     if(CXXOperatorCallExpr* e = dyn_cast<CXXOperatorCallExpr>(expr))
       return resolve(e);
     else if(CXXConstructExpr* e = dyn_cast<CXXConstructExpr>(expr))
-      return resolve(e);
-    else if(ImplicitCastExpr* e = dyn_cast<ImplicitCastExpr>(expr))
-      return resolve(e);
-    else if(MaterializeTemporaryExpr* e = dyn_cast<MaterializeTemporaryExpr>(expr))
       return resolve(e);
     else if(MemberExpr* e = dyn_cast<MemberExpr>(expr))
       return resolve(e);
@@ -557,9 +547,7 @@ public:
     } else {
 
       // If it is not an integer literal, it may still be a constant integer expression
-      Expr* arg1 = expr->getArg(1);
-      if(ImplicitCastExpr* castExpr = dyn_cast<ImplicitCastExpr>(arg1))
-        arg1 = castExpr->getSubExpr();
+      Expr* arg1 = skipAllImplicitNodes(expr->getArg(1));
 
       DeclRefExpr* var = dyn_cast<DeclRefExpr>(arg1);
       llvm::APSInt res;
@@ -616,7 +604,7 @@ private:
   void resolve(clang::Expr* expr) {
     using namespace clang;
     // ignore implicit nodes
-    expr = expr->IgnoreImplicit();
+    expr = skipAllImplicitNodes(expr);
 
     if(CXXOperatorCallExpr* e = dyn_cast<CXXOperatorCallExpr>(expr))
       return resolve(e);
@@ -826,7 +814,7 @@ dawn::SourceLocation ClangASTExprResolver::getSourceLocation(clang::Decl* decl) 
 std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::Expr* expr) {
   using namespace clang;
   // ignore implicit nodes
-  expr = expr->IgnoreImplicit();
+  expr = skipAllImplicitNodes(expr);
 
   if(ArraySubscriptExpr* e = dyn_cast<ArraySubscriptExpr>(expr))
     return resolve(e);
@@ -850,11 +838,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::Expr* expr) {
     return resolve(e);
   else if(FloatingLiteral* e = dyn_cast<FloatingLiteral>(expr))
     return resolve(e);
-  else if(ImplicitCastExpr* e = dyn_cast<ImplicitCastExpr>(expr))
-    return resolve(e);
   else if(IntegerLiteral* e = dyn_cast<IntegerLiteral>(expr))
-    return resolve(e);
-  else if(MaterializeTemporaryExpr* e = dyn_cast<MaterializeTemporaryExpr>(expr))
     return resolve(e);
   else if(MemberExpr* e = dyn_cast<MemberExpr>(expr))
     return resolve(e);
@@ -963,8 +947,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXOperatorCall
 }
 
 std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXConstructExpr* expr) {
-  if(StorageResolver::isaStorage(getClassNameFromConstructExpr(expr)) &&
-     expr->getNumArgs() == 1) {
+  if(StorageResolver::isaStorage(getClassNameFromConstructExpr(expr)) && expr->getNumArgs() == 1) {
     // This is an access to a storage e.g `u = ...`
     return resolve(expr->getArg(0));
 
@@ -1072,10 +1055,6 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::FloatingLiteral
   return floatLiteral;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::ImplicitCastExpr* expr) {
-  return resolve(expr->getSubExpr());
-}
-
 std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::IntegerLiteral* expr) {
   auto integerLiteral = std::make_shared<dawn::LiteralAccessExpr>(
       expr->getValue().toString(10, true), resolveBuiltinType(expr), getSourceLocation(expr));
@@ -1085,10 +1064,6 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::IntegerLiteral*
     return functionResolver_->addArgument(expr, integerLiteral);
 
   return integerLiteral;
-}
-
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::MaterializeTemporaryExpr* expr) {
-  return resolve(expr->GetTemporaryExpr());
 }
 
 std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::MemberExpr* expr) {
@@ -1173,7 +1148,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolveAssignmentOp(clang::Exp
 dawn::BuiltinTypeID ClangASTExprResolver::resolveBuiltinType(clang::Expr* expr) {
   using namespace clang;
   // ignore implicit nodes
-  expr = expr->IgnoreImplicit();
+  expr = skipAllImplicitNodes(expr);
 
   // Resolve C-Style casting
   if(currentCStyleCastExpr_) {
