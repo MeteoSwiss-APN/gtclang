@@ -37,9 +37,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
 include(GTClangCloneRepository)
 
-set(GTCLANG_MCHBUILD_GIT_URL "https:///github.com/Meteoswiss-APN/mchbuild.git" 
+set(GTCLANG_MCHBUILD_GIT_URL "https:///github.com/stefanmoosbrugger/mchbuild.git" 
     CACHE PATH "URL of the mchbuild git repository to clone")
-set(GTCLANG_MCHBUILD_GIT_BRANCH "master" CACHE STRING "Branch of the mchbuild git repository to clone")
+set(GTCLANG_MCHBUILD_GIT_BRANCH "llvm_fix" CACHE STRING "Branch of the mchbuild git repository to clone")
 
 gtclang_clone_repository(NAME mchbuild URL ${GTCLANG_MCHBUILD_GIT_URL} BRANCH ${GTCLANG_MCHBUILD_GIT_BRANCH} SOURCE_DIR GTCLANG_MCHBUILD_SOURCE_DIR )
 
