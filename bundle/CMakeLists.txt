@@ -81,7 +81,7 @@ mchbuild_find_package(
   ADDITIONAL
     DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
     GIT_REPOSITORY "git@github.com:twicki/dawn.git"
-    GIT_TAG "merge_kcache_new_codegen" 
+    GIT_TAG "fix_from_working" 
     MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
