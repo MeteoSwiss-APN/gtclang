@@ -14,7 +14,9 @@
 //
 //===------------------------------------------------------------------------------------------===//
 #define GRIDTOOLS_CLANG_GENERATED 1
-#include "gridtools/clang/verify.hpp"
+#define GRIDTOOLS_CLANG_HALO_EXTEND 3
+
+#include <gtest/gtest.h>
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/coriolis_stencil_c++-naive.cpp"
 #include "test/integration-test/CodeGen/generated/coriolis_stencil_gridtools.cpp"
