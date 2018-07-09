@@ -46,8 +46,8 @@ struct Test : public stencil {
 
   Do {
     vertical_region(k_start, k_end) {
-      field_a = TestFunctionReturn(field_b); // EXPECTED_ACCESSES: W:field_a:<0,0,0,0,0,0> %and% R:field_b:<0,1,0,1,0,1>
-      TestFunctionByRef(field_a, field_b);   // EXPECTED_ACCESSES: W:field_a:<0,0,0,0,0,0> %and% R:field_b:<0,1,0,1,0,1>
+      field_a = TestFunctionReturn(field_b); // EXPECTED_ACCESSES: W:field_a:<0,0,0,0,0,0> %and% R:field_b:<1,1,1,1,1,1>
+      TestFunctionByRef(field_a, field_b);   // EXPECTED_ACCESSES: W:field_a:<0,0,0,0,0,0> %and% R:field_b:<1,1,1,1,1,1>
     }
   }
 };
