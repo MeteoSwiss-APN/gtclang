@@ -46,7 +46,6 @@ TEST(split_stencil, test) {
   gridtools::split_stencil copy_gt(dom, in_gt, out_gt);
   cxxnaive::split_stencil copy_naive(dom, in_naive, out_naive);
 
-  copy_gt.run();
   copy_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));

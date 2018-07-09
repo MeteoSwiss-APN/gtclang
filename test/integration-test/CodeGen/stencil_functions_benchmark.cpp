@@ -26,6 +26,9 @@ using namespace dawn;
 
 namespace sftest {
 void test_01_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -37,6 +40,9 @@ void test_01_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_02_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -48,6 +54,9 @@ void test_02_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_03_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -60,6 +69,9 @@ void test_03_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
 }
 
 void test_06_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -71,6 +83,9 @@ void test_06_stencil_reference(const domain& dom, storage_t& in_s, storage_t& ou
   }
 }
 void test_07_stencil_reference(const domain& dom, storage_t& in_s, storage_t& out_s) {
+  in_s.sync();
+  out_s.sync();
+
   auto in = make_host_view(in_s);
   auto out = make_host_view(out_s);
   for(int i = dom.iminus(); i < (dom.isize() - dom.iplus()); ++i) {
@@ -100,7 +115,6 @@ TEST(stencil_functions, test_01) {
   cxxnaive::test_01_stencil test_01_naive(dom, in, out_naive);
   sftest::test_01_stencil_reference(dom, in, out_ref);
 
-  test_01_gt.run();
   test_01_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
@@ -125,7 +139,6 @@ TEST(stencil_functions, test_02) {
   cxxnaive::test_02_stencil test_02_naive(dom, in, out_naive);
   sftest::test_02_stencil_reference(dom, in, out_ref);
 
-  test_02_gt.run();
   test_02_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
@@ -150,7 +163,6 @@ TEST(stencil_functions, test_03) {
   cxxnaive::test_03_stencil test_03_naive(dom, in, out_naive);
   sftest::test_03_stencil_reference(dom, in, out_ref);
 
-  test_03_gt.run();
   test_03_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
@@ -175,7 +187,6 @@ TEST(stencil_functions, test_06) {
   cxxnaive::test_06_stencil test_06_naive(dom, in, out_naive);
   sftest::test_06_stencil_reference(dom, in, out_ref);
 
-  test_06_gt.run();
   test_06_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
@@ -200,7 +211,6 @@ TEST(stencil_functions, test_07) {
   cxxnaive::test_07_stencil test_07_naive(dom, in, out_naive);
   sftest::test_07_stencil_reference(dom, in, out_ref);
 
-  test_07_gt.run();
   test_07_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
