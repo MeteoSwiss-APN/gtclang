@@ -80,8 +80,8 @@ mchbuild_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${MCHBUILD_DOWNLOAD_DIR}
-    GIT_REPOSITORY "git@github.com:twicki/dawn.git"
-    GIT_TAG "fix_from_working" 
+    GIT_REPOSITORY "git@github.com:MeteoSwiss-APN/dawn.git"
+    GIT_TAG "master" 
     MCHBUILD_ROOT "${GTCLANG_MCHBUILD_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
