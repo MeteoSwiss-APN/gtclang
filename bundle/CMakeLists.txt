@@ -70,20 +70,21 @@ include(yodaSetDownloadDir)
 # Set the default download directory (define YODA_DOWNLOAD_DIR)
 yoda_set_download_dir()
 
+include("thirdparty/gtclangAddBoost")
+set(dawn_cmake_args -DBOOST_ROOT=${BOOST_ROOT} -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>)
+
 yoda_find_package(
   PACKAGE dawn
   NO_DEFAULT_PATH
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-    GIT_REPOSITORY "https://github.com/cosunae/dawn.git"
-    GIT_TAG "yoda" 
+    GIT_REPOSITORY "git@github.com:Meteoswiss-APN/dawn.git"
+    GIT_TAG "master" 
     YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    CMAKE_ARGS ${dawn_cmake_args}
 )
 
-
-include("thirdparty/gtclangAddBoost")
 
 #TODO Cleanup the mess with the naming conventions
 set(gtclang_cmake_args -Ddawn_DIR=${dawn_DIR} -DBOOST_ROOT=${BOOST_ROOT})
@@ -91,7 +92,6 @@ option(GTCLANG_ENABLE_GRIDTOOLS "Enable GridTools compilation" OFF)
 
 set(gtclang_dependencies "boost" "dawn")
 
-message("MOD ${CMAKE_MODULE_PATH}")
 if(GTCLANG_ENABLE_GRIDTOOLS) 
   yoda_find_package(
     PACKAGE GridTools
@@ -99,14 +99,16 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
     DEPENDS "boost"
     ADDITIONAL
       DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-      GIT_REPOSITORY "git@github.com:cosunae/gridtools.git"
-      GIT_TAG "fix_fill_and_flush" 
+      GIT_REPOSITORY "git@github.com:twicki/gridtools.git"
+      GIT_TAG "gtclang_fixed_version" 
       YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
-      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON
+      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON -DENABLE_PERFORMANCE_METERS=ON
   )
   list(APPEND gtclang_dependencies "gridtools")
 
   list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
+else()
+  list(APPEND gtclang_cmake_args -DGTCLANG_BUILD_EXAMPLES=OFF)
 endif()
 
 yoda_find_package(
