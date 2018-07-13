@@ -104,7 +104,7 @@ endforeach()
 
 if(DEFINED GridTools_DIR)
   include("AddGridTools")
-  mchbuild_create_package_string(GridTools info)
+  yoda_create_package_string(GridTools info)
   list(APPEND package_info ${info})
 
   string(TOUPPER GridTools PACKAGE)
