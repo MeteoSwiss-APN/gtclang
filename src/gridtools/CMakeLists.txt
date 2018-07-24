@@ -18,6 +18,4 @@ include(yodaAddCustomDummyTarget)
 # Add a dummy target with all the source files so that they are included in a qt creator project
 yoda_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectClang
                              DIRECTORIES "clang")
-yoda_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectClangJSON
-                             DIRECTORIES "clang/Support/External/json")
 
