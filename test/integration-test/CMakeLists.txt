@@ -67,9 +67,10 @@ yoda_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectCodeGenTest
 
 # Codegen tests require GridTools
 if(GTCLANG_HAS_GRIDTOOLS AND GTCLANG_BUILD_EXAMPLES)
-  set(codegen_examples copy_stencil coriolis_stencil hori_diff_stencil_01 hori_diff_stencil_02
-      hori_diff_type2_stencil hd_smagorinsky intervals_stencil globals_stencil stencil_functions
-      nested_stencil_functions stencil_desc_ast boundary_condition boundary_condition_2)
+  set(codegen_examples copy_stencil)
+#  set(codegen_examples copy_stencil coriolis_stencil hori_diff_stencil_01 hori_diff_stencil_02
+#      hori_diff_type2_stencil hd_smagorinsky intervals_stencil globals_stencil stencil_functions
+#      nested_stencil_functions stencil_desc_ast boundary_condition boundary_condition_2)
   set(codegen_example_benchmarks)
   set(codegen_generate_targets)
 
@@ -112,6 +113,16 @@ foreach(example ${codegen_examples})
     list(APPEND codegen_generate_targets ${example}-codegen-gt)
     list(APPEND codegen_generate_targets ${example}-codegen-cxxnaive)
 
+    if(GTCLANG_ENABLE_CUDA)
+      add_custom_command( OUTPUT ${cwd}/CodeGen/generated/${example}_cuda.cpp
+        COMMAND $<TARGET_FILE:gtclang> "-backend=cuda" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_cuda.cpp"  "${cwd}/CodeGen/${example}.cpp"
+        DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
+      )
+      list(APPEND codegen_generate_targets ${example}-codegen-cuda)
+
+    endif(GTCLANG_ENABLE_CUDA)
+
+
     add_executable(${example}_benchmarks "${cwd}/CodeGen/${example}_benchmark.cpp" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
     target_include_directories(${example}_benchmarks PUBLIC ${include_dirs})
     #TODO yoda_add_unittest does not work here since the DEPENDS argument not only makes a dependency but also links against them
@@ -124,12 +135,12 @@ foreach(example ${codegen_examples})
     add_test(NAME CTest-${example}_benchmarks COMMAND $<TARGET_FILE:${example}_benchmarks> 12 12 10 --gtest_output=xml:${example}_unittest.xml)
 
     if(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
-      cuda_add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
+      cuda_add_executable(${example}_benchmarks_gt_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
 
-      target_include_directories(${example}_benchmarks_cuda PUBLIC ${include_dirs})
-      add_dependencies(${example}_benchmarks_cuda gtclang ${example}_benchmarks)
-      target_link_libraries(${example}_benchmarks_cuda gtest ${CUDA_CUDART_LIBRARY})
-      target_compile_definitions(${example}_benchmarks_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
+      target_include_directories(${example}_benchmarks_gt_cuda PUBLIC ${include_dirs})
+      add_dependencies(${example}_benchmarks_gt_cuda gtclang ${example}_benchmarks)
+      target_link_libraries(${example}_benchmarks_gt_cuda gtest ${CUDA_CUDART_LIBRARY})
+      target_compile_definitions(${example}_benchmarks_gt_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
 
       set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_gridtools.cpp)
       set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
@@ -139,8 +150,27 @@ foreach(example ${codegen_examples})
         set(CTEST_SUBMIT_COMMAND "${SLURM_SRUN_COMMAND}" "-n" "${GTCLANG_SLURM_N_TASKS}" ${GTCLANG_SLURM_RESOURCES_LIST} "-p" "${GTCLANG_SLURM_PARTITION}")
       endif(CTEST_CUDA_SUBMIT)
 
-      add_test(NAME CTest-${example}_benchmarks_cuda COMMAND ${CTEST_SUBMIT_COMMAND} $<TARGET_FILE:${example}_benchmarks_cuda> 12 12 10 --gtest_output=xml:${example}_cuda_unittest.xml)
+      add_test(NAME CTest-${example}_benchmarks_gt_cuda COMMAND ${CTEST_SUBMIT_COMMAND} $<TARGET_FILE:${example}_benchmarks_gt_cuda> 12 12 10 --gtest_output=xml:${example}_cuda_unittest.xml)
     endif(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
+    if(GTCLANG_ENABLE_CUDA)
+      cuda_add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
+
+      target_include_directories(${example}_benchmarks_cuda PUBLIC ${include_dirs})
+      target_add_definitions(${example}_benchmarks_cuda -DOPTBACKEND=cuda)
+      add_dependencies(${example}_benchmarks_cuda gtclang ${example}_benchmarks)
+      target_link_libraries(${example}_benchmarks_cuda gtest ${CUDA_CUDART_LIBRARY})
+      target_compile_definitions(${example}_benchmarks_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
+
+      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_cuda.cpp)
+      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
+
+      if(CTEST_CUDA_SUBMIT) 
+        string(REPLACE " " ";" GTCLANG_SLURM_RESOURCES_LIST ${GTCLANG_SLURM_RESOURCES})
+        set(CTEST_SUBMIT_COMMAND "${SLURM_SRUN_COMMAND}" "-n" "${GTCLANG_SLURM_N_TASKS}" ${GTCLANG_SLURM_RESOURCES_LIST} "-p" "${GTCLANG_SLURM_PARTITION}")
+      endif(CTEST_CUDA_SUBMIT)
+
+      add_test(NAME CTest-${example}_benchmarks_cuda COMMAND ${CTEST_SUBMIT_COMMAND} $<TARGET_FILE:${example}_benchmarks_cuda> 12 12 10 --gtest_output=xml:${example}_cuda_unittest.xml)
+    endif(GTCLANG_ENABLE_CUDA)
 
 endforeach()
 

@@ -16,6 +16,19 @@
 #define GRIDTOOLS_CLANG_GENERATED 1
 #define GT_VECTOR_LIMIT_SIZE 30
 
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
+#endif
+
+#define CAT(X,Y) CAT2(X,Y)
+#define CAT2(X,Y) X##Y
+#define CAT_2 CAT
+
+// Macro for adding quotes
+#define STRINGIFY(X) STRINGIFY2(X)
+#define STRINGIFY2(X) #X
+
+
 #undef FUSION_MAX_VECTOR_SIZE
 #undef FUSION_MAX_MAP_SIZE
 #define FUSION_MAX_VECTOR_SIZE GT_VECTOR_LIMIT_SIZE
@@ -26,7 +39,11 @@
 #include "gridtools/clang/verify.hpp"
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/copy_stencil_c++-naive.cpp"
-#include "test/integration-test/CodeGen/generated/copy_stencil_gridtools.cpp"
+
+#define INCLUDE_FILE(HEAD,TAIL) STRINGIFY( CAT_2(HEAD,TAIL) )
+
+#include INCLUDE_FILE(test/integration-test/CodeGen/generated/copy_stencil_,OPTBACKEND.cpp)
+
 #include <gtest/gtest.h>
 
 using namespace dawn;
@@ -41,7 +58,7 @@ TEST(copy_stencil, test) {
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
   verif.fill(-1.0, out_gt, out_naive);
 
-  gridtools::copy_stencil copy_gt(dom, in, out_gt);
+  OPTBACKEND::copy_stencil copy_gt(dom, in, out_gt);
   cxxnaive::copy_stencil copy_naive(dom, in, out_naive);
 
   copy_gt.run();
