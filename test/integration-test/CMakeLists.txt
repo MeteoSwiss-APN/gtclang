@@ -156,7 +156,7 @@ foreach(example ${codegen_examples})
       cuda_add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
 
       target_include_directories(${example}_benchmarks_cuda PUBLIC ${include_dirs})
-      target_add_definitions(${example}_benchmarks_cuda -DOPTBACKEND=cuda)
+      target_compile_definitions(${example}_benchmarks_cuda PRIVATE -DOPTBACKEND=cuda)
       add_dependencies(${example}_benchmarks_cuda gtclang ${example}_benchmarks)
       target_link_libraries(${example}_benchmarks_cuda gtest ${CUDA_CUDART_LIBRARY})
       target_compile_definitions(${example}_benchmarks_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
