@@ -50,6 +50,8 @@ using namespace dawn;
 TEST(copy_stencil, test) {
   domain dom(Options::getInstance().m_size[0], Options::getInstance().m_size[1],
              Options::getInstance().m_size[2]);
+  dom.set_halos(halo::value, halo::value, halo::value, halo::value, 0, 0);
+
   verifier verif(dom);
 
   meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
