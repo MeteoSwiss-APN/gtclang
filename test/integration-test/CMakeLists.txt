@@ -67,7 +67,10 @@ yoda_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectCodeGenTest
 
 # Codegen tests require GridTools
 if(GTCLANG_HAS_GRIDTOOLS AND GTCLANG_BUILD_EXAMPLES)
-  set(codegen_examples copy_stencil)
+  set(codegen_examples copy_stencil coriolis_stencil hori_diff_stencil_01 hori_diff_stencil_02 
+    #hori_diff_type2_stencil
+    hd_smagorinsky intervals_stencil
+    )
 #  set(codegen_examples copy_stencil coriolis_stencil hori_diff_stencil_01 hori_diff_stencil_02
 #      hori_diff_type2_stencil hd_smagorinsky intervals_stencil globals_stencil stencil_functions
 #      nested_stencil_functions stencil_desc_ast boundary_condition boundary_condition_2)
@@ -115,7 +118,7 @@ foreach(example ${codegen_examples})
 
     if(GTCLANG_ENABLE_CUDA)
       add_custom_command( OUTPUT ${cwd}/CodeGen/generated/${example}_cuda.cpp
-        COMMAND $<TARGET_FILE:gtclang> "-backend=cuda" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_cuda.cpp"  "${cwd}/CodeGen/${example}.cpp"
+        COMMAND $<TARGET_FILE:gtclang> "-inline=pc" "-backend=cuda" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_cuda.cpp"  "${cwd}/CodeGen/${example}.cpp"
         DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
       )
       list(APPEND codegen_generate_targets ${example}-codegen-cuda)
@@ -156,7 +159,7 @@ foreach(example ${codegen_examples})
       cuda_add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
 
       target_include_directories(${example}_benchmarks_cuda PUBLIC ${include_dirs})
-      target_add_definitions(${example}_benchmarks_cuda -DOPTBACKEND=cuda)
+      target_compile_definitions(${example}_benchmarks_cuda PRIVATE -DOPTBACKEND=cuda)
       add_dependencies(${example}_benchmarks_cuda gtclang ${example}_benchmarks)
       target_link_libraries(${example}_benchmarks_cuda gtest ${CUDA_CUDART_LIBRARY})
       target_compile_definitions(${example}_benchmarks_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
