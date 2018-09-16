@@ -40,7 +40,7 @@ stencil hori_diff_type2_stencil {
   storage out, in;
   storage_j crlato, crlatu;
   storage hdmask;
-  var lap;
+  storage lap;
 
   Do {
     vertical_region(k_start, k_end) {

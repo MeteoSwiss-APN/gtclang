@@ -23,11 +23,14 @@
 #define BOOST_MPL_LIMIT_VECTOR_SIZE FUSION_MAX_VECTOR_SIZE
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 
+#include <gtest/gtest.h>
+
 #include "gridtools/clang/verify.hpp"
+#include "test/integration-test/CodeGen/Macros.hpp"
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/globals_stencil_c++-naive.cpp"
-#include "test/integration-test/CodeGen/generated/globals_stencil_gridtools.cpp"
-#include <gtest/gtest.h>
+
+#include INCLUDE_FILE(test/integration-test/CodeGen/generated/globals_stencil_,OPTBACKEND.cpp)
 
 using namespace dawn;
 TEST(globals_stencil, test) {
@@ -41,10 +44,12 @@ TEST(globals_stencil, test) {
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
   verif.fill(-1.0, out_gt, out_naive);
 
+#if OPTBACKEND==gridtools
   gridtools::globals::get().var_runtime = 1;
+#endif
   cxxnaive::globals::get().var_runtime = 1;
 
-  gridtools::globals_stencil globals_gt(dom, in, out_gt);
+  OPTBACKEND::globals_stencil globals_gt(dom, in, out_gt);
   cxxnaive::globals_stencil globals_naive(dom, in, out_naive);
 
   globals_gt.run();

@@ -16,19 +16,6 @@
 #define GRIDTOOLS_CLANG_GENERATED 1
 #define GT_VECTOR_LIMIT_SIZE 30
 
-#ifndef OPTBACKEND
-#define OPTBACKEND gridtools
-#endif
-
-#define CAT(X,Y) CAT2(X,Y)
-#define CAT2(X,Y) X##Y
-#define CAT_2 CAT
-
-// Macro for adding quotes
-#define STRINGIFY(X) STRINGIFY2(X)
-#define STRINGIFY2(X) #X
-
-
 #undef FUSION_MAX_VECTOR_SIZE
 #undef FUSION_MAX_MAP_SIZE
 #define FUSION_MAX_VECTOR_SIZE GT_VECTOR_LIMIT_SIZE
@@ -36,11 +23,10 @@
 #define BOOST_MPL_LIMIT_VECTOR_SIZE FUSION_MAX_VECTOR_SIZE
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 
+#include "test/integration-test/CodeGen/Macros.hpp"
 #include "gridtools/clang/verify.hpp"
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/copy_stencil_c++-naive.cpp"
-
-#define INCLUDE_FILE(HEAD,TAIL) STRINGIFY( CAT_2(HEAD,TAIL) )
 
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/copy_stencil_,OPTBACKEND.cpp)
 

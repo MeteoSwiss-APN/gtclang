@@ -13,32 +13,21 @@
 //  See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
+#ifndef TEST_INTEGRATIONTEST_CODEGEN_MACROS_H
+#define TEST_INTEGRATIONTEST_CODEGEN_MACROS_H
 
-#include "gridtools/clang_dsl.hpp"
-using namespace gridtools::clang;
+#define CAT(X,Y) CAT2(X,Y)
+#define CAT2(X,Y) X##Y
+#define CAT_2 CAT
 
-#ifndef GRIDTOOLS_CLANG_GENERATED
-interval k_flat = k_start + 4;
+// Macro for adding quotes
+#define STRINGIFY(X) STRINGIFY2(X)
+#define STRINGIFY2(X) #X
+
+#define INCLUDE_FILE(HEAD,TAIL) STRINGIFY( CAT_2(HEAD,TAIL) )
+
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
 #endif
 
-globals {
-  int var_runtime;        // == 1
-  double var_default = 2.0; // == 2
-  bool var_compiletime;   // == true
-};
-
-stencil copy_stencil {
-  storage in, lap, out;
-
-  Do {
-    vertical_region(k_start, k_flat) {
-       lap = in[j-1];
-    }
-    vertical_region(k_flat+2, k_end) {
-       lap = in(i+1);
-    }
-    vertical_region(k_start, k_end) {
-       out = lap[i+1] + lap[i-1] + lap[j+1] + lap[j-1];
-    }
-  }
-};
+#endif
