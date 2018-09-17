@@ -30,6 +30,10 @@
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/globals_stencil_c++-naive.cpp"
 
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
+#endif
+
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/globals_stencil_,OPTBACKEND.cpp)
 
 using namespace dawn;

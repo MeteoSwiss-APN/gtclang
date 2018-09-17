@@ -31,6 +31,10 @@
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/hd_smagorinsky_c++-naive.cpp"
 
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
+#endif
+
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/hd_smagorinsky_,OPTBACKEND.cpp)
 
 

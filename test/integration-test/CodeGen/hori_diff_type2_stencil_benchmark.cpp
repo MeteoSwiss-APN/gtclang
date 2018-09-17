@@ -30,6 +30,10 @@
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/hori_diff_type2_stencil_c++-naive.cpp"
 
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
+#endif
+
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/hori_diff_type2_stencil_,OPTBACKEND.cpp)
 
 

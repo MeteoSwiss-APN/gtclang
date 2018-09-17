@@ -26,8 +26,4 @@
 
 #define INCLUDE_FILE(HEAD,TAIL) STRINGIFY( CAT_2(HEAD,TAIL) )
 
-#ifndef OPTBACKEND
-#define OPTBACKEND gridtools
-#endif
-
 #endif

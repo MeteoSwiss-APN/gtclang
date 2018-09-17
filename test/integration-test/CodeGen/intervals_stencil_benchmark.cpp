@@ -29,6 +29,10 @@
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/intervals_stencil_c++-naive.cpp"
 
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
+#endif
+
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/intervals_stencil_,OPTBACKEND.cpp)
 
 
