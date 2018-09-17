@@ -134,6 +134,9 @@ foreach(example ${codegen_examples})
 
     set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_gridtools.cpp)
     set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
+    if(GTCLANG_ENABLE_CUDA)
+      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_cuda.cpp)
+    endif(GTCLANG_ENABLE_CUDA)
 
     add_test(NAME CTest-${example}_benchmarks COMMAND $<TARGET_FILE:${example}_benchmarks> 12 12 10 --gtest_output=xml:${example}_unittest.xml)
 

@@ -28,17 +28,11 @@ globals {
 };
 
 stencil copy_stencil {
-  storage in, lap, out;
+  storage in, out;
 
   Do {
-    vertical_region(k_start, k_flat) {
-       lap = in[j-1];
-    }
-    vertical_region(k_flat+2, k_end) {
-       lap = in(i+1);
-    }
     vertical_region(k_start, k_end) {
-       out = lap[i+1] + lap[i-1] + lap[j+1] + lap[j-1];
+       out = in;
     }
   }
 };
