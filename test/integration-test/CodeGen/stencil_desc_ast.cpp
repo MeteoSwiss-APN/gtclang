@@ -32,13 +32,12 @@ stencil test_01_stencil {
   Do {
     if(var_runtime == 1)
       vertical_region(k_start, k_end) {
-//     if(var_runtime == 1)
           out = in + var_runtime;
       }
   }
 };
 
-/*
+
 //
 // Test 2
 //
@@ -180,4 +179,3 @@ stencil test_09_stencil {
   }
 };
 
-*/
