@@ -48,14 +48,11 @@ TEST(globals_stencil, test) {
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
   verif.fill(-1.0, out_gt, out_naive);
 
-#if OPTBACKEND==gridtools
-  gridtools::globals::get().var_runtime = 1;
-#endif
-  cxxnaive::globals::get().var_runtime = 1;
-
   OPTBACKEND::globals_stencil globals_gt(dom, in, out_gt);
+  globals_gt.set_var_runtime(1);
   cxxnaive::globals_stencil globals_naive(dom, in, out_naive);
-
+  globals_naive.set_var_runtime(1);
+  
   globals_gt.run();
   globals_naive.run();
 
