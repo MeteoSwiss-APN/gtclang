@@ -29,6 +29,7 @@ std::array<int, N> operator+(std::array<int, N> const& lhs, std::array<int, N> c
     res[i] = lhs[i] + rhs[i];
   }
   return res;
+
 }
 } // namespace clang
 } // namespace gridtools
