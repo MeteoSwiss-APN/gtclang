@@ -79,8 +79,8 @@ yoda_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-    GIT_REPOSITORY "git@github.com:cosunae/dawn.git"
-    GIT_TAG "backend_option" 
+    GIT_REPOSITORY "git@bitbucket.org:cosuna/dawn.git"
+    GIT_TAG "cuda_backend" 
     YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
