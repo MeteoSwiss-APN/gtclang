@@ -114,7 +114,7 @@ foreach(example ${codegen_examples})
 
     if(GTCLANG_ENABLE_CUDA)
       add_custom_command( OUTPUT ${cwd}/CodeGen/generated/${example}_cuda.cpp
-        COMMAND $<TARGET_FILE:gtclang> "-inline=pc" "-backend=cuda" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_cuda.cpp"  "${cwd}/CodeGen/${example}.cpp"
+        COMMAND $<TARGET_FILE:gtclang> "-backend=cuda" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_cuda.cpp"  "${cwd}/CodeGen/${example}.cpp"
         DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
       )
       list(APPEND codegen_generate_targets ${example}-codegen-cuda)
@@ -151,7 +151,7 @@ foreach(example ${codegen_examples})
 
       add_test(NAME CTest-${example}_benchmarks_gt_cuda COMMAND ${CTEST_SUBMIT_COMMAND} $<TARGET_FILE:${example}_benchmarks_gt_cuda> 12 12 10 --gtest_output=xml:${example}_cuda_unittest.xml)
     endif(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
-    if(GTCLANG_ENABLE_CUDA)
+    if(GTCLANG_ENABLE_CUDA AND ${example} MATCHES nested_stencil_functions )
       cuda_add_executable(${example}_benchmarks_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
 
       target_include_directories(${example}_benchmarks_cuda PUBLIC ${include_dirs})
