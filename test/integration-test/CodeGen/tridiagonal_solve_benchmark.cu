@@ -1,1 +1,1 @@
-#include "tridiagonal_solve_benchmark.cu"
+#include "tridiagonal_solve_benchmark.cpp"
