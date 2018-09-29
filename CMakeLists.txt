@@ -63,7 +63,7 @@ include(GTClangMacros)
 if(GTCLANG_HAS_CUDA)
   include(GTClangSetupCUDA)
   gtclang_setup_CUDA()
-  find_package(SLURM REQUIRED)
+  find_package(SLURM)
 endif(GTCLANG_HAS_CUDA)
 
 # Set C++ standard
