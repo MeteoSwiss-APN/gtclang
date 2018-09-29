@@ -45,16 +45,19 @@ TEST(tridiagonal_solve, test) {
   verifier verif(dom);
 
   meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
-  storage_t d_naive(meta_data, "d"), d_gt(meta_data, "d_gt"), a(meta_data, "a"),b(meta_data, "b"),c(meta_data, "c");
+  storage_t d_naive(meta_data, "d"), d_gt(meta_data, "d_gt"), a(meta_data, "a"),b(meta_data, "b"),
+           c_gt(meta_data, "c_gt"), c_naive(meta_data, "c_naive");
 
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, d_naive);
-  verif.fillMath(8.0, 1.0, 1.5, 1.5, 2.0, 4.0, d_gt);
+  verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, d_gt);
   verif.fillMath(7.4, 2.0, 1.5, 1.3, 2.1, 3.0, a);
   verif.fillMath(8.0, 2.0, 1.4, 1.2, 2.3, 3.0, b);
-  verif.fillMath(7.8, 2.0, 1.1, 1.7, 1.9, 4.1, c);
+  verif.fillMath(7.8, 2.0, 1.1, 1.7, 1.9, 4.1, c_gt);
+  verif.fillMath(7.8, 2.0, 1.1, 1.7, 1.9, 4.1, c_naive);
 
-  OPTBACKEND::tridiagonal_solve tridiagonal_solve_gt(dom, d_gt, a, b, c);
-  cxxnaive::tridiagonal_solve tridiagonal_solve_naive(dom, d_naive, a, b, c);
+
+  OPTBACKEND::tridiagonal_solve tridiagonal_solve_gt(dom, d_gt, a, b, c_gt);
+  cxxnaive::tridiagonal_solve tridiagonal_solve_naive(dom, d_naive, a, b, c_naive);
 
   tridiagonal_solve_gt.run();
   tridiagonal_solve_naive.run();

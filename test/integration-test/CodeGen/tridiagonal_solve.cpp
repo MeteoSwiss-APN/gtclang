@@ -31,7 +31,7 @@ stencil tridiagonal_solve {
         c = c * m;
         d = (d - a * d[k - 1]) * m;
     }
-    vertical_region(k_end-1, k_end) {
+    vertical_region(k_end-1, k_start) {
         d -= c * d[k + 1];
     }
   }
