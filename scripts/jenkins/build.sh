@@ -20,7 +20,8 @@ function help {
   echo -e "Basic usage:$SCRIPT "\\n
   echo -e "The following switches are recognized. $OFF "
   echo -e "-i sets the installation directory"
-  echo -e "-g gpu build" 
+  echo -e "-g gpu build"
+  echo -e "-c cuda build" 
   echo -e "-h Shows this help"
   echo -e "-d <path> path to dawn"
   exit 1
@@ -40,6 +41,9 @@ while getopts i:gd: flag; do
       ;;
     g)
       ENABLE_GPU=true
+      ;;
+    c)
+      ENABLE_CUDA=true
       ;;
     d) 
       DAWN_PATH=$OPTARG
@@ -78,6 +82,8 @@ fi
 
 if [ "$ENABLE_GPU" = true ]; then
   cmake ${CMAKE_ARGS} -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES="${SLURM_RESOURCES[@]}" -DGTCLANG_SLURM_PARTITION=${SLURM_PARTITION} -DGPU_DEVICE=${GPU_DEVICE} ../
+else if [ "$ENABLE_CUDA" = true ]; then
+  cmake ${CMAKE_ARGS} -DGTCLANG_ENABLE_CUDA=ON -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES="${SLURM_RESOURCES[@]}" -DGTCLANG_SLURM_PARTITION=${SLURM_PARTITION} -DGPU_DEVICE=${GPU_DEVICE} ../
 else
   cmake ${CMAKE_ARGS} ../
 fi
