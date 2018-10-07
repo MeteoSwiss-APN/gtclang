@@ -159,11 +159,14 @@ list(APPEND library_flags ${Boost_LIBRARIES})
 
 list(APPEND gridtools_flags ${compiler_flags} ${include_flags} ${library_flags})
 
-gtclang_add_integrationtest(NAME no-codegen
+## The cuda backend is not supported by the python scripts for no-codegen
+if(NOT GTCLANG_BUILD_CUDA_EXAMPLES)
+  gtclang_add_integrationtest(NAME no-codegen
                             GTCLANG ${GTCLANG_EXECUTABLE}
                             DIRECTORIES ${directories}
                             GRIDTOOLS_FLAGS ${gridtools_flags}
-)
+  )
+endif(NOT GTCLANG_BUILD_CUDA_EXAMPLES)
 
 # Add a dummy target with all the source files so that they are included in a qt creator project
 yoda_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectIntegrationTest
@@ -173,7 +176,7 @@ yoda_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectCodeGenTest
                          DIRECTORIES ${cwd}/CodeGen)
 
 # Codegen tests require GridTools
-if(GTCLANG_HAS_GRIDTOOLS AND GTCLANG_BUILD_EXAMPLES)
+if(GTCLANG_HAS_GRIDTOOLS)
   set(codegen_examples copy_stencil coriolis_stencil hori_diff_stencil_01 hori_diff_stencil_02
       hori_diff_type2_stencil hd_smagorinsky intervals_stencil globals_stencil stencil_functions
       nested_stencil_functions stencil_desc_ast boundary_condition boundary_condition_2 tridiagonal_solve
@@ -192,25 +195,19 @@ if(GTCLANG_HAS_GRIDTOOLS AND GTCLANG_BUILD_EXAMPLES)
   list(APPEND include_dirs "${GRIDTOOLS_INCLUDE_DIRS}")
   list(APPEND include_dirs "${CMAKE_SOURCE_DIR}")
   list(APPEND include_dirs "${Boost_INCLUDE_DIR}")
-  
-  if(GTCLANG_HAS_GRIDTOOLS AND GTCLANG_BUILD_EXAMPLES)
-    code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND gridtools)
-    if(GTCLANG_ENABLE_CUDA)
-      code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND cuda)
-    endif(GTCLANG_ENABLE_CUDA)
-    compile_generated_examples(EXAMPLES ${codegen_examples} DUMMY ${cuda_codegen_examples} BACKEND gridtools)
-    if(GTCLANG_BUILD_EXAMPLES_WITH_GPU)
-      cuda_compile_generated_examples(EXAMPLES ${codegen_examples} BACKEND gridtools)
-      if(GTCLANG_ENABLE_CUDA)
-        cuda_compile_generated_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND cuda)
-      endif(GTCLANG_ENABLE_CUDA)
+  if(GTCLANG_HAS_GRIDTOOLS)
+    if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_GT_GPU_EXAMPLES OR GTCLANG_BUILD_CUDA_EXAMPLES)
+      code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND gridtools)
     endif()
+    if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_CUDA_EXAMPLES)
+      compile_generated_examples(EXAMPLES ${codegen_examples} DUMMY ${cuda_codegen_examples} BACKEND gridtools)
+    endif()
+    if(GTCLANG_BUILD_GT_GPU_EXAMPLES)
+      cuda_compile_generated_examples(EXAMPLES ${codegen_examples} BACKEND gridtools)
+    endif()
+    if(GTCLANG_BUILD_CUDA_EXAMPLES)
+      code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND cuda)
+      cuda_compile_generated_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND cuda)
+    endif(GTCLANG_BUILD_CUDA_EXAMPLES)
   endif()
-  
-#  gtclang_add_codegentest(NAME codegen-only
-#                          GTCLANG ${GTCLANG_EXECUTABLE}
-#                          CODEGEN_EXAMPLES ${codegen_examples}
-#                          GRIDTOOLS_FLAGS ${gridtools_flags}
-#  )
-
 endif()
