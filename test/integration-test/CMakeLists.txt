@@ -207,10 +207,10 @@ if(GTCLANG_HAS_GRIDTOOLS AND GTCLANG_BUILD_EXAMPLES)
     endif()
   endif()
   
-  gtclang_add_codegentest(NAME codegen-only
-                          GTCLANG ${GTCLANG_EXECUTABLE}
-                          CODEGEN_EXAMPLES ${codegen_examples}
-                          GRIDTOOLS_FLAGS ${gridtools_flags}
-  )
+#  gtclang_add_codegentest(NAME codegen-only
+#                          GTCLANG ${GTCLANG_EXECUTABLE}
+#                          CODEGEN_EXAMPLES ${codegen_examples}
+#                          GRIDTOOLS_FLAGS ${gridtools_flags}
+#  )
 
 endif()

@@ -31,7 +31,7 @@ echo "####### executing: $0 $* (PID=$$ HOST=$HOSTNAME TIME=`date '+%D %H:%M:%S'`
 
 ENABLE_GPU=false
 
-while getopts i:gd: flag; do
+while getopts i:gcd: flag; do
   case $flag in
     i)
       INSTALL_DIR=$OPTARG
@@ -82,7 +82,7 @@ fi
 
 if [ "$ENABLE_GPU" = true ]; then
   cmake ${CMAKE_ARGS} -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES="${SLURM_RESOURCES[@]}" -DGTCLANG_SLURM_PARTITION=${SLURM_PARTITION} -DGPU_DEVICE=${GPU_DEVICE} ../
-else if [ "$ENABLE_CUDA" = true ]; then
+elif [ "$ENABLE_CUDA" = true ]; then
   cmake ${CMAKE_ARGS} -DGTCLANG_ENABLE_CUDA=ON -DGTCLANG_BUILD_EXAMPLES_WITH_GPU=ON -DCTEST_CUDA_SUBMIT=ON -DGTCLANG_SLURM_RESOURCES="${SLURM_RESOURCES[@]}" -DGTCLANG_SLURM_PARTITION=${SLURM_PARTITION} -DGPU_DEVICE=${GPU_DEVICE} ../
 else
   cmake ${CMAKE_ARGS} ../

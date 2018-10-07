@@ -34,7 +34,7 @@
 #define OPTBACKEND gridtools
 #endif
 
-#include INCLUDE_FILE(test / integration - test / CodeGen / generated / kparallel_solver_, OPTBACKEND.cpp)
+#include INCLUDE_FILE(test/integration-test/CodeGen/generated/kparallel_solver_,OPTBACKEND.cpp)
 
 using namespace dawn;
 TEST(kparallel_solver, test) {
