@@ -75,7 +75,7 @@ function(compile_generated_examples)
   foreach(example ${ARG_DUMMY})
       add_executable(${example}_benchmarks_${backend} ${cwd}/CodeGen/dummy.cpp)
       set_property(SOURCE ${cwd}/CodeGen/dummy.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
-      if(GTCLANG_BUILD_CUDA_EXAMPLES
+      if(GTCLANG_BUILD_CUDA_EXAMPLES)
         set_property(SOURCE ${cwd}/CodeGen/dummy.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_cuda.cpp)
       endif(GTCLANG_BUILD_CUDA_EXAMPLES)
   endforeach()
