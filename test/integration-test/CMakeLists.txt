@@ -48,7 +48,6 @@ function(code_generate_examples)
       set(config_str "${config_str}" "${flags}")
   
       file(MAKE_DIRECTORY "${cwd}/CodeGen/generated/")
-  
       # Add make target
       add_custom_command( OUTPUT ${cwd}/CodeGen/generated/${example}_${backend}.cpp
         COMMAND $<TARGET_FILE:gtclang> "-backend=${backend}" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_${backend}.cpp"  "${cwd}/CodeGen/${example}.cpp"
@@ -73,7 +72,6 @@ function(compile_generated_examples)
   if(NOT ${backend} STREQUAL "gridtools") 
     message(FATAL "backend ${backend} not supported")
   endif()
-
   foreach(example ${ARG_DUMMY})
       add_executable(${example}_benchmarks_${backend} ${cwd}/CodeGen/dummy.cpp)
       set_property(SOURCE ${cwd}/CodeGen/dummy.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
@@ -90,7 +88,6 @@ function(compile_generated_examples)
       set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
   
       add_test(NAME CTest-${example}_benchmarks_${backend} COMMAND $<TARGET_FILE:${example}_benchmarks_${backend}> 12 12 10 --gtest_output=xml:${example}_unittest.xml)
-  
   endforeach()
 endfunction(compile_generated_examples)
 
@@ -199,9 +196,8 @@ if(GTCLANG_HAS_GRIDTOOLS)
     if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_GT_GPU_EXAMPLES OR GTCLANG_BUILD_CUDA_EXAMPLES)
       code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND gridtools)
     endif()
-    if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_CUDA_EXAMPLES)
-      compile_generated_examples(EXAMPLES ${codegen_examples} DUMMY ${cuda_codegen_examples} BACKEND gridtools)
-    endif()
+
+    compile_generated_examples(EXAMPLES ${codegen_examples} DUMMY ${cuda_codegen_examples} BACKEND gridtools)
     if(GTCLANG_BUILD_GT_GPU_EXAMPLES)
       cuda_compile_generated_examples(EXAMPLES ${codegen_examples} BACKEND gridtools)
     endif()
