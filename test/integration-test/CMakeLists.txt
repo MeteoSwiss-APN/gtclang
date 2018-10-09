@@ -33,10 +33,10 @@ function(code_generate_examples)
   set(multiValueArgs EXAMPLES)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-  set(codegen_examples ${ARG_EXAMPLES})
+  set(codegen_examples_ ${ARG_EXAMPLES})
   set(backend ${ARG_BACKEND})
 
-  foreach(example ${codegen_examples})
+  foreach(example ${codegen_examples_})
       # Add json inputfiles if they exist
       set(config_str "")
       if(EXISTS "${cwd}/CodeGen/${example}.json")
@@ -67,7 +67,7 @@ function(compile_generated_examples)
   set(multiValueArgs EXAMPLES DUMMY)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-  set(codegen_example ${ARG_EXAMPLES})
+  set(codegen_examples_ ${ARG_EXAMPLES})
   set(backend ${ARG_BACKEND})
 
   if(NOT ${backend} STREQUAL "gridtools") 
@@ -79,7 +79,7 @@ function(compile_generated_examples)
       set_property(SOURCE ${cwd}/CodeGen/dummy.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
       set_property(SOURCE ${cwd}/CodeGen/dummy.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_cuda.cpp)
   endforeach()
-  foreach(example ${codegen_examples})
+  foreach(example ${codegen_examples_})
       add_executable(${example}_benchmarks_${backend} "${cwd}/CodeGen/${example}_benchmark.cpp" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
       target_include_directories(${example}_benchmarks_${backend} PUBLIC ${include_dirs})
       target_compile_definitions(${example}_benchmarks_${backend} PRIVATE -DOPTBACKEND=${backend})
@@ -99,10 +99,10 @@ function(cuda_compile_generated_examples)
   set(multiValueArgs EXAMPLES)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-  set(codegen_examples ${ARG_EXAMPLES})
+  set(codegen_examples_ ${ARG_EXAMPLES})
   set(backend ${ARG_BACKEND})
 
-  foreach(example ${codegen_examples})
+  foreach(example ${codegen_examples_})
       cuda_add_executable(${example}_benchmarks_${backend}_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
 
       target_include_directories(${example}_benchmarks_${backend}_cuda PUBLIC ${include_dirs})
