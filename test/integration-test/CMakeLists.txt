@@ -54,11 +54,16 @@ function(code_generate_examples)
         COMMAND $<TARGET_FILE:gtclang> "-backend=${backend}" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_${backend}.cpp"  "${cwd}/CodeGen/${example}.cpp"
         DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
       )
-  
+ 
+      add_custom_target(${example}_${backend}_codegen ALL DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
+ 
       add_custom_command(OUTPUT ${cwd}/CodeGen/generated/${example}_c++-naive.cpp
         COMMAND $<TARGET_FILE:gtclang> "-backend=c++-naive" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_c++-naive.cpp"  "${cwd}/CodeGen/${example}.cpp"
         DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
       )
+ 
+      add_custom_target(${example}_c++-naive_codegen ALL DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
+
   endforeach()
 endfunction(code_generate_examples)
 
@@ -85,11 +90,11 @@ function(compile_generated_examples)
       add_executable(${example}_benchmarks_${backend} "${cwd}/CodeGen/${example}_benchmark.cpp" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
       target_include_directories(${example}_benchmarks_${backend} PUBLIC ${include_dirs})
       target_compile_definitions(${example}_benchmarks_${backend} PRIVATE -DOPTBACKEND=${backend})
-      add_dependencies(${example}_benchmarks_${backend} gtclang)
+      add_dependencies(${example}_benchmarks_${backend} gtclang ${example}_c++-naive_codegen ${example}_${backend}_codegen)
       target_link_libraries(${example}_benchmarks_${backend} ${GTCLANG_UNITTEST_EXTERNAL_LIBRARIES} gtest)
   
-      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
-      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
+#      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
+#      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
   
       add_test(NAME CTest-${example}_benchmarks_${backend} COMMAND $<TARGET_FILE:${example}_benchmarks_${backend}> 12 12 10 --gtest_output=xml:${example}_unittest.xml)
   
@@ -109,16 +114,16 @@ function(cuda_compile_generated_examples)
 
       target_include_directories(${example}_benchmarks_${backend}_cuda PUBLIC ${include_dirs})
       if(${backend} STREQUAL cuda)
-        add_dependencies(${example}_benchmarks_${backend}_cuda gtclang ${example}_benchmarks_gridtools)
+        add_dependencies(${example}_benchmarks_${backend}_cuda gtclang ${example}_c++-naive_codegen ${example}_${backend}_codegen)
       else()
-        add_dependencies(${example}_benchmarks_${backend}_cuda gtclang)
+        add_dependencies(${example}_benchmarks_${backend}_cuda gtclang ${example}_c++-naive_codegen ${example}_${backend}_codegen)
       endif()
       target_link_libraries(${example}_benchmarks_${backend}_cuda gtest ${CUDA_CUDART_LIBRARY})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DOPTBACKEND=${backend})
 
-      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
-      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
+#      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
+#      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
 
       add_custom_target(
         dummy_${example}_${backend}
@@ -197,170 +202,16 @@ if(GTCLANG_HAS_GRIDTOOLS)
   list(APPEND include_dirs "${Boost_INCLUDE_DIR}")
   if(GTCLANG_HAS_GRIDTOOLS)
     if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_GT_GPU_EXAMPLES OR GTCLANG_BUILD_CUDA_EXAMPLES)
-
-      set(codegen_examples_ ${codegen_examples} ${cuda_codegen_examples} )
-      set(backend gridtools)
-    
-      foreach(example ${codegen_examples_})
-          # Add json inputfiles if they exist
-          set(config_str "")
-          if(EXISTS "${cwd}/CodeGen/${example}.json")
-            set(config_str "--config=${cwd}/CodeGen/${example}.json")
-          endif()
-      
-          # Add the specified compilerflags
-          GET_COMPILER_FLAGS(${example} flags)
-          set(config_str "${config_str}" "${flags}")
-      
-          file(MAKE_DIRECTORY "${cwd}/CodeGen/generated/")
-      
-          # Add make target
-          add_custom_command( OUTPUT ${cwd}/CodeGen/generated/${example}_${backend}.cpp
-            COMMAND $<TARGET_FILE:gtclang> "-backend=${backend}" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_${backend}.cpp"  "${cwd}/CodeGen/${example}.cpp"
-            DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
-          )
-      
-          add_custom_command(OUTPUT ${cwd}/CodeGen/generated/${example}_c++-naive.cpp
-            COMMAND $<TARGET_FILE:gtclang> "-backend=c++-naive" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_c++-naive.cpp"  "${cwd}/CodeGen/${example}.cpp"
-            DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
-          )
-      endforeach()
-    
-#      code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND gridtools)
+      code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND gridtools)
     endif()
     if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_CUDA_EXAMPLES)
-
-      set(codegen_examples_ ${codegen_examples})
-      set(backend gridtools)
-    
-      if(NOT ${backend} STREQUAL "gridtools") 
-        message(FATAL "backend ${backend} not supported")
-      endif()
-    
-      foreach(example ${cuda_codegen_examples})
-          add_executable(${example}_benchmarks_${backend} ${cwd}/CodeGen/dummy.cpp)
-          set_property(SOURCE ${cwd}/CodeGen/dummy.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
-          if(GTCLANG_BUILD_CUDA_EXAMPLES)
-            set_property(SOURCE ${cwd}/CodeGen/dummy.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_cuda.cpp)
-          endif(GTCLANG_BUILD_CUDA_EXAMPLES)
-      endforeach()
-      foreach(example ${codegen_examples_})
-          add_executable(${example}_benchmarks_${backend} "${cwd}/CodeGen/${example}_benchmark.cpp" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
-          target_include_directories(${example}_benchmarks_${backend} PUBLIC ${include_dirs})
-          target_compile_definitions(${example}_benchmarks_${backend} PRIVATE -DOPTBACKEND=${backend})
-          add_dependencies(${example}_benchmarks_${backend} gtclang)
-          target_link_libraries(${example}_benchmarks_${backend} ${GTCLANG_UNITTEST_EXTERNAL_LIBRARIES} gtest)
-      
-          set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
-          set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
-      
-          add_test(NAME CTest-${example}_benchmarks_${backend} COMMAND $<TARGET_FILE:${example}_benchmarks_${backend}> 12 12 10 --gtest_output=xml:${example}_unittest.xml)
-      
-      endforeach()
-
-#      compile_generated_examples(EXAMPLES ${codegen_examples} DUMMY ${cuda_codegen_examples} BACKEND gridtools)
+      compile_generated_examples(EXAMPLES ${codegen_examples} DUMMY ${cuda_codegen_examples} BACKEND gridtools)
     endif()
     if(GTCLANG_BUILD_GT_GPU_EXAMPLES)
-      set(codegen_examples_ ${codegen_examples})
-      set(backend gridtools)
-    
-      foreach(example ${codegen_examples_})
-          cuda_add_executable(${example}_benchmarks_${backend}_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
-    
-          target_include_directories(${example}_benchmarks_${backend}_cuda PUBLIC ${include_dirs})
-          if(${backend} STREQUAL cuda)
-            add_dependencies(${example}_benchmarks_${backend}_cuda gtclang ${example}_benchmarks_gridtools)
-          else()
-            add_dependencies(${example}_benchmarks_${backend}_cuda gtclang)
-          endif()
-          target_link_libraries(${example}_benchmarks_${backend}_cuda gtest ${CUDA_CUDART_LIBRARY})
-          target_compile_definitions(${example}_benchmarks_${backend}_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
-          target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DOPTBACKEND=${backend})
-    
-          set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
-          set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
-    
-          add_custom_target(
-            dummy_${example}_${backend}
-            DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp
-          )
-    
-          if(CTEST_CUDA_SUBMIT) 
-            string(REPLACE " " ";" GTCLANG_SLURM_RESOURCES_LIST ${GTCLANG_SLURM_RESOURCES})
-            set(CTEST_SUBMIT_COMMAND "${SLURM_SRUN_COMMAND}" "-n" "${GTCLANG_SLURM_N_TASKS}" ${GTCLANG_SLURM_RESOURCES_LIST} "-p" "${GTCLANG_SLURM_PARTITION}")
-          endif(CTEST_CUDA_SUBMIT)
-    
-          add_test(NAME CTest-${example}_benchmarks_${backend}_cuda COMMAND ${CTEST_SUBMIT_COMMAND} $<TARGET_FILE:${example}_benchmarks_${backend}_cuda> 12 12 10 --gtest_output=xml:${example}_cuda_unittest.xml)
-      endforeach()
-
-#      cuda_compile_generated_examples(EXAMPLES ${codegen_examples} BACKEND gridtools)
+      cuda_compile_generated_examples(EXAMPLES ${codegen_examples} BACKEND gridtools)
     endif()
     if(GTCLANG_BUILD_CUDA_EXAMPLES)
-
-      set(codegen_examples_ ${codegen_examples} ${cuda_codegen_examples} )
-      set(backend cuda)
-    
-      foreach(example ${codegen_examples_})
-          # Add json inputfiles if they exist
-          set(config_str "")
-          if(EXISTS "${cwd}/CodeGen/${example}.json")
-            set(config_str "--config=${cwd}/CodeGen/${example}.json")
-          endif()
-      
-          # Add the specified compilerflags
-          GET_COMPILER_FLAGS(${example} flags)
-          set(config_str "${config_str}" "${flags}")
-      
-          file(MAKE_DIRECTORY "${cwd}/CodeGen/generated/")
-      
-          # Add make target
-          add_custom_command( OUTPUT ${cwd}/CodeGen/generated/${example}_${backend}.cpp
-            COMMAND $<TARGET_FILE:gtclang> "-backend=${backend}" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_${backend}.cpp"  "${cwd}/CodeGen/${example}.cpp"
-            DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
-          )
-      
-          add_custom_command(OUTPUT ${cwd}/CodeGen/generated/${example}_c++-naive.cpp
-            COMMAND $<TARGET_FILE:gtclang> "-backend=c++-naive" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_c++-naive.cpp"  "${cwd}/CodeGen/${example}.cpp"
-            DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
-          )
-      endforeach()
- 
-#      code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND cuda)
-
-
-      set(codegen_examples_ ${codegen_examples} ${cuda_codegen_examples})
-      set(backend cuda)
-    
-      foreach(example ${codegen_examples_})
-          cuda_add_executable(${example}_benchmarks_${backend}_cuda "${cwd}/CodeGen/${example}_benchmark.cu" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
-    
-          target_include_directories(${example}_benchmarks_${backend}_cuda PUBLIC ${include_dirs})
-          if(${backend} STREQUAL cuda)
-            add_dependencies(${example}_benchmarks_${backend}_cuda gtclang ${example}_benchmarks_gridtools)
-          else()
-            add_dependencies(${example}_benchmarks_${backend}_cuda gtclang)
-          endif()
-          target_link_libraries(${example}_benchmarks_${backend}_cuda gtest ${CUDA_CUDART_LIBRARY})
-          target_compile_definitions(${example}_benchmarks_${backend}_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
-          target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DOPTBACKEND=${backend})
-    
-          set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
-          set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
-    
-          add_custom_target(
-            dummy_${example}_${backend}
-            DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp
-          )
-    
-          if(CTEST_CUDA_SUBMIT) 
-            string(REPLACE " " ";" GTCLANG_SLURM_RESOURCES_LIST ${GTCLANG_SLURM_RESOURCES})
-            set(CTEST_SUBMIT_COMMAND "${SLURM_SRUN_COMMAND}" "-n" "${GTCLANG_SLURM_N_TASKS}" ${GTCLANG_SLURM_RESOURCES_LIST} "-p" "${GTCLANG_SLURM_PARTITION}")
-          endif(CTEST_CUDA_SUBMIT)
-    
-          add_test(NAME CTest-${example}_benchmarks_${backend}_cuda COMMAND ${CTEST_SUBMIT_COMMAND} $<TARGET_FILE:${example}_benchmarks_${backend}_cuda> 12 12 10 --gtest_output=xml:${example}_cuda_unittest.xml)
-      endforeach()
-
-
+      code_generate_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND cuda)
       cuda_compile_generated_examples(EXAMPLES ${codegen_examples} ${cuda_codegen_examples} BACKEND cuda)
     endif(GTCLANG_BUILD_CUDA_EXAMPLES)
   endif()
