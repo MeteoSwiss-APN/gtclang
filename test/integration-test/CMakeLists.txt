@@ -56,13 +56,15 @@ function(code_generate_examples)
       )
  
       add_custom_target(${example}_${backend}_codegen ALL DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
+      set_source_files_properties(${cwd}/CodeGen/generated/${example}_${backend}.cpp PROPERTIES GENERATED TRUE)
  
       add_custom_command(OUTPUT ${cwd}/CodeGen/generated/${example}_c++-naive.cpp
         COMMAND $<TARGET_FILE:gtclang> "-backend=c++-naive" ${config_str} "-o" "${cwd}/CodeGen/generated/${example}_c++-naive.cpp"  "${cwd}/CodeGen/${example}.cpp"
         DEPENDS ${cwd}/CodeGen/${example}.cpp gtclang
       )
  
-      add_custom_target(${example}_c++-naive_codegen ALL DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
+      add_custom_target(${example}_c++-naive_codegen ALL DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
+      set_source_files_properties(${cwd}/CodeGen/generated/${example}_c++-naive.cpp PROPERTIES GENERATED TRUE)
 
   endforeach()
 endfunction(code_generate_examples)
