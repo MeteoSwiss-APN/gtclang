@@ -140,7 +140,7 @@ public:
           typename StorageType1::data_t value1 = storage1_v(i, j, k);
           typename StorageType2::data_t value2 = storage2_v(i, j, k);
           if(!compare_below_threashold(value1, value2, m_precision)) {
-            /*if(--max_erros >= 0)*/ {
+            if(--max_erros >= 0) {
               std::cerr << "( " << i << ", " << j << ", " << k << " ) : "
                         << " " << storage1.name() << " = " << value1 << " ; "
                         << " " << storage2.name() << " = " << value2
@@ -191,8 +191,8 @@ public:
 
     double time = 0;
     auto allStencils = computation.getStencils();
-    for(auto stencil : allStencils){
-        time += stencil->get_time();
+    for(auto stencil : allStencils) {
+      time += stencil->get_time();
     }
 
     std::cout << "\033[0;33m"

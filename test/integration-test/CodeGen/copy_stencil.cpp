@@ -17,22 +17,12 @@
 #include "gridtools/clang_dsl.hpp"
 using namespace gridtools::clang;
 
-#ifndef GRIDTOOLS_CLANG_GENERATED
-interval k_flat = k_start + 4;
-#endif
-
-globals {
-  int var_runtime;        // == 1
-  double var_default = 2.0; // == 2
-  bool var_compiletime;   // == true
-};
-
 stencil copy_stencil {
   storage in, out;
 
   Do {
     vertical_region(k_start, k_end) {
-       out = in;
+      out = in;
     }
   }
 };
