@@ -34,8 +34,9 @@
 #define OPTBACKEND gridtools
 #endif
 
+// clang-format off
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/stencil_functions_,OPTBACKEND.cpp)
-
+// clang-format on
 
 using namespace dawn;
 

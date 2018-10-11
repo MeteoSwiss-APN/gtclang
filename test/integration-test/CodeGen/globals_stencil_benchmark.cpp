@@ -34,7 +34,9 @@
 #define OPTBACKEND gridtools
 #endif
 
+// clang-format off
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/globals_stencil_,OPTBACKEND.cpp)
+// clang-format on
 
 using namespace dawn;
 TEST(globals_stencil, test) {
@@ -52,7 +54,7 @@ TEST(globals_stencil, test) {
   globals_gt.set_var_runtime(1);
   cxxnaive::globals_stencil globals_naive(dom, in, out_naive);
   globals_naive.set_var_runtime(1);
-  
+
   globals_gt.run();
   globals_naive.run();
 

@@ -34,8 +34,9 @@
 #define OPTBACKEND gridtools
 #endif
 
+// clang-format off
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/coriolis_stencil_,OPTBACKEND.cpp)
-
+// clang-format on
 
 using namespace dawn;
 TEST(coriolis_stencil, test) {

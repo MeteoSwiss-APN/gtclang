@@ -34,8 +34,9 @@
 #define OPTBACKEND gridtools
 #endif
 
+// clang-format off
 #include INCLUDE_FILE(test/integration-test/CodeGen/generated/stencil_desc_ast_,OPTBACKEND.cpp)
-
+// clang-format on
 
 using namespace dawn;
 
@@ -247,9 +248,8 @@ TEST(stencil_desc_ast, test_01) {
   cxxnaive::test_01_stencil test_01_naive(dom, in, out_naive);
   sdesctest::test_01_stencil_reference(dom, in, out_ref);
 
-//  test_01_gt.set_var_runtime(5);
-//  test_01_gt.set_var_compiletime(6);
-
+  //  test_01_gt.set_var_runtime(5);
+  //  test_01_gt.set_var_compiletime(6);
 
   test_01_gt.run();
   test_01_naive.run();
