@@ -55,5 +55,4 @@ namespace clang {}
 #include "gridtools/clang/storage.hpp"
 #include "gridtools/clang/arrayAddons.hpp"
 #include "gridtools/clang/param_wrapper.hpp"
-#include "gridtools/clang/timer.hpp"
 
