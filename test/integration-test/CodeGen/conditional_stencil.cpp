@@ -34,7 +34,7 @@ stencil_function fn {
   }
 };
 
-stencil copy_stencil {
+stencil conditional_stencil {
   storage in, out;
 
   Do {
