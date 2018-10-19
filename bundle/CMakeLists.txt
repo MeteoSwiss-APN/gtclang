@@ -91,7 +91,7 @@ yoda_find_package(
   ADDITIONAL
     DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
     GIT_REPOSITORY "git@github.com:cosunae/dawn.git"
-    GIT_TAG "cuda_backend2" 
+    GIT_TAG "kcache_local" 
     YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
