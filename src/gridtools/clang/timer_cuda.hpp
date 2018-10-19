@@ -13,7 +13,8 @@
 //  See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-#pragma once
+#ifndef GRIDTOOLS_CLANG_TIMER_CUDA_HPP
+#define GRIDTOOLS_CLANG_TIMER_CUDA_HPP
 
 #include <cuda_runtime.h>
 #include <memory>
@@ -76,3 +77,5 @@ public:
 };
 } // namespace clang
 } // namespace gridtools
+
+#endif

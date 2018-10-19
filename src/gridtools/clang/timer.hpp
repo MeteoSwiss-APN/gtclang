@@ -13,7 +13,8 @@
 //  See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-#pragma once
+#ifndef GRIDTOOLS_CLANG_TIMER_HPP
+#define GRIDTOOLS_CLANG_TIMER_HPP
 
 #include <sstream>
 #include <string>
@@ -84,3 +85,5 @@ private:
 };
 } // namespace clang
 } // namespace gridtools
+
+#endif

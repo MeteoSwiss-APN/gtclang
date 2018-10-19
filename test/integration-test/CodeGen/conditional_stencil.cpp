@@ -39,10 +39,11 @@ stencil conditional_stencil {
 
   Do {
     vertical_region(k_start, k_end) {
-      if(var2)
+      if(var2) {
         fn(i, in, out);
-      else
+      } else {
         fn(j, in, out);
+      }
     }
   }
 };
