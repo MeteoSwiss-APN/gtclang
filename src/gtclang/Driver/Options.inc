@@ -36,6 +36,7 @@
 
 OPT(bool, Verbose, false, "verbose", "", "Enable verbose output by using step-by-step logging", "", false, false)
 OPT(bool, DumpSIR, false, "dump-sir", "", "Dump the parsed SIR to stdout", "", false, false)
+OPT(bool, DumpAST, false, "dump-ast", "", "Dump the clang AST of the preprocessed input to stdout", "", false, false)
 OPT(bool, WriteSIR, false, "write-sir", "", "Write the parsed SIR to stdout", "", false, false)
 OPT(bool, DumpPP, false, "dump-pp", "", "Dump the preprocessed code to stdout", "", false, false)
 OPT(std::string, OutputFile, "", "output", "o", "Write output to <file>", "<file>", true, false)
@@ -43,11 +44,6 @@ OPT(std::string, ConfigFile, "", "config", "",
     "json <file> with a single key \"globals\" which contains \"key\" : \"value\" pairs of global variables and their respective values. "
     "Global variables defined in the config file are treated as compile time constants and are replaced by their value", 
     "<file>", true, false)
-OPT(std::string, Backend, "gridtools", "backend", "", 
-    "Set backend code-generator. Possible values for <backend> are:"
-    "\n - gridtools = gridtools C++ code"
-    "\n - c++-naive   = naive C++ code\n"
-    "\n - c++-opt     = optimized C++ code", "<backend>", true, false)
 OPT(bool, CodeGen, true, "codegen", "", "Generate code", "", false, true)
 OPT(bool, ClangFormat, true, "clang-format", "", "Run clang-format on the generated code", "", false, true)
 OPT(bool, ReportPassPreprocessor, false, "report-pass-preprocessor", "", 

@@ -41,6 +41,8 @@ namespace clang {}
 #pragma GCC system_header
 #endif
 
+#define BOOST_PP_VARIADICS 1
+
 #include "gridtools/clang/boundary_condition.hpp"
 #include "gridtools/clang/cxx11_warning.hpp"
 #include "gridtools/clang/defs.hpp"
@@ -53,3 +55,4 @@ namespace clang {}
 #include "gridtools/clang/storage.hpp"
 #include "gridtools/clang/arrayAddons.hpp"
 #include "gridtools/clang/param_wrapper.hpp"
+

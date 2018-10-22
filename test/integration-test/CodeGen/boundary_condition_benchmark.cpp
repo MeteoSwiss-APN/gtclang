@@ -15,17 +15,28 @@
 //===------------------------------------------------------------------------------------------===//
 #define GRIDTOOLS_CLANG_GENERATED 1
 #define GRIDTOOLS_CLANG_HALO_EXTEND 3
+#define GT_VECTOR_LIMIT_SIZE 30
+
+#undef FUSION_MAX_VECTOR_SIZE
+#undef FUSION_MAX_MAP_SIZE
+#define FUSION_MAX_VECTOR_SIZE GT_VECTOR_LIMIT_SIZE
+#define FUSION_MAX_MAP_SIZE FUSION_MAX_VECTOR_SIZE
+#define BOOST_MPL_LIMIT_VECTOR_SIZE FUSION_MAX_VECTOR_SIZE
+#define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+
+#include <gtest/gtest.h>
 #include "gridtools/clang/verify.hpp"
+#include "test/integration-test/CodeGen/Macros.hpp"
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/boundary_condition_c++-naive.cpp"
-#include "test/integration-test/CodeGen/generated/boundary_condition_gridtools.cpp"
-#include <gtest/gtest.h>
 
-#ifdef __CUDACC__
-#include <boundary-conditions/apply_gpu.hpp>
-#else
-#include <boundary-conditions/apply.hpp>
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
 #endif
+
+// clang-format off
+#include INCLUDE_FILE(test/integration-test/CodeGen/generated/boundary_condition_,OPTBACKEND.cpp)
+// clang-format on
 
 using namespace dawn;
 TEST(split_stencil, test) {
@@ -35,7 +46,7 @@ TEST(split_stencil, test) {
                 GRIDTOOLS_CLANG_HALO_EXTEND, GRIDTOOLS_CLANG_HALO_EXTEND, 0, 0);
   verifier verif(dom);
 
-  meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize());
+  meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
   storage_t in_naive(meta_data, "in-naive"), in_gt(meta_data, "in-gt"), out_gt(meta_data, "out-gt"),
       out_naive(meta_data, "out-naive");
 
@@ -43,7 +54,7 @@ TEST(split_stencil, test) {
   verif.fill_boundaries(10, in_naive);
   verif.fill(-1.0, out_gt, out_naive);
 
-  gridtools::split_stencil copy_gt(dom, in_gt, out_gt);
+  OPTBACKEND::split_stencil copy_gt(dom, in_gt, out_gt);
   cxxnaive::split_stencil copy_naive(dom, in_naive, out_naive);
 
   copy_gt.run();
