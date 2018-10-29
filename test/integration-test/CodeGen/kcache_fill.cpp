@@ -17,7 +17,7 @@
 #include "gridtools/clang_dsl.hpp"
 using namespace gridtools::clang;
 
-stencil copy_stencil {
+stencil kcache_fill {
   storage in, out;
 
   Do {
