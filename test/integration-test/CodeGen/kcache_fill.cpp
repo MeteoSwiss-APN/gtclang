@@ -22,10 +22,13 @@ stencil kcache_fill {
 
   Do {
     vertical_region(k_start, k_start + 1) {
-      out = in + in[k + 1];
+      out = in + in[k + 1] + in[k + 2];
     }
-    vertical_region(k_start + 2, k_end - 1) {
-      out = in + in[k - 1] + in[k + 1] + out[k - 1];
+    vertical_region(k_start + 2, k_end - 2) {
+      out = in + in[k - 1] + in[k + 1] + in[k + 2] + out[k - 1];
+    }
+    vertical_region(k_end - 2, k_end - 2) {
+      out = in + in[k - 1] + in[k + 1] + in[k + 2] + out[k - 1];
     }
     vertical_region(k_end, k_end) {
       out = in + in[k - 1] + out[k - 1];
