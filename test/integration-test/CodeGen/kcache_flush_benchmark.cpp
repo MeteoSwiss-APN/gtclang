@@ -50,8 +50,8 @@ TEST(kcache_flush, test) {
   meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
   storage_t in(meta_data, "in"), out_gt(meta_data, "out-gt"), out_naive(meta_data, "out-naive");
 
-  verif.flushMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
-  verif.flush(-1.0, out_gt, out_naive);
+  verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
+  verif.fill(-1.0, out_gt, out_naive);
 
   OPTBACKEND::kcache_flush kcache_flush_gt(dom, in, out_gt);
   cxxnaive::kcache_flush kcache_flush_naive(dom, in, out_naive);
