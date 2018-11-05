@@ -185,7 +185,8 @@ if(GTCLANG_HAS_GRIDTOOLS)
       hori_diff_type2_stencil hd_smagorinsky intervals_stencil globals_stencil stencil_functions
       local_kcache kcache_fill kcache_fill_backward kcache_fill_kparallel nested_stencil_functions stencil_desc_ast boundary_condition boundary_condition_2 tridiagonal_solve
       kparallel_solver)
-  set(cuda_codegen_examples intervals01 intervals02 intervals03)
+  # specific examples for cuda backend
+  set(cuda_codegen_examples intervals01 intervals02 intervals03 local_kcache)
 
   set(codegen_example_benchmarks)
 
