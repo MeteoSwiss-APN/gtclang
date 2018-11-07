@@ -194,6 +194,10 @@ if(GTCLANG_HAS_GRIDTOOLS)
   
   ADD_COMPILER_FLAG_TO_EXAMPLE("boundary_condition" "-max-fields=2")
   ADD_COMPILER_FLAG_TO_EXAMPLE("boundary_condition" "-fsplit-stencils")
+
+  ADD_COMPILER_FLAG_TO_EXAMPLE("intervals02" "-disable-kcaches")
+  ADD_COMPILER_FLAG_TO_EXAMPLE("intervals03" "-disable-kcaches")
+
   set(include_dirs)
   list(APPEND include_dirs "${CMAKE_SOURCE_DIR}/src")
   list(APPEND include_dirs "${GRIDTOOLS_INCLUDE_DIRS}")
