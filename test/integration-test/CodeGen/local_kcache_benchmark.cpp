@@ -40,26 +40,26 @@ TEST(local_kcache, test) {
   verifier verif(dom);
 
   meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
-  storage_t a_gt(meta_data, "a_gt"), a_naive(meta_data, "a_naive"), b_naive(meta_data, "b"), b_gt(meta_data, "b_gt");
-  storage_t c_gt(meta_data, "c_gt"), c_naive(meta_data, "c_naive"), d_naive(meta_data, "d"), d_gt(meta_data, "d_gt");
+  storage_t a_opt(meta_data, "a_opt"), a_naive(meta_data, "a_naive"), b_naive(meta_data, "b"), b_opt(meta_data, "b_opt");
+  storage_t c_opt(meta_data, "c_opt"), c_naive(meta_data, "c_naive"), d_naive(meta_data, "d"), d_opt(meta_data, "d_opt");
 
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.2, a_naive);
-  verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.2, a_gt);
+  verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.2, a_opt);
   verif.fillMath(5.8, 1.0, 1.7, 1.7, 1.9, 4.1, b_naive);
-  verif.fillMath(5.8, 1.0, 1.7, 1.7, 1.9, 4.1, b_gt);
+  verif.fillMath(5.8, 1.0, 1.7, 1.7, 1.9, 4.1, b_opt);
   verif.fillMath(7.8, 2.0, 1.1, 1.7, 1.9, 4.1, c_naive);
-  verif.fillMath(7.8, 2.0, 1.1, 1.7, 1.9, 4.1, c_gt);
+  verif.fillMath(7.8, 2.0, 1.1, 1.7, 1.9, 4.1, c_opt);
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, d_naive);
-  verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, d_gt);
+  verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, d_opt);
 
-  OPTBACKEND::local_kcache local_kcache_gt(dom, a_gt, b_gt, c_gt, d_gt);
+  OPTBACKEND::local_kcache local_kcache_opt(dom, a_opt, b_opt, c_opt, d_opt);
   cxxnaive::local_kcache local_kcache_naive(dom, a_naive, b_naive, c_naive, d_naive);
 
-  local_kcache_gt.run();
+  local_kcache_opt.run();
   local_kcache_naive.run();
 
-  ASSERT_TRUE(verif.verify(a_gt, a_naive));
-  ASSERT_TRUE(verif.verify(b_gt, b_naive));
-  ASSERT_TRUE(verif.verify(c_gt, c_naive));
-  ASSERT_TRUE(verif.verify(d_gt, d_naive));
+  ASSERT_TRUE(verif.verify(a_opt, a_naive));
+  ASSERT_TRUE(verif.verify(b_opt, b_naive));
+  ASSERT_TRUE(verif.verify(c_opt, c_naive));
+  ASSERT_TRUE(verif.verify(d_opt, d_naive));
 }
