@@ -186,7 +186,8 @@ if(GTCLANG_HAS_GRIDTOOLS)
       nested_stencil_functions stencil_desc_ast boundary_condition boundary_condition_2 tridiagonal_solve
       kparallel_solver)
   # specific examples for cuda backend
-  set(cuda_codegen_examples intervals01 intervals02 intervals03 local_kcache kcache_fill kcache_fill_kparallel kcache_fill_backward)
+  set(cuda_codegen_examples intervals01 intervals02 intervals03 local_kcache kcache_fill kcache_fill_kparallel
+      kcache_fill_backward kcache_flush)
 
   set(codegen_example_benchmarks)
 
