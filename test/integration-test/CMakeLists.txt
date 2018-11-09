@@ -187,7 +187,7 @@ if(GTCLANG_HAS_GRIDTOOLS)
       kparallel_solver)
   # specific examples for cuda backend
   set(cuda_codegen_examples intervals01 intervals02 intervals03 local_kcache kcache_fill kcache_fill_kparallel
-      kcache_fill_backward kcache_flush)
+      kcache_fill_backward) # kcache_flush)
 
   set(codegen_example_benchmarks)
 
