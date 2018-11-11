@@ -17,7 +17,7 @@
 #include "gridtools/clang_dsl.hpp"
 using namespace gridtools::clang;
 
-stencil kcache_flush {
+stencil kcache_epflush {
   storage in, out;
   var b, tmp;
 
