@@ -18,26 +18,29 @@
 using namespace gridtools::clang;
 
 stencil kcache_flush {
-  storage a, c;
+  storage in, out;
   var b, tmp;
 
   Do {
     // MS0
     vertical_region(k_start, k_start)
-        tmp = a;
+        tmp = in;
 
     vertical_region(k_start + 1, k_end) {
-      tmp = a * 2;
+      tmp = in * 2;
       b = tmp(k - 1);
     }
 
     // MS1
+    vertical_region(k_end, k_end - 2) {
+      out = 2.2;
+    }
     vertical_region(k_end - 3, k_end - 3) {
-      c = tmp[k + 3] + tmp[k + 2] + tmp[k + 1];
+      out = tmp[k + 3] + tmp[k + 2] + tmp[k + 1];
     }
     vertical_region(k_end - 4, k_start) {
       tmp = b;
-      c = tmp[k + 1];
+      out = tmp[k + 1];
     }
   }
 };
