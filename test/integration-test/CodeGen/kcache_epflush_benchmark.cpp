@@ -47,7 +47,11 @@ TEST(kcache_epflush, test) {
   verifier verif(dom);
 
   meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
-  storage_t in(meta_data, "in"), out_gt(meta_data, "out-gt"), out_naive(meta_data, "out-naive");
+  // Output fields
+  storage_t out_opt(meta_data, "out_optimized"), out_naive(meta_data, "out_naive");
+  
+  // Input fields
+  storage_t  in(meta_data, "in");
 
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
   verif.fill(-1.0, out_gt, out_naive);

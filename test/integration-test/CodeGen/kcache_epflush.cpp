@@ -28,7 +28,7 @@ stencil kcache_epflush {
 
     vertical_region(k_start + 1, k_end) {
       tmp = in * 2;
-      b = tmp(k - 1);
+      b = tmp[k - 1];
     }
 
     // MS1
