@@ -48,9 +48,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
 include(GTClangCloneRepository)
 
-set(GTCLANG_YODA_GIT_URL "https:///github.com/Meteoswiss-APN/yoda.git" 
+set(GTCLANG_YODA_GIT_URL "https:///github.com/cosunae/yoda.git" 
     CACHE PATH "URL of the yoda git repository to clone")
-set(GTCLANG_YODA_GIT_BRANCH "1.0.0" CACHE STRING "Branch of the yoda git repository to clone")
+set(GTCLANG_YODA_GIT_BRANCH "latest_gt" CACHE STRING "Branch of the yoda git repository to clone")
 
 gtclang_clone_repository(NAME yoda URL ${GTCLANG_YODA_GIT_URL} BRANCH ${GTCLANG_YODA_GIT_BRANCH} SOURCE_DIR GTCLANG_YODA_SOURCE_DIR )
 
@@ -90,8 +90,8 @@ yoda_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-    GIT_REPOSITORY "git@github.com:MeteoSwiss-APN/dawn.git"
-    GIT_TAG "master" 
+    GIT_REPOSITORY "git@github.com:cosunae/dawn.git"
+    GIT_TAG "latest_gt" 
     YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
@@ -110,10 +110,10 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
     DEPENDS "boost"
     ADDITIONAL
       DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-      GIT_REPOSITORY "git@github.com:twicki/gridtools.git"
-      GIT_TAG "gtclang_fixed_version" 
+      GIT_REPOSITORY "git@github.com:eth-cscs/gridtools.git"
+      GIT_TAG "master" 
       YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
-      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON -DENABLE_PERFORMANCE_METERS=ON
+      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON -DENABLE_PERFORMANCE_METERS=ON -DINSTALL_GTEST=OFF
   )
   list(APPEND gtclang_dependencies "gridtools")
 
