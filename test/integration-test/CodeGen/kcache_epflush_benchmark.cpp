@@ -49,18 +49,18 @@ TEST(kcache_epflush, test) {
   meta_data_t meta_data(dom.isize(), dom.jsize(), dom.ksize() + 1);
   // Output fields
   storage_t out_opt(meta_data, "out_optimized"), out_naive(meta_data, "out_naive");
-  
+
   // Input fields
-  storage_t  in(meta_data, "in");
+  storage_t in(meta_data, "in");
 
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
-  verif.fill(-1.0, out_gt, out_naive);
+  verif.fill(-1.0, out_opt, out_naive);
 
-  OPTBACKEND::kcache_epflush kcache_epflush_gt(dom, in, out_gt);
+  OPTBACKEND::kcache_epflush kcache_epflush_gt(dom, in, out_opt);
   cxxnaive::kcache_epflush kcache_epflush_naive(dom, in, out_naive);
 
   kcache_epflush_gt.run();
   kcache_epflush_naive.run();
 
-  ASSERT_TRUE(verif.verify(out_gt, out_naive));
+  ASSERT_TRUE(verif.verify(out_opt, out_naive));
 }
