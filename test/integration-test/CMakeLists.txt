@@ -124,7 +124,7 @@ function(cuda_compile_generated_examples)
         add_dependencies(${example}_benchmarks_${backend}_cuda gtclang ${example}_c++-naive_codegen ${example}_${backend}_codegen)
       endif()
       if(${backend} STREQUAL gridtools)
-        target_compile_definitions(${example}_benchmarks_${backend} PRIVATE -DBACKEND_CUDA)
+        target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DBACKEND_CUDA)
       endif()
 
       target_link_libraries(${example}_benchmarks_${backend}_cuda gtest ${CUDA_CUDART_LIBRARY})
