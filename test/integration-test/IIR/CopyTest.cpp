@@ -14,21 +14,17 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-// RUN: %gtclang% %file% -write-sir -fno-codegen -o %filename%_gen.cpp
-// EXPECTED_FILE: OUTPUT:%filename%_gen.sir REFERENCE:%filename%_gen_ref.sir IGNORE:filename
+// RUN: %gtclang% %file% -fserialize-iir -fno-codegen -o %filename%_gen.cpp
+// EXPECTED_FILE: OUTPUT:%filename%.iir REFERENCE:%filename%_ref.iir IGNORE:filename
 
 #include "gridtools/clang_dsl.hpp"
 
 using namespace gridtools::clang;
 
 stencil Test {
-  storage a, b;
+  storage field_a, field_b;
 
   Do {
-    vertical_region(k_start, k_end) {
-      b = a(i + 1) + a[i - 1] + a(i, j + 1) + a[j - 1, k] + a[k - 1] + a[j + 1, k + 1];
-    }
+    vertical_region(k_start, k_end) { field_a = field_b; }
   }
 };
-
-int main() {}

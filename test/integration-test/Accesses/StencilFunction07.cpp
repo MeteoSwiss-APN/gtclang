@@ -22,7 +22,7 @@ using namespace gridtools::clang;
 
 stencil_function foo {
   storage in;
-  Do {}
+  Do { in = in; }
 };
 
 stencil Test {
