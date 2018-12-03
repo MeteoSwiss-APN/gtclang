@@ -6,10 +6,10 @@
    "31": "__local_fn_31"
   },
   "exprIDToAccessID": {
-   "32": 31,
    "29": 13,
    "22": 13,
-   "23": 14
+   "23": 14,
+   "32": 31
   },
   "stmtIDToAccessID": {
    "33": 31
@@ -73,12 +73,12 @@
   },
   "fieldnameToBoundaryCondition": {},
   "fieldIDtoLegalDimensions": {
-   "13": {
+   "14": {
     "int1": 1,
     "int2": 1,
     "int3": 1
    },
-   "14": {
+   "13": {
     "int1": 1,
     "int2": 1,
     "int3": 1
@@ -313,5 +313,5 @@
    }
   ]
  },
- "filename": "/home/tobias/Documents/Work/gtclang/test/integration-test/IIR/StencilFnCallTest.cpp"
+ "filename": "StencilFnCallTest.cpp"
 }

@@ -1,8 +1,8 @@
 {
  "metadata": {
   "accessIDToName": {
-   "10": "field_b",
-   "9": "field_a"
+   "9": "field_a",
+   "10": "field_b"
   },
   "exprIDToAccessID": {
    "17": 10,
