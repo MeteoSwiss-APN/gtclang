@@ -171,6 +171,7 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
                                      dawn::SIRSerializer::SerializationKind::SK_Byte);
 
     } else {
+
       dawn_unreachable("Unknown SIRFormat option");
     }
   }
