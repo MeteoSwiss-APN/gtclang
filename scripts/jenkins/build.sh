@@ -27,6 +27,28 @@ function help {
   exit 1
 }
 
+function check_output() {
+  local outfile=$1
+  # check if generation has been successfull
+  set +e
+  res=`egrep -i '^100% tests passed, 0 tests failed out of ' ${outfile}`
+  set -e
+
+  if [ $? -ne 0 ] ; then
+    # echo outfileput to stdoutfile
+    test -f ${outfile} || echo "batch job outfileput file missing"
+    echo "=== ${outfile} BEGIN ==="
+    cat ${outfile} | /bin/sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+    echo "=== ${outfile} END ==="
+    # abort
+    echo "problem with unittests detected"
+    exit 1
+  else
+    echo "Unittests successfull (see ${outfile} for detailed log)"
+    cat ${outfile}
+  fi
+}
+
 echo "####### executing: $0 $* (PID=$$ HOST=$HOSTNAME TIME=`date '+%D %H:%M:%S'`)"
 
 ENABLE_GPU=false
@@ -90,5 +112,27 @@ fi
 
 nice make -j6 install
 
-# Run unittests
-ctest -VV -C ${build_type} --output-on-failure --force-new-ctest-process  
+if [ ! -d buildenv ]; then
+  git clone https://github.com/C2SM-RCM/buildenv.git
+fi
+envloc=${build_dir}/buildenv
+# load slurm tools
+if [ ! -f ${envloc}/slurmTools.sh ] ; then
+    echo "could not find ${envloc}/env/slurmTools.sh"
+    exit 1
+fi
+. ${envloc}/slurmTools.sh
+
+
+slurm_script_template=${base_dir}/scripts/jenkins/submit.${myhost}.slurm
+slurm_script=${build_dir}/submit.${myhost}.slurm.job
+
+cp ${slurm_script_template} ${slurm_script} 
+/bin/sed -i 's|<BUILD_DIR>|'"${build_dir}"'|g' ${slurm_script}
+/bin/sed -i 's|<CMD>|'"ctest -VV  -C ${build_type} --output-on-failure --force-new-ctest-process"'|g' ${slurm_script}
+
+launch_job ${slurm_script} 7200 &
+# wait for all jobs to finish
+wait
+out=${build_dir}/test.log
+check_output ${out}
