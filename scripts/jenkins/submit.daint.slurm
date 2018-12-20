@@ -16,6 +16,6 @@ echo $LD_LIBRARY_PATH
 
 BUILD_DIR=<BUILD_DIR>
 cd $BUILD_DIR
-
+<ENV>
 <CMD>
 

@@ -32,7 +32,6 @@ function check_output() {
   # check if generation has been successfull
   set +e
   res=`egrep -i '^100% tests passed, 0 tests failed out of ' ${outfile}`
-  set -e
 
   if [ $? -ne 0 ] ; then
     # echo outfileput to stdoutfile
@@ -47,6 +46,7 @@ function check_output() {
     echo "Unittests successfull (see ${outfile} for detailed log)"
     cat ${outfile}
   fi
+  set -e
 }
 
 echo "####### executing: $0 $* (PID=$$ HOST=$HOSTNAME TIME=`date '+%D %H:%M:%S'`)"
