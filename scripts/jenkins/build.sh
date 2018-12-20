@@ -5,7 +5,7 @@ set -e
 BASEPATH_SCRIPT=$(dirname "${0}")
 source ${BASEPATH_SCRIPT}/machine_env.sh
 source ${BASEPATH_SCRIPT}/env_${myhost}.sh
-env_file=${BASEPATH_SCRIPT}/env_${myhost}.sh
+env_file=`realpath ${BASEPATH_SCRIPT}`/env_${myhost}.sh
 
 if [ -z ${SLURM_RESOURCES+x} ]; then 
   echo "SLURM_RESOURCES is unset"
@@ -88,7 +88,7 @@ fi
 
 base_dir=$(pwd)
 build_dir=${base_dir}/bundle/build
-
+echo $base_dir $build_dir $env_file "KKK"
 mkdir -p $build_dir
 cd $build_dir
 
