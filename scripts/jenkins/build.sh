@@ -5,7 +5,7 @@ set -e
 BASEPATH_SCRIPT=$(dirname "${0}")
 source ${BASEPATH_SCRIPT}/machine_env.sh
 source ${BASEPATH_SCRIPT}/env_${myhost}.sh
-
+env_file=${BASEPATH_SCRIPT}/env_${myhost}.sh
 
 if [ -z ${SLURM_RESOURCES+x} ]; then 
   echo "SLURM_RESOURCES is unset"
@@ -129,6 +129,7 @@ slurm_script=${build_dir}/submit.${myhost}.slurm.job
 
 cp ${slurm_script_template} ${slurm_script} 
 /bin/sed -i 's|<BUILD_DIR>|'"${build_dir}"'|g' ${slurm_script}
+/bin/sed -i 's|<ENV>|'"source ${env_file}"'|g' ${slurm_script}
 /bin/sed -i 's|<CMD>|'"ctest -VV  -C ${build_type} --output-on-failure --force-new-ctest-process"'|g' ${slurm_script}
 
 launch_job ${slurm_script} 7200 &

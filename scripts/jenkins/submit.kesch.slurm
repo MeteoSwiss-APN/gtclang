@@ -25,7 +25,7 @@ export MV2_USE_GPUDIRECT=0 #with this perf are ok
 
 BUILD_DIR=<BUILD_DIR>
 cd $BUILD_DIR
-
+<ENV>
 <CMD>
 
 ########################################################
