@@ -111,18 +111,6 @@ fi
 
 nice make -j6 install
 
-if [ ! -d buildenv ]; then
-  git clone https://github.com/C2SM-RCM/buildenv.git
-fi
-envloc=${build_dir}/buildenv
-# load slurm tools
-if [ ! -f ${envloc}/slurmTools.sh ] ; then
-    echo "could not find ${envloc}/env/slurmTools.sh"
-    exit 1
-fi
-. ${envloc}/slurmTools.sh
-
-
 slurm_script_template=${base_dir}/scripts/jenkins/submit.${myhost}.slurm
 slurm_script=${build_dir}/submit.${myhost}.slurm.job
 
@@ -131,8 +119,7 @@ cp ${slurm_script_template} ${slurm_script}
 /bin/sed -i 's|<ENV>|'"source ${env_file}"'|g' ${slurm_script}
 /bin/sed -i 's|<CMD>|'"ctest -VV  -C ${build_type} --output-on-failure --force-new-ctest-process"'|g' ${slurm_script}
 
-launch_job ${slurm_script} 7200 &
+sbatch --wait ${slurm_script}
 # wait for all jobs to finish
-wait
 out=${build_dir}/test.log
 check_output ${out}
