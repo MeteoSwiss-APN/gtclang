@@ -88,7 +88,6 @@ fi
 
 base_dir=$(pwd)
 build_dir=${base_dir}/bundle/build
-echo $base_dir $build_dir $env_file "KKK"
 mkdir -p $build_dir
 cd $build_dir
 
