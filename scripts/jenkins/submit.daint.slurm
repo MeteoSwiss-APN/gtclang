@@ -8,7 +8,7 @@
 #SBATCH -C gpu
 #SBATCH --cpus-per-task=1
 #SBATCH --account=c14
-#SBATCH --partition=debug
+#SBATCH --partition=normal
 
 echo $LD_LIBRARY_PATH
 
