@@ -15,3 +15,4 @@ export CC=`which gcc`
 export SLURM_RESOURCES=('--gres=gpu:1 -C gpu --account=c14')
 export SLURM_PARTITION="debug"
 export GPU_DEVICE="P100"
+export PROTOBUFDIR="/scratch/snx3000/jenkins/workspace/protobuf/slave/daint/install/lib64/cmake/protobuf/"

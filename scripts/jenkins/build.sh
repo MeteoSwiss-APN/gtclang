@@ -1,5 +1,20 @@
 #!/bin/bash
 
+
+function help {
+  echo -e "Basic usage:$SCRIPT "\\n
+  echo -e "The following switches are recognized. $OFF "
+  echo -e "-i sets the installation directory"
+  echo -e "-g gpu build"
+  echo -e "-c cuda build" 
+  echo -e "-h Shows this help"
+  echo -e "-d <path> path to dawn"
+  exit 1
+}
+
+
+echo "####### executing: $0 $* (PID=$$ HOST=$HOSTNAME TIME=`date '+%D %H:%M:%S'`)"
+
 set -e
 
 BASEPATH_SCRIPT=$(dirname "${0}")
@@ -15,42 +30,6 @@ if [ -z ${myhost+x} ]; then
 fi
 
 SCRIPT=`basename $0`
-
-function help {
-  echo -e "Basic usage:$SCRIPT "\\n
-  echo -e "The following switches are recognized. $OFF "
-  echo -e "-i sets the installation directory"
-  echo -e "-g gpu build"
-  echo -e "-c cuda build" 
-  echo -e "-h Shows this help"
-  echo -e "-d <path> path to dawn"
-  exit 1
-}
-
-function check_output() {
-  local outfile=$1
-  # check if generation has been successfull
-  set +e
-  res=`egrep -i '^100% tests passed, 0 tests failed out of ' ${outfile}`
-
-  if [ $? -ne 0 ] ; then
-    # echo outfileput to stdoutfile
-    test -f ${outfile} || echo "batch job outfileput file missing"
-    echo "=== ${outfile} BEGIN ==="
-    cat ${outfile} | /bin/sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
-    echo "=== ${outfile} END ==="
-    # abort
-    echo "problem with unittests detected"
-    exit 1
-  else
-    echo "Unittests successfull (see ${outfile} for detailed log)"
-    cat ${outfile}
-  fi
-  set -e
-}
-
-echo "####### executing: $0 $* (PID=$$ HOST=$HOSTNAME TIME=`date '+%D %H:%M:%S'`)"
-
 ENABLE_GPU=false
 
 while getopts i:gcd: flag; do
@@ -77,14 +56,6 @@ while getopts i:gcd: flag; do
   esac
 done
 
-if [ ${myhost} == "kesch" ]; then
-  PROTOBUFDIR="/scratch/jenkins/workspace/protobuf/slave/kesch/install/lib64/cmake/protobuf/"
-elif [ ${myhost} == "daint" ]; then
-  PROTOBUFDIR="/scratch/snx3000/jenkins/workspace/protobuf/slave/daint/install/lib64/cmake/protobuf/"
-else
-  echo" Error Machine not found: ${myhost}"
-  exit 1
-fi
 
 base_dir=$(pwd)
 build_dir=${base_dir}/bundle/build
@@ -120,6 +91,6 @@ cp ${slurm_script_template} ${slurm_script}
 /bin/sed -i 's|<CMD>|'"ctest -VV  -C ${build_type} --output-on-failure --force-new-ctest-process"'|g' ${slurm_script}
 
 sbatch --wait ${slurm_script}
-# wait for all jobs to finish
-out=${build_dir}/test.log
-check_output ${out}
+# # wait for all jobs to finish
+# out=${build_dir}/test.log
+# check_output ${out}

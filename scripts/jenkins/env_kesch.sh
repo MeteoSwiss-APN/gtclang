@@ -14,4 +14,5 @@ export LLVM_DIR=/scratch/cosuna/software/clang/clang-3.8.1/install/
 export SLURM_RESOURCES=('--gres=gpu:1')
 export SLURM_PARTITION="debug"
 export GPU_DEVICE="K80"
+export PROTOBUFDIR="/scratch/jenkins/workspace/protobuf/slave/kesch/install/lib64/cmake/protobuf/"
 
