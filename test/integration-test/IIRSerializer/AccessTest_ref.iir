@@ -5,13 +5,13 @@
    "20": "b"
   },
   "exprIDToAccessID": {
+   "37": 19,
+   "38": 20,
    "32": 19,
    "33": 19,
    "34": 19,
    "35": 19,
-   "36": 19,
-   "37": 19,
-   "38": 20
+   "36": 19
   },
   "stmtIDToAccessID": {},
   "literalIDToName": {},
@@ -26,9 +26,7 @@
   "temporaryFieldIDs": [],
   "globalVariableIDs": [],
   "versionedFields": {
-   "variableVersionMap": {},
-   "versionIDs": [],
-   "versionIDToOriginalID": {}
+   "variableVersionMap": {}
   },
   "stencilDescStatements": [
    {
@@ -102,257 +100,255 @@
          {
           "stmtaccesspairs": [
            {
-            "statement": {
-             "ASTStmt": {
-              "expr_stmt": {
-               "expr": {
-                "assignment_expr": {
-                 "left": {
-                  "field_access_expr": {
-                   "name": "b",
-                   "offset": [
-                    0,
-                    0,
-                    0
-                   ],
-                   "argument_map": [
-                    -1,
-                    -1,
-                    -1
-                   ],
-                   "argument_offset": [
-                    0,
-                    0,
-                    0
-                   ],
-                   "negate_offset": false,
-                   "loc": {
-                    "Line": 28,
-                    "Column": 48
-                   },
-                   "ID": 38
-                  }
-                 },
-                 "op": "=",
-                 "right": {
-                  "binary_operator": {
-                   "left": {
-                    "binary_operator": {
-                     "left": {
-                      "binary_operator": {
-                       "left": {
-                        "binary_operator": {
-                         "left": {
-                          "binary_operator": {
-                           "left": {
-                            "field_access_expr": {
-                             "name": "a",
-                             "offset": [
-                              1,
-                              0,
-                              0
-                             ],
-                             "argument_map": [
-                              -1,
-                              -1,
-                              -1
-                             ],
-                             "argument_offset": [
-                              0,
-                              0,
-                              0
-                             ],
-                             "negate_offset": false,
-                             "loc": {
-                              "Line": 29,
-                              "Column": 9
-                             },
-                             "ID": 32
-                            }
-                           },
-                           "op": "+",
-                           "right": {
-                            "field_access_expr": {
-                             "name": "a",
-                             "offset": [
-                              -1,
-                              0,
-                              0
-                             ],
-                             "argument_map": [
-                              -1,
-                              -1,
-                              -1
-                             ],
-                             "argument_offset": [
-                              0,
-                              0,
-                              0
-                             ],
-                             "negate_offset": false,
-                             "loc": {
-                              "Line": 29,
-                              "Column": 20
-                             },
-                             "ID": 33
-                            }
-                           },
-                           "loc": {
-                            "Line": 29,
-                            "Column": 9
-                           },
-                           "ID": 31
-                          }
-                         },
-                         "op": "+",
-                         "right": {
-                          "field_access_expr": {
-                           "name": "a",
-                           "offset": [
-                            0,
-                            1,
-                            0
-                           ],
-                           "argument_map": [
-                            -1,
-                            -1,
-                            -1
-                           ],
-                           "argument_offset": [
-                            0,
-                            0,
-                            0
-                           ],
-                           "negate_offset": false,
-                           "loc": {
-                            "Line": 29,
-                            "Column": 31
-                           },
-                           "ID": 34
-                          }
-                         },
-                         "loc": {
-                          "Line": 29,
-                          "Column": 9
-                         },
-                         "ID": 30
-                        }
-                       },
-                       "op": "+",
-                       "right": {
-                        "field_access_expr": {
-                         "name": "a",
-                         "offset": [
-                          0,
-                          -1,
-                          0
-                         ],
-                         "argument_map": [
-                          -1,
-                          -1,
-                          -1
-                         ],
-                         "argument_offset": [
-                          0,
-                          0,
-                          0
-                         ],
-                         "negate_offset": false,
-                         "loc": {
-                          "Line": 29,
-                          "Column": 42
-                         },
-                         "ID": 35
-                        }
-                       },
-                       "loc": {
-                        "Line": 29,
-                        "Column": 9
-                       },
-                       "ID": 29
-                      }
-                     },
-                     "op": "+",
-                     "right": {
-                      "field_access_expr": {
-                       "name": "a",
-                       "offset": [
-                        0,
-                        0,
-                        -1
-                       ],
-                       "argument_map": [
-                        -1,
-                        -1,
-                        -1
-                       ],
-                       "argument_offset": [
-                        0,
-                        0,
-                        0
-                       ],
-                       "negate_offset": false,
-                       "loc": {
-                        "Line": 29,
-                        "Column": 53
-                       },
-                       "ID": 36
-                      }
-                     },
-                     "loc": {
-                      "Line": 29,
-                      "Column": 9
-                     },
-                     "ID": 28
-                    }
-                   },
-                   "op": "+",
-                   "right": {
-                    "field_access_expr": {
-                     "name": "a",
-                     "offset": [
-                      0,
-                      1,
-                      1
-                     ],
-                     "argument_map": [
-                      -1,
-                      -1,
-                      -1
-                     ],
-                     "argument_offset": [
-                      0,
-                      0,
-                      0
-                     ],
-                     "negate_offset": false,
-                     "loc": {
-                      "Line": 29,
-                      "Column": 64
-                     },
-                     "ID": 37
-                    }
-                   },
-                   "loc": {
-                    "Line": 29,
-                    "Column": 9
-                   },
-                   "ID": 27
-                  }
-                 },
-                 "loc": {
-                  "Line": 28,
-                  "Column": 48
-                 },
-                 "ID": 39
-                }
-               },
-               "loc": {
-                "Line": 28,
-                "Column": 48
-               },
-               "ID": 26
-              }
+            "ASTStmt": {
+             "expr_stmt": {
+              "expr": {
+               "assignment_expr": {
+                "left": {
+                 "field_access_expr": {
+                  "name": "b",
+                  "offset": [
+                   0,
+                   0,
+                   0
+                  ],
+                  "argument_map": [
+                   -1,
+                   -1,
+                   -1
+                  ],
+                  "argument_offset": [
+                   0,
+                   0,
+                   0
+                  ],
+                  "negate_offset": false,
+                  "loc": {
+                   "Line": 28,
+                   "Column": 48
+                  },
+                  "ID": 38
+                 }
+                },
+                "op": "=",
+                "right": {
+                 "binary_operator": {
+                  "left": {
+                   "binary_operator": {
+                    "left": {
+                     "binary_operator": {
+                      "left": {
+                       "binary_operator": {
+                        "left": {
+                         "binary_operator": {
+                          "left": {
+                           "field_access_expr": {
+                            "name": "a",
+                            "offset": [
+                             1,
+                             0,
+                             0
+                            ],
+                            "argument_map": [
+                             -1,
+                             -1,
+                             -1
+                            ],
+                            "argument_offset": [
+                             0,
+                             0,
+                             0
+                            ],
+                            "negate_offset": false,
+                            "loc": {
+                             "Line": 29,
+                             "Column": 9
+                            },
+                            "ID": 32
+                           }
+                          },
+                          "op": "+",
+                          "right": {
+                           "field_access_expr": {
+                            "name": "a",
+                            "offset": [
+                             -1,
+                             0,
+                             0
+                            ],
+                            "argument_map": [
+                             -1,
+                             -1,
+                             -1
+                            ],
+                            "argument_offset": [
+                             0,
+                             0,
+                             0
+                            ],
+                            "negate_offset": false,
+                            "loc": {
+                             "Line": 29,
+                             "Column": 20
+                            },
+                            "ID": 33
+                           }
+                          },
+                          "loc": {
+                           "Line": 29,
+                           "Column": 9
+                          },
+                          "ID": 31
+                         }
+                        },
+                        "op": "+",
+                        "right": {
+                         "field_access_expr": {
+                          "name": "a",
+                          "offset": [
+                           0,
+                           1,
+                           0
+                          ],
+                          "argument_map": [
+                           -1,
+                           -1,
+                           -1
+                          ],
+                          "argument_offset": [
+                           0,
+                           0,
+                           0
+                          ],
+                          "negate_offset": false,
+                          "loc": {
+                           "Line": 29,
+                           "Column": 31
+                          },
+                          "ID": 34
+                         }
+                        },
+                        "loc": {
+                         "Line": 29,
+                         "Column": 9
+                        },
+                        "ID": 30
+                       }
+                      },
+                      "op": "+",
+                      "right": {
+                       "field_access_expr": {
+                        "name": "a",
+                        "offset": [
+                         0,
+                         -1,
+                         0
+                        ],
+                        "argument_map": [
+                         -1,
+                         -1,
+                         -1
+                        ],
+                        "argument_offset": [
+                         0,
+                         0,
+                         0
+                        ],
+                        "negate_offset": false,
+                        "loc": {
+                         "Line": 29,
+                         "Column": 42
+                        },
+                        "ID": 35
+                       }
+                      },
+                      "loc": {
+                       "Line": 29,
+                       "Column": 9
+                      },
+                      "ID": 29
+                     }
+                    },
+                    "op": "+",
+                    "right": {
+                     "field_access_expr": {
+                      "name": "a",
+                      "offset": [
+                       0,
+                       0,
+                       -1
+                      ],
+                      "argument_map": [
+                       -1,
+                       -1,
+                       -1
+                      ],
+                      "argument_offset": [
+                       0,
+                       0,
+                       0
+                      ],
+                      "negate_offset": false,
+                      "loc": {
+                       "Line": 29,
+                       "Column": 53
+                      },
+                      "ID": 36
+                     }
+                    },
+                    "loc": {
+                     "Line": 29,
+                     "Column": 9
+                    },
+                    "ID": 28
+                   }
+                  },
+                  "op": "+",
+                  "right": {
+                   "field_access_expr": {
+                    "name": "a",
+                    "offset": [
+                     0,
+                     1,
+                     1
+                    ],
+                    "argument_map": [
+                     -1,
+                     -1,
+                     -1
+                    ],
+                    "argument_offset": [
+                     0,
+                     0,
+                     0
+                    ],
+                    "negate_offset": false,
+                    "loc": {
+                     "Line": 29,
+                     "Column": 64
+                    },
+                    "ID": 37
+                   }
+                  },
+                  "loc": {
+                   "Line": 29,
+                   "Column": 9
+                  },
+                  "ID": 27
+                 }
+                },
+                "loc": {
+                 "Line": 28,
+                 "Column": 48
+                },
+                "ID": 39
+               }
+              },
+              "loc": {
+               "Line": 28,
+               "Column": 48
+              },
+              "ID": 26
              }
             },
             "callerAccesses": {
@@ -409,12 +405,12 @@
       ],
       "loopOrder": "Parallel",
       "multiStageID": 42,
-      "multiStageCaches": {}
+      "Caches": {}
      }
     ],
     "stencilID": 21,
     "attr": {
-     "attrBits": 0
+     "attributes": []
     }
    }
   ]

@@ -21,9 +21,7 @@
   "temporaryFieldIDs": [],
   "globalVariableIDs": [],
   "versionedFields": {
-   "variableVersionMap": {},
-   "versionIDs": [],
-   "versionIDToOriginalID": {}
+   "variableVersionMap": {}
   },
   "stencilDescStatements": [
    {
@@ -68,12 +66,12 @@
   },
   "fieldnameToBoundaryCondition": {},
   "fieldIDtoLegalDimensions": {
-   "9": {
+   "10": {
     "int1": 1,
     "int2": 1,
     "int3": 1
    },
-   "10": {
+   "9": {
     "int1": 1,
     "int2": 1,
     "int3": 1
@@ -97,77 +95,75 @@
          {
           "stmtaccesspairs": [
            {
-            "statement": {
-             "ASTStmt": {
-              "expr_stmt": {
-               "expr": {
-                "assignment_expr": {
-                 "left": {
-                  "field_access_expr": {
-                   "name": "field_a",
-                   "offset": [
-                    0,
-                    0,
-                    0
-                   ],
-                   "argument_map": [
-                    -1,
-                    -1,
-                    -1
-                   ],
-                   "argument_offset": [
-                    0,
-                    0,
-                    0
-                   ],
-                   "negate_offset": false,
-                   "loc": {
-                    "Line": 28,
-                    "Column": 50
-                   },
-                   "ID": 18
-                  }
-                 },
-                 "op": "=",
-                 "right": {
-                  "field_access_expr": {
-                   "name": "field_b",
-                   "offset": [
-                    0,
-                    0,
-                    0
-                   ],
-                   "argument_map": [
-                    -1,
-                    -1,
-                    -1
-                   ],
-                   "argument_offset": [
-                    0,
-                    0,
-                    0
-                   ],
-                   "negate_offset": false,
-                   "loc": {
-                    "Line": 28,
-                    "Column": 60
-                   },
-                   "ID": 17
-                  }
-                 },
-                 "loc": {
-                  "Line": 28,
-                  "Column": 50
-                 },
-                 "ID": 19
-                }
-               },
-               "loc": {
-                "Line": 28,
-                "Column": 50
-               },
-               "ID": 16
-              }
+            "ASTStmt": {
+             "expr_stmt": {
+              "expr": {
+               "assignment_expr": {
+                "left": {
+                 "field_access_expr": {
+                  "name": "field_a",
+                  "offset": [
+                   0,
+                   0,
+                   0
+                  ],
+                  "argument_map": [
+                   -1,
+                   -1,
+                   -1
+                  ],
+                  "argument_offset": [
+                   0,
+                   0,
+                   0
+                  ],
+                  "negate_offset": false,
+                  "loc": {
+                   "Line": 28,
+                   "Column": 50
+                  },
+                  "ID": 18
+                 }
+                },
+                "op": "=",
+                "right": {
+                 "field_access_expr": {
+                  "name": "field_b",
+                  "offset": [
+                   0,
+                   0,
+                   0
+                  ],
+                  "argument_map": [
+                   -1,
+                   -1,
+                   -1
+                  ],
+                  "argument_offset": [
+                   0,
+                   0,
+                   0
+                  ],
+                  "negate_offset": false,
+                  "loc": {
+                   "Line": 28,
+                   "Column": 60
+                  },
+                  "ID": 17
+                 }
+                },
+                "loc": {
+                 "Line": 28,
+                 "Column": 50
+                },
+                "ID": 19
+               }
+              },
+              "loc": {
+               "Line": 28,
+               "Column": 50
+              },
+              "ID": 16
              }
             },
             "callerAccesses": {
@@ -224,12 +220,12 @@
       ],
       "loopOrder": "Parallel",
       "multiStageID": 22,
-      "multiStageCaches": {}
+      "Caches": {}
      }
     ],
     "stencilID": 11,
     "attr": {
-     "attrBits": 0
+     "attributes": []
     }
    }
   ]
