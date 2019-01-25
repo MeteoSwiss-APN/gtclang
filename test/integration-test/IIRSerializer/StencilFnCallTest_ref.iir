@@ -1,19 +1,14 @@
 {
  "metadata": {
   "accessIDToName": {
-   "14": "b",
-   "31": "__local_fn_31",
-   "13": "a"
+   "13": "a",
+   "14": "b"
   },
   "exprIDToAccessID": {
-   "29": 13,
    "22": 13,
-   "23": 14,
-   "32": 31
+   "23": 14
   },
-  "stmtIDToAccessID": {
-   "33": 31
-  },
+  "stmtIDToAccessID": {},
   "literalIDToName": {},
   "fieldAccessIDs": [
    13,
@@ -98,93 +93,6 @@
           "stmtaccesspairs": [
            {
             "ASTStmt": {
-             "var_decl_stmt": {
-              "type": {
-               "builtin_type": {
-                "type_id": "Float"
-               },
-               "is_const": true,
-               "is_volatile": false
-              },
-              "name": "__local_fn_31",
-              "dimension": 0,
-              "op": "=",
-              "init_list": [
-               {
-                "field_access_expr": {
-                 "name": "a",
-                 "offset": [
-                  0,
-                  0,
-                  0
-                 ],
-                 "argument_map": [
-                  -1,
-                  -1,
-                  -1
-                 ],
-                 "argument_offset": [
-                  0,
-                  0,
-                  0
-                 ],
-                 "negate_offset": false,
-                 "loc": {
-                  "Line": 26,
-                  "Column": 25
-                 },
-                 "ID": 29
-                }
-               }
-              ],
-              "loc": {
-               "Line": -1,
-               "Column": -1
-              },
-              "ID": 33
-             }
-            },
-            "accesses": {
-             "writeAccess": {
-              "31": {
-               "extents": [
-                {
-                 "minus": 0,
-                 "plus": 0
-                },
-                {
-                 "minus": 0,
-                 "plus": 0
-                },
-                {
-                 "minus": 0,
-                 "plus": 0
-                }
-               ]
-              }
-             },
-             "readAccess": {
-              "13": {
-               "extents": [
-                {
-                 "minus": 0,
-                 "plus": 0
-                },
-                {
-                 "minus": 0,
-                 "plus": 0
-                },
-                {
-                 "minus": 0,
-                 "plus": 0
-                }
-               ]
-              }
-             }
-            }
-           },
-           {
-            "ASTStmt": {
              "expr_stmt": {
               "expr": {
                "assignment_expr": {
@@ -216,14 +124,41 @@
                 },
                 "op": "=",
                 "right": {
-                 "var_access_expr": {
-                  "name": "__local_fn_31",
-                  "is_external": false,
+                 "stencil_fun_call_expr": {
+                  "callee": "fn",
+                  "arguments": [
+                   {
+                    "field_access_expr": {
+                     "name": "a",
+                     "offset": [
+                      0,
+                      0,
+                      0
+                     ],
+                     "argument_map": [
+                      -1,
+                      -1,
+                      -1
+                     ],
+                     "argument_offset": [
+                      0,
+                      0,
+                      0
+                     ],
+                     "negate_offset": false,
+                     "loc": {
+                      "Line": 32,
+                      "Column": 66
+                     },
+                     "ID": 22
+                    }
+                   }
+                  ],
                   "loc": {
-                   "Line": -1,
-                   "Column": -1
+                   "Line": 32,
+                   "Column": 63
                   },
-                  "ID": 32
+                  "ID": 21
                  }
                 },
                 "loc": {
@@ -260,7 +195,7 @@
               }
              },
              "readAccess": {
-              "31": {
+              "13": {
                "extents": [
                 {
                  "minus": 0,
@@ -304,5 +239,5 @@
    }
   ]
  },
- "filename": "StencilFnCallTest.cpp"
+ "filename": "/home/tobias/Documents/Work/gtclang/test/integration-test/IIRSerializer/StencilFnCallTest.cpp"
 }
