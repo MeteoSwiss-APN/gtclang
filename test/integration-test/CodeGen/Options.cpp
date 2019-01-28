@@ -12,7 +12,7 @@
 //  This file is distributed under the MIT License (MIT).
 //  See LICENSE.txt for details.
 //
-//===------------------------------------------------------------------------------------------===//#include "test/integration-test/CodeGen/Options.hpp"
+//===------------------------------------------------------------------------------------------===//
 #include "test/integration-test/CodeGen/Options.hpp"
 
 namespace dawn {
