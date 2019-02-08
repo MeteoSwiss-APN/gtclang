@@ -90,8 +90,8 @@ yoda_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-    GIT_REPOSITORY "git@github.com:twicki/dawn.git"
-    GIT_TAG "Serializer_III" 
+    GIT_REPOSITORY "git@github.com:MeteoSwiss-APN/dawn.git"
+    GIT_TAG "master 
     YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
