@@ -92,9 +92,12 @@ function(compile_generated_examples)
       add_executable(${example}_benchmarks_${backend} "${cwd}/CodeGen/${example}_benchmark.cpp" "${cwd}/CodeGen/TestMain.cpp" "${cwd}/CodeGen/Options.cpp")
       target_include_directories(${example}_benchmarks_${backend} PUBLIC ${include_dirs})
       target_compile_definitions(${example}_benchmarks_${backend} PRIVATE -DOPTBACKEND=${backend})
+      if(${backend} STREQUAL gridtools)
+        target_compile_definitions(${example}_benchmarks_${backend} PRIVATE -DBACKEND_MC)
+      endif()
       add_dependencies(${example}_benchmarks_${backend} gtclang ${example}_c++-naive_codegen ${example}_${backend}_codegen)
       target_link_libraries(${example}_benchmarks_${backend} ${GTCLANG_UNITTEST_EXTERNAL_LIBRARIES} gtest)
-  
+
 #      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
 #      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cpp APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
   
@@ -120,12 +123,13 @@ function(cuda_compile_generated_examples)
       else()
         add_dependencies(${example}_benchmarks_${backend}_cuda gtclang ${example}_c++-naive_codegen ${example}_${backend}_codegen)
       endif()
+      if(${backend} STREQUAL gridtools)
+        target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DBACKEND_CUDA)
+      endif()
+
       target_link_libraries(${example}_benchmarks_${backend}_cuda gtest ${CUDA_CUDART_LIBRARY})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DOPTBACKEND=${backend})
-
-#      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_${backend}.cpp)
-#      set_property(SOURCE ${cwd}/CodeGen/${example}_benchmark.cu APPEND PROPERTY OBJECT_DEPENDS ${cwd}/CodeGen/generated/${example}_c++-naive.cpp)
 
       add_custom_target(
         dummy_${example}_${backend}
@@ -159,6 +163,7 @@ set(directories
   ${cwd}/PassSetNonTempCaches
   ${cwd}/PassSetBoundaryCondition
   ${cwd}/SIR
+  ${cwd}/IIRSerializer
 )
 
 list(APPEND compiler_flags -std=c++11 -O2)
@@ -184,11 +189,13 @@ yoda_add_custom_dummy_target(NAME GTClangQtCreatorParseProjectCodeGenTest
 
 # Codegen tests require GridTools
 if(GTCLANG_HAS_GRIDTOOLS)
-  set(codegen_examples copy_stencil conditional_stencil coriolis_stencil hori_diff_stencil_01 hori_diff_stencil_02
+  set(codegen_examples copy_stencil lap conditional_stencil coriolis_stencil hori_diff_stencil_01 hori_diff_stencil_02
       hori_diff_type2_stencil hd_smagorinsky intervals_stencil globals_stencil stencil_functions
       nested_stencil_functions stencil_desc_ast boundary_condition boundary_condition_2 tridiagonal_solve
-      kparallel_solver)
-  set(cuda_codegen_examples intervals01 intervals02 intervals03)
+      kparallel_solver asymmetric)
+  # specific examples for cuda backend
+  set(cuda_codegen_examples intervals01 intervals02 intervals03 local_kcache kcache_fill kcache_fill_kparallel
+      kcache_fill_backward kcache_flush kcache_epflush)
 
   set(codegen_example_benchmarks)
 
@@ -197,6 +204,12 @@ if(GTCLANG_HAS_GRIDTOOLS)
   
   ADD_COMPILER_FLAG_TO_EXAMPLE("boundary_condition" "-max-fields=2")
   ADD_COMPILER_FLAG_TO_EXAMPLE("boundary_condition" "-fsplit-stencils")
+
+  ADD_COMPILER_FLAG_TO_EXAMPLE("intervals02" "-disable-kcaches")
+  ADD_COMPILER_FLAG_TO_EXAMPLE("intervals03" "-disable-kcaches")
+
+  ADD_COMPILER_FLAG_TO_EXAMPLE("lap" "-fpass-tmp-to-function")
+
   set(include_dirs)
   list(APPEND include_dirs "${CMAKE_SOURCE_DIR}/src")
   list(APPEND include_dirs "${GRIDTOOLS_INCLUDE_DIRS}")

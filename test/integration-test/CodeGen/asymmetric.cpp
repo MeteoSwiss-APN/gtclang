@@ -13,11 +13,23 @@
 //  See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
-#include "test/integration-test/CodeGen/Options.hpp"
 
-namespace dawn {
-Options& Options::getInstance() {
-  static Options instance;
-  return instance;
-}
-}
+#include "gridtools/clang_dsl.hpp"
+using namespace gridtools::clang;
+
+stencil asymmetric_stencil {
+  storage in, out;
+
+  var tmp;
+
+  Do {
+    vertical_region(k_start, k_start) {
+      tmp = in[i + 1] + in[j - 2];
+      out = 1;
+    }
+    vertical_region(k_start + 1, k_end) {
+      tmp = in[i - 3] + in[j + 1];
+      out = tmp[k - 1];
+    }
+  }
+};
