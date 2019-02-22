@@ -31,15 +31,26 @@ endif()
 project(gtclang-all C CXX)
 enable_testing()
 cmake_minimum_required(VERSION 3.8.1)
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.3)
+        message(FATAL_ERROR "GCC version must be at least 5.3!")
+    endif()
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0)
+        message(FATAL_ERROR "Clang version must be at least 6.0!")
+    endif()
+else()
+    message(WARNING "You are using an unsupported compiler! Compilation has only been tested with Clang and GCC.")
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
 include(GTClangCloneRepository)
 
-set(GTCLANG_YODA_GIT_URL "https:///github.com/Meteoswiss-APN/yoda.git" 
+set(GTCLANG_YODA_GIT_URL "https:///github.com/MeteoSwiss-APN/yoda.git" 
     CACHE PATH "URL of the yoda git repository to clone")
-set(GTCLANG_YODA_GIT_BRANCH "1.0.0" CACHE STRING "Branch of the yoda git repository to clone")
+set(GTCLANG_YODA_GIT_BRANCH "1.0.1" CACHE STRING "Branch of the yoda git repository to clone")
 
 gtclang_clone_repository(NAME yoda URL ${GTCLANG_YODA_GIT_URL} BRANCH ${GTCLANG_YODA_GIT_BRANCH} SOURCE_DIR GTCLANG_YODA_SOURCE_DIR )
 
@@ -99,14 +110,14 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
     DEPENDS "boost"
     ADDITIONAL
       DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-      GIT_REPOSITORY "git@github.com:twicki/gridtools.git"
-      GIT_TAG "gtclang_fixed_version" 
+      GIT_REPOSITORY "git@github.com:cosunae/gridtools.git"
+      GIT_TAG "16.10.2018" 
       YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
-      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON -DENABLE_PERFORMANCE_METERS=ON
+      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON -DENABLE_PERFORMANCE_METERS=ON -DINSTALL_GTEST=OFF
   )
   list(APPEND gtclang_dependencies "gridtools")
 
-  list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
+  list(APPEND gtclang_cmake_args -DGRIDTOOLS_ROOT=${GridTools_DIR})
 else()
   list(APPEND gtclang_cmake_args -DGTCLANG_BUILD_EXAMPLES=OFF)
 endif()
@@ -141,4 +152,3 @@ install(
   FILES ${conf_bundle_filename}
   DESTINATION bundle_conf
 )
-

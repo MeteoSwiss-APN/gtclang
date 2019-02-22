@@ -24,12 +24,22 @@
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 
 #include "gridtools/clang/verify.hpp"
+#include "test/integration-test/CodeGen/Macros.hpp"
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/intervals_stencil_c++-naive.cpp"
-#include "test/integration-test/CodeGen/generated/intervals_stencil_gridtools.cpp"
 #include <gtest/gtest.h>
 
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
+#endif
+
+// clang-format off
+#include INCLUDE_FILE(test/integration-test/CodeGen/generated/intervals_stencil_,OPTBACKEND.cpp)
+// clang-format on
+
 using namespace dawn;
+
+namespace {
 TEST(intervals_stencil, test) {
   domain dom(Options::getInstance().m_size[0], Options::getInstance().m_size[1],
              Options::getInstance().m_size[2]);
@@ -41,11 +51,12 @@ TEST(intervals_stencil, test) {
   verif.fillMath(8.0, 2.0, 1.5, 1.5, 2.0, 4.0, in);
   verif.fill(-1.0, out_gt, out_naive);
 
-  gridtools::intervals_stencil intervals_stencil_gt(dom, in, out_gt);
+  OPTBACKEND::intervals_stencil intervals_stencil_gt(dom, in, out_gt);
   cxxnaive::intervals_stencil intervals_stencil_naive(dom, in, out_naive);
 
   intervals_stencil_gt.run();
   intervals_stencil_naive.run();
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
+}
 }

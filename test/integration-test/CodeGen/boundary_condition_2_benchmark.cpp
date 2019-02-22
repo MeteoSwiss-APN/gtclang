@@ -24,11 +24,19 @@
 #define BOOST_MPL_LIMIT_VECTOR_SIZE FUSION_MAX_VECTOR_SIZE
 #define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 
+#include <gtest/gtest.h>
 #include "gridtools/clang/verify.hpp"
+#include "test/integration-test/CodeGen/Macros.hpp"
 #include "test/integration-test/CodeGen/Options.hpp"
 #include "test/integration-test/CodeGen/generated/boundary_condition_2_c++-naive.cpp"
-#include "test/integration-test/CodeGen/generated/boundary_condition_2_gridtools.cpp"
-#include <gtest/gtest.h>
+
+#ifndef OPTBACKEND
+#define OPTBACKEND gridtools
+#endif
+
+// clang-format off
+#include INCLUDE_FILE(test/integration-test/CodeGen/generated/boundary_condition_2_,OPTBACKEND.cpp)
+// clang-format on
 
 using namespace dawn;
 TEST(split_stencil, test) {
@@ -47,7 +55,7 @@ TEST(split_stencil, test) {
   verif.fill_boundaries(15, in_naive);
   verif.fill(-1.0, out_gt, out_naive);
 
-  gridtools::split_stencil swapconst_gt(dom, in_gt, out_gt, bc_field);
+  OPTBACKEND::split_stencil swapconst_gt(dom, in_gt, out_gt, bc_field);
   cxxnaive::split_stencil swapconst_naive(dom, in_naive, out_naive, bc_field);
 
   swapconst_gt.run();

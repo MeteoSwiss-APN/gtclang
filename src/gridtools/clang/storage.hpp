@@ -22,10 +22,12 @@
 // Set the storage type
 #ifdef GRIDTOOLS_CLANG_HOST
 #define GRIDTOOLS_CLANG_STORAGE_TYPE GRIDTOOLS_CLANG_STORAGE_HOST
+#define BACKEND_MC 1
 #endif
 
 #ifdef GRIDTOOLS_CLANG_CUDA
 #define GRIDTOOLS_CLANG_STORAGE_TYPE GRIDTOOLS_CLANG_STORAGE_CUDA
+#define BACKEND_CUDA 1
 #endif
 
 // Default storage type is HOST
@@ -79,6 +81,10 @@
 #endif
 
 #include "gridtools/clang/storage_runtime.hpp"
+
+#ifdef GRIDTOOLS_CLANG_CUDA
+#include "gridtools/clang/timer_cuda.hpp"
+#endif
 
 #endif
 

@@ -21,7 +21,8 @@ stencil copy_stencil {
   storage in, out;
 
   Do {
-    vertical_region(k_start, k_end)
-        out = in;
+    vertical_region(k_start, k_end) {
+      out = in;
+    }
   }
 };
