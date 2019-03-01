@@ -193,7 +193,7 @@
       9,
       10
     ],
-    "filename": "/scratch/cosuna/gtclang/test/integration-test/PassStageReordering/Test01.cpp",
+    "filename": "Test01.cpp",
     "globals": null,
     "literalAccessIDs": null,
     "stencilLocation": "24:8",
