@@ -296,7 +296,7 @@
       17,
       18
     ],
-    "filename": "/scratch/cosuna/gtclang/test/integration-test/PassStageMerger/Test01.cpp",
+    "filename": "Test01.cpp",
     "globals": null,
     "literalAccessIDs": null,
     "stencilLocation": "24:8",
