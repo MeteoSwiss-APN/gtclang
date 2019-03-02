@@ -18,6 +18,7 @@
 #include "dawn/Compiler/DawnCompiler.h"
 #include "dawn/SIR/SIR.h"
 #include "dawn/SIR/SIRSerializer.h"
+#include "dawn/Support/Assert.h"
 #include "dawn/Support/Config.h"
 #include "dawn/Support/Format.h"
 #include "dawn/Support/StringUtil.h"
