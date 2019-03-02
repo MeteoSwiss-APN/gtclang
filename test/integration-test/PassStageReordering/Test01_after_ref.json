@@ -1,8 +1,8 @@
 {
   "IIR": {
     "Stencil0": {
-      "Fields": [
-        {
+      "Fields": {
+        "field_a0": {
           "IsTemporary": false,
           "dim": "[1,1,1]",
           "field": {
@@ -13,7 +13,6 @@
             },
             "intend": 2,
             "interval": "{ Start : End }",
-            "name": "field_a0",
             "redundant extents": {
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "null"
@@ -21,7 +20,7 @@
           },
           "name": "field_a0"
         },
-        {
+        "field_a1": {
           "IsTemporary": false,
           "dim": "[1,1,1]",
           "field": {
@@ -32,7 +31,6 @@
             },
             "intend": 0,
             "interval": "{ Start : End }",
-            "name": "field_a1",
             "redundant extents": {
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
@@ -40,12 +38,12 @@
           },
           "name": "field_a1"
         }
-      ],
+      },
       "ID": "11",
       "MultiStage0": {
         "Caches": null,
-        "Fields": [
-          {
+        "Fields": {
+          "field_a0": {
             "accessID": 9,
             "extents": {
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -53,13 +51,12 @@
             },
             "intend": 2,
             "interval": "{ Start : End }",
-            "name": "field_a0",
             "redundant extents": {
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "null"
             }
           },
-          {
+          "field_a1": {
             "accessID": 10,
             "extents": {
               "read_access": "null",
@@ -67,13 +64,12 @@
             },
             "intend": 0,
             "interval": "{ Start : End }",
-            "name": "field_a1",
             "redundant extents": {
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
           }
-        ],
+        },
         "ID": 22,
         "Loop": "parallel",
         "Stage0": {
@@ -102,22 +98,8 @@
             "interval": "{ Start : End }"
           },
           "Extents": "[(0, 0), (0, 0), (0, 0)]",
-          "Fields": [
-            {
-              "accessID": 10,
-              "extents": {
-                "read_access": "null",
-                "write_access": "[(0, 0), (0, 0), (0, 0)]"
-              },
-              "intend": 0,
-              "interval": "{ Start : End }",
-              "name": "field_a1",
-              "redundant extents": {
-                "read_access": "null",
-                "write_access": "[(0, 0), (0, 0), (0, 0)]"
-              }
-            },
-            {
+          "Fields": {
+            "field_a0": {
               "accessID": 9,
               "extents": {
                 "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -125,13 +107,25 @@
               },
               "intend": 2,
               "interval": "{ Start : End }",
-              "name": "field_a0",
               "redundant extents": {
                 "read_access": "[(0, 0), (0, 0), (0, 0)]",
                 "write_access": "null"
               }
+            },
+            "field_a1": {
+              "accessID": 10,
+              "extents": {
+                "read_access": "null",
+                "write_access": "[(0, 0), (0, 0), (0, 0)]"
+              },
+              "intend": 0,
+              "interval": "{ Start : End }",
+              "redundant extents": {
+                "read_access": "null",
+                "write_access": "[(0, 0), (0, 0), (0, 0)]"
+              }
             }
-          ],
+          },
           "RequiresSync": false
         }
       }
@@ -148,9 +142,6 @@
     },
     "FieldToBC": null,
     "GlobalAccessIDs": null,
-    "IDToStencilCall": {
-      "11": "stencil-call:__code_gen_11();\n"
-    },
     "TemporaryAccessIDs": null,
     "VariableVersions": {
       "versionIDs": null,

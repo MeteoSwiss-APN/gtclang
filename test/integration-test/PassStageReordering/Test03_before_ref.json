@@ -1,8 +1,8 @@
 {
   "IIR": {
     "Stencil0": {
-      "Fields": [
-        {
+      "Fields": {
+        "field_b0": {
           "IsTemporary": false,
           "dim": "[1,1,1]",
           "field": {
@@ -13,7 +13,6 @@
             },
             "intend": 2,
             "interval": "{ Start+1 : End-1 }",
-            "name": "field_b0",
             "redundant extents": {
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "null"
@@ -21,7 +20,7 @@
           },
           "name": "field_b0"
         },
-        {
+        "field_b1": {
           "IsTemporary": false,
           "dim": "[1,1,1]",
           "field": {
@@ -32,7 +31,6 @@
             },
             "intend": 1,
             "interval": "{ Start+1 : End-1 }",
-            "name": "field_b1",
             "redundant extents": {
               "read_access": "[(0, 0), (0, 0), (-1, -1)]",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
@@ -40,7 +38,7 @@
           },
           "name": "field_b1"
         },
-        {
+        "field_b2": {
           "IsTemporary": false,
           "dim": "[1,1,1]",
           "field": {
@@ -51,7 +49,6 @@
             },
             "intend": 0,
             "interval": "{ Start+1 : End-1 }",
-            "name": "field_b2",
             "redundant extents": {
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
@@ -59,12 +56,12 @@
           },
           "name": "field_b2"
         }
-      ],
+      },
       "ID": "16",
       "MultiStage0": {
         "Caches": null,
-        "Fields": [
-          {
+        "Fields": {
+          "field_b0": {
             "accessID": 13,
             "extents": {
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -72,13 +69,12 @@
             },
             "intend": 2,
             "interval": "{ Start+1 : End-1 }",
-            "name": "field_b0",
             "redundant extents": {
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "null"
             }
           },
-          {
+          "field_b1": {
             "accessID": 14,
             "extents": {
               "read_access": "null",
@@ -86,19 +82,18 @@
             },
             "intend": 0,
             "interval": "{ Start+1 : End-1 }",
-            "name": "field_b1",
             "redundant extents": {
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
           }
-        ],
+        },
         "ID": 31,
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_b0": {
                 "accessID": 13,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -106,13 +101,12 @@
                 },
                 "intend": 2,
                 "interval": "{ Start+1 : End-1 }",
-                "name": "field_b0",
                 "redundant extents": {
                   "read_access": "[(0, 0), (0, 0), (0, 0)]",
                   "write_access": "null"
                 }
               },
-              {
+              "field_b1": {
                 "accessID": 14,
                 "extents": {
                   "read_access": "null",
@@ -120,13 +114,12 @@
                 },
                 "intend": 0,
                 "interval": "{ Start+1 : End-1 }",
-                "name": "field_b1",
                 "redundant extents": {
                   "read_access": "null",
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 1,
             "Stmts": [
               {
@@ -150,22 +143,8 @@
             "interval": "{ Start+1 : End-1 }"
           },
           "Extents": "[(0, 0), (0, 0), (0, 0)]",
-          "Fields": [
-            {
-              "accessID": 14,
-              "extents": {
-                "read_access": "null",
-                "write_access": "[(0, 0), (0, 0), (0, 0)]"
-              },
-              "intend": 0,
-              "interval": "{ Start+1 : End-1 }",
-              "name": "field_b1",
-              "redundant extents": {
-                "read_access": "null",
-                "write_access": "[(0, 0), (0, 0), (0, 0)]"
-              }
-            },
-            {
+          "Fields": {
+            "field_b0": {
               "accessID": 13,
               "extents": {
                 "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -173,20 +152,32 @@
               },
               "intend": 2,
               "interval": "{ Start+1 : End-1 }",
-              "name": "field_b0",
               "redundant extents": {
                 "read_access": "[(0, 0), (0, 0), (0, 0)]",
                 "write_access": "null"
               }
+            },
+            "field_b1": {
+              "accessID": 14,
+              "extents": {
+                "read_access": "null",
+                "write_access": "[(0, 0), (0, 0), (0, 0)]"
+              },
+              "intend": 0,
+              "interval": "{ Start+1 : End-1 }",
+              "redundant extents": {
+                "read_access": "null",
+                "write_access": "[(0, 0), (0, 0), (0, 0)]"
+              }
             }
-          ],
+          },
           "RequiresSync": false
         }
       },
       "MultiStage1": {
         "Caches": null,
-        "Fields": [
-          {
+        "Fields": {
+          "field_b1": {
             "accessID": 14,
             "extents": {
               "read_access": "[(0, 0), (0, 0), (-1, -1)]",
@@ -194,13 +185,12 @@
             },
             "intend": 2,
             "interval": "{ Start+1 : End-1 }",
-            "name": "field_b1",
             "redundant extents": {
               "read_access": "[(0, 0), (0, 0), (-1, -1)]",
               "write_access": "null"
             }
           },
-          {
+          "field_b2": {
             "accessID": 15,
             "extents": {
               "read_access": "null",
@@ -208,19 +198,18 @@
             },
             "intend": 0,
             "interval": "{ Start+1 : End-1 }",
-            "name": "field_b2",
             "redundant extents": {
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
           }
-        ],
+        },
         "ID": 32,
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_b1": {
                 "accessID": 14,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (-1, -1)]",
@@ -228,13 +217,12 @@
                 },
                 "intend": 2,
                 "interval": "{ Start+1 : End-1 }",
-                "name": "field_b1",
                 "redundant extents": {
                   "read_access": "[(0, 0), (0, 0), (-1, -1)]",
                   "write_access": "null"
                 }
               },
-              {
+              "field_b2": {
                 "accessID": 15,
                 "extents": {
                   "read_access": "null",
@@ -242,13 +230,12 @@
                 },
                 "intend": 0,
                 "interval": "{ Start+1 : End-1 }",
-                "name": "field_b2",
                 "redundant extents": {
                   "read_access": "null",
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 2,
             "Stmts": [
               {
@@ -272,22 +259,8 @@
             "interval": "{ Start+1 : End-1 }"
           },
           "Extents": "[(0, 0), (0, 0), (0, 0)]",
-          "Fields": [
-            {
-              "accessID": 15,
-              "extents": {
-                "read_access": "null",
-                "write_access": "[(0, 0), (0, 0), (0, 0)]"
-              },
-              "intend": 0,
-              "interval": "{ Start+1 : End-1 }",
-              "name": "field_b2",
-              "redundant extents": {
-                "read_access": "null",
-                "write_access": "[(0, 0), (0, 0), (0, 0)]"
-              }
-            },
-            {
+          "Fields": {
+            "field_b1": {
               "accessID": 14,
               "extents": {
                 "read_access": "[(0, 0), (0, 0), (-1, -1)]",
@@ -295,13 +268,25 @@
               },
               "intend": 2,
               "interval": "{ Start+1 : End-1 }",
-              "name": "field_b1",
               "redundant extents": {
                 "read_access": "[(0, 0), (0, 0), (-1, -1)]",
                 "write_access": "null"
               }
+            },
+            "field_b2": {
+              "accessID": 15,
+              "extents": {
+                "read_access": "null",
+                "write_access": "[(0, 0), (0, 0), (0, 0)]"
+              },
+              "intend": 0,
+              "interval": "{ Start+1 : End-1 }",
+              "redundant extents": {
+                "read_access": "null",
+                "write_access": "[(0, 0), (0, 0), (0, 0)]"
+              }
             }
-          ],
+          },
           "RequiresSync": false
         }
       }
@@ -320,9 +305,6 @@
     },
     "FieldToBC": null,
     "GlobalAccessIDs": null,
-    "IDToStencilCall": {
-      "16": "stencil-call:__code_gen_16();\n"
-    },
     "TemporaryAccessIDs": null,
     "VariableVersions": {
       "versionIDs": null,
