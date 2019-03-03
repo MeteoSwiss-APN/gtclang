@@ -5,13 +5,13 @@
    "20": "b"
   },
   "exprIDToAccessID": {
+   "38": 20,
+   "32": 19,
+   "33": 19,
    "34": 19,
    "35": 19,
    "36": 19,
-   "37": 19,
-   "38": 20,
-   "32": 19,
-   "33": 19
+   "37": 19
   },
   "stmtIDToAccessID": {},
   "literalIDToName": {},
@@ -42,6 +42,25 @@
    }
   },
   "globalVariableToValue": {},
+  "idToStencilCall": {
+   "21": {
+    "stencil_call_decl_stmt": {
+     "stencil_call": {
+      "loc": {
+       "Line": -1,
+       "Column": -1
+      },
+      "callee": "__code_gen_21",
+      "arguments": []
+     },
+     "loc": {
+      "Line": -1,
+      "Column": -1
+     },
+     "ID": 22
+    }
+   }
+  },
   "stencilLocation": {
    "Line": 24,
    "Column": 8
