@@ -165,7 +165,6 @@ set(directories
   ${cwd}/PassTemporaryMerger
   ${cwd}/PassTemporaryType
   ${cwd}/PassPreprocessor
-  ${cwd}/PassSetNonTempCaches
   ${cwd}/PassSetBoundaryCondition
   ${cwd}/SIR
   ${cwd}/IIRSerializer
