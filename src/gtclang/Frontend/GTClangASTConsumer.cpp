@@ -276,7 +276,14 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   // Write file to disk
   DAWN_LOG(INFO) << "Writing file to disk... ";
   std::error_code ec;
+#if  __clang_major__ == 6
   llvm::sys::fs::OpenFlags flags = llvm::sys::fs::OpenFlags::F_RW;
+#elif __clang_major__ == 7
+  llvm::sys::fs::OpenFlags flags = llvm::sys::fs::OpenFlags::F_Text;
+#else
+  #error clang_version_not_supported
+#endif
+
   llvm::raw_fd_ostream fout(generatedFilename, ec, flags);
 
   // Print a header
