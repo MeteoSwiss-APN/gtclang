@@ -72,8 +72,8 @@
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_a0": {
                 "accessID": 9,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -86,7 +86,7 @@
                   "write_access": "null"
                 }
               },
-              {
+              "field_a1": {
                 "accessID": 10,
                 "extents": {
                   "read_access": "null",
@@ -99,7 +99,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 0,
             "Stmts": [
               {

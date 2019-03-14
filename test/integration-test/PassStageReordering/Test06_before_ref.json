@@ -136,8 +136,8 @@
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_a0": {
                 "accessID": 23,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (-1, 1)]",
@@ -150,7 +150,7 @@
                   "write_access": "null"
                 }
               },
-              {
+              "field_a1": {
                 "accessID": 24,
                 "extents": {
                   "read_access": "null",
@@ -163,7 +163,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               },
-              {
+              "field_b1": {
                 "accessID": 27,
                 "extents": {
                   "read_access": "null",
@@ -176,7 +176,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 0,
             "Stmts": [
               {
@@ -321,8 +321,8 @@
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_a1": {
                 "accessID": 24,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (1, 1)]",
@@ -335,20 +335,7 @@
                   "write_access": "null"
                 }
               },
-              {
-                "accessID": 27,
-                "extents": {
-                  "read_access": "[(0, 0), (0, 0), (-1, -1)]",
-                  "write_access": "null"
-                },
-                "intend": 2,
-                "interval": "{ Start+3 : End-1 }",
-                "redundant extents": {
-                  "read_access": "[(0, 0), (0, 0), (-1, -1)]",
-                  "write_access": "null"
-                }
-              },
-              {
+              "field_a2": {
                 "accessID": 25,
                 "extents": {
                   "read_access": "null",
@@ -361,7 +348,20 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               },
-              {
+              "field_b1": {
+                "accessID": 27,
+                "extents": {
+                  "read_access": "[(0, 0), (0, 0), (-1, -1)]",
+                  "write_access": "null"
+                },
+                "intend": 2,
+                "interval": "{ Start+3 : End-1 }",
+                "redundant extents": {
+                  "read_access": "[(0, 0), (0, 0), (-1, -1)]",
+                  "write_access": "null"
+                }
+              },
+              "field_b2": {
                 "accessID": 28,
                 "extents": {
                   "read_access": "null",
@@ -374,7 +374,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 1,
             "Stmts": [
               {

@@ -140,8 +140,8 @@
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_b0": {
                 "accessID": 30,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -154,7 +154,7 @@
                   "write_access": "null"
                 }
               },
-              {
+              "field_b1": {
                 "accessID": 31,
                 "extents": {
                   "read_access": "null",
@@ -167,7 +167,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 0,
             "Stmts": [
               {
@@ -256,8 +256,8 @@
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_a0": {
                 "accessID": 27,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -270,7 +270,7 @@
                   "write_access": "null"
                 }
               },
-              {
+              "field_a1": {
                 "accessID": 28,
                 "extents": {
                   "read_access": "null",
@@ -283,7 +283,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 1,
             "Stmts": [
               {
@@ -372,8 +372,8 @@
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_b1": {
                 "accessID": 31,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -386,7 +386,7 @@
                   "write_access": "null"
                 }
               },
-              {
+              "field_b2": {
                 "accessID": 32,
                 "extents": {
                   "read_access": "null",
@@ -399,7 +399,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 2,
             "Stmts": [
               {
@@ -488,8 +488,8 @@
         "Loop": "parallel",
         "Stage0": {
           "DoMethod0": {
-            "Fields": [
-              {
+            "Fields": {
+              "field_a1": {
                 "accessID": 28,
                 "extents": {
                   "read_access": "[(0, 0), (0, 0), (0, 0)]",
@@ -502,7 +502,7 @@
                   "write_access": "null"
                 }
               },
-              {
+              "field_a2": {
                 "accessID": 29,
                 "extents": {
                   "read_access": "null",
@@ -515,7 +515,7 @@
                   "write_access": "[(0, 0), (0, 0), (0, 0)]"
                 }
               }
-            ],
+            },
             "ID": 3,
             "Stmts": [
               {
