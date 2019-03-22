@@ -12,8 +12,6 @@ RUN cd /usr/local/gtclang_build                                                 
     cd gtclang                                                                                                                  && \
     sed -i 's/git@github.com:MeteoSwiss-APN\/dawn.git/https:\/\/github.com\/MeteoSwiss-APN\/dawn.git/g' bundle/CMakeLists.txt   && \
     cd bundle/ && mkdir build && cd build && \ 
-    echo $PWD && \
-    echo "PPP cmake -DPYTHON_EXECUTABLE=${PYTHON_DIR} -DCMAKE_INSTALL_PREFIX=/usr/local/gtclang_build/install .. " && \
     cmake -DPYTHON_EXECUTABLE="${PYTHON_DIR}" -DCMAKE_INSTALL_PREFIX=/usr/local/gtclang_build/install ..                        && \
     make -j2
 
