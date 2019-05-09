@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.0-devel-ubuntu18.04 AS builder
-MAINTAINER Carlos Osuna <Carlos.Osuna@meteoswiss.ch>
+LABEL maintainer="Carlos Osuna <Carlos.Osuna@meteoswiss.ch>"
 LABEL description="This is a gtclang container" 
 RUN apt-get update                                                                                                              && \
     apt-get install -y clang-6.0 libclang-6.0-dev git cmake openssh-client python3.7 libboost-all-dev                           && \
