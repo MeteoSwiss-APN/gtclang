@@ -17,8 +17,7 @@
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "null"
             }
-          },
-          "name": "field_a0"
+          }
         },
         "field_a1": {
           "IsTemporary": false,
@@ -35,8 +34,7 @@
               "read_access": "[(1, 1), (0, 0), (0, 0)]",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
-          },
-          "name": "field_a1"
+          }
         },
         "field_a2": {
           "IsTemporary": false,
@@ -53,8 +51,7 @@
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
-          },
-          "name": "field_a2"
+          }
         }
       },
       "ID": "18",
@@ -216,7 +213,8 @@
           "RequiresSync": false
         }
       }
-    }
+    },
+    "globals": null
   },
   "MetaInformation": {
     "AccessIDToName": {
@@ -231,6 +229,9 @@
     },
     "FieldToBC": null,
     "GlobalAccessIDs": null,
+    "IDToStencilCall": {
+      "18": "stencil-call:__code_gen_18();\n"
+    },
     "TemporaryAccessIDs": null,
     "VariableVersions": {
       "versionIDs": null,
@@ -247,7 +248,6 @@
       17
     ],
     "filename": "Test05.cpp",
-    "globals": null,
     "literalAccessIDs": null,
     "stencilLocation": "24:8",
     "stencilname": "Test"

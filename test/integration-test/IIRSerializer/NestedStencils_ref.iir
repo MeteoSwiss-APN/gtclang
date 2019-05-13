@@ -9,6 +9,10 @@
    "25": 16
   },
   "stmtIDToAccessID": {},
+  "accessIDToType": {
+   "16": 6,
+   "17": 6
+  },
   "literalIDToName": {},
   "fieldAccessIDs": [
    16,
@@ -36,7 +40,6 @@
     "int3": 1
    }
   },
-  "globalVariableToValue": {},
   "idToStencilCall": {
    "18": {
     "stencil_call_decl_stmt": {
@@ -63,6 +66,7 @@
   "stencilName": "Test"
  },
  "internalIR": {
+  "globalVariableToValue": {},
   "stencils": [
    {
     "multiStages": [
@@ -227,5 +231,5 @@
    }
   ]
  },
- "filename": "/code/clang-gridtools/bundle/build/gtclang-prefix/src/gtclang/test/integration-test/IIRSerializer/NestedStencils.cpp"
+ "filename": "/code/gtclang/test/integration-test/IIRSerializer/NestedStencils.cpp"
 }

@@ -5,10 +5,14 @@
    "10": "field_b"
   },
   "exprIDToAccessID": {
-   "17": 10,
-   "18": 9
+   "18": 9,
+   "17": 10
   },
   "stmtIDToAccessID": {},
+  "accessIDToType": {
+   "9": 6,
+   "10": 6
+  },
   "literalIDToName": {},
   "fieldAccessIDs": [
    9,
@@ -25,18 +29,17 @@
   },
   "fieldnameToBoundaryCondition": {},
   "fieldIDtoLegalDimensions": {
-   "10": {
+   "9": {
     "int1": 1,
     "int2": 1,
     "int3": 1
    },
-   "9": {
+   "10": {
     "int1": 1,
     "int2": 1,
     "int3": 1
    }
   },
-  "globalVariableToValue": {},
   "idToStencilCall": {
    "11": {
     "stencil_call_decl_stmt": {
@@ -63,6 +66,7 @@
   "stencilName": "Test"
  },
  "internalIR": {
+  "globalVariableToValue": {},
   "stencils": [
    {
     "multiStages": [
@@ -227,5 +231,5 @@
    }
   ]
  },
- "filename": "/code/clang-gridtools/bundle/build/gtclang-prefix/src/gtclang/test/integration-test/IIRSerializer/CopyTest.cpp"
+ "filename": "/code/gtclang/test/integration-test/IIRSerializer/CopyTest.cpp"
 }

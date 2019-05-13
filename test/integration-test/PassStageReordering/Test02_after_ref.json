@@ -17,8 +17,7 @@
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "null"
             }
-          },
-          "name": "field_a0"
+          }
         },
         "field_a1": {
           "IsTemporary": false,
@@ -35,8 +34,7 @@
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
-          },
-          "name": "field_a1"
+          }
         },
         "field_a2": {
           "IsTemporary": false,
@@ -53,8 +51,7 @@
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
-          },
-          "name": "field_a2"
+          }
         },
         "field_b0": {
           "IsTemporary": false,
@@ -71,8 +68,7 @@
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "null"
             }
-          },
-          "name": "field_b0"
+          }
         },
         "field_b1": {
           "IsTemporary": false,
@@ -89,8 +85,7 @@
               "read_access": "[(0, 0), (0, 0), (0, 0)]",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
-          },
-          "name": "field_b1"
+          }
         },
         "field_b2": {
           "IsTemporary": false,
@@ -107,8 +102,7 @@
               "read_access": "null",
               "write_access": "[(0, 0), (0, 0), (0, 0)]"
             }
-          },
-          "name": "field_b2"
+          }
         }
       },
       "ID": "33",
@@ -421,7 +415,8 @@
           "RequiresSync": false
         }
       }
-    }
+    },
+    "globals": null
   },
   "MetaInformation": {
     "AccessIDToName": {
@@ -442,6 +437,9 @@
     },
     "FieldToBC": null,
     "GlobalAccessIDs": null,
+    "IDToStencilCall": {
+      "33": "stencil-call:__code_gen_33();\n"
+    },
     "TemporaryAccessIDs": null,
     "VariableVersions": {
       "versionIDs": null,
@@ -464,7 +462,6 @@
       32
     ],
     "filename": "Test02.cpp",
-    "globals": null,
     "literalAccessIDs": null,
     "stencilLocation": "24:8",
     "stencilname": "Test"
