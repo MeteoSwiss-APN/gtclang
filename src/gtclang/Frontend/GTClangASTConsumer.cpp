@@ -44,6 +44,7 @@
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/Path.h"
+#include "llvm/Support/raw_os_ostream.h"
 #include <cstdio>
 #include <ctime>
 #include <iostream>
@@ -273,39 +274,30 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
     code = clangformat.format(code);
   }
 
+  std::shared_ptr<llvm::raw_ostream> ost;
+  std::error_code ec;
+  llvm::sys::fs::OpenFlags flags = llvm::sys::fs::OpenFlags::F_RW;
   if(context_->getOptions().WriteToStdOut) {
-    // Write file to std::cout
-    DAWN_LOG(INFO) << "Writing file to output... ";
-    // Print a header
-    std::cout << dawn::format("// gtclang (%s)\n// based on LLVM/Clang (%s), Dawn (%s)\n",
-                              GTCLANG_FULL_VERSION_STR, LLVM_VERSION_STRING, DAWN_VERSION_STR);
-    std::cout << "// Generated on " << currentDateTime() << "\n\n";
-
-    // Add the macro definitions
-    for(const auto& macroDefine : DawnTranslationUnit->getPPDefines())
-      std::cout << macroDefine << "\n";
-
-    std::cout.write(code.data(), code.size());
+    ost = std::make_shared<llvm::raw_os_ostream>(std::cout);
   } else {
-    // Write file to disk
-    DAWN_LOG(INFO) << "Writing file to disk... ";
-    std::error_code ec;
-    llvm::sys::fs::OpenFlags flags = llvm::sys::fs::OpenFlags::F_RW;
-    llvm::raw_fd_ostream fout(generatedFilename, ec, flags);
-
-    // Print a header
-    fout << dawn::format("// gtclang (%s)\n// based on LLVM/Clang (%s), Dawn (%s)\n",
-                         GTCLANG_FULL_VERSION_STR, LLVM_VERSION_STRING, DAWN_VERSION_STR);
-    fout << "// Generated on " << currentDateTime() << "\n\n";
-
-    // Add the macro definitions
-    for(const auto& macroDefine : DawnTranslationUnit->getPPDefines())
-      fout << macroDefine << "\n";
-
-    fout.write(code.data(), code.size());
-    if(ec.value())
-      context_->getDiagnostics().report(Diagnostics::err_fs_error) << ec.message();
+    ost = std::make_shared<llvm::raw_fd_ostream>(generatedFilename, ec, flags);
   }
+
+  // Write file to disk
+  DAWN_LOG(INFO) << "Writing file to output... ";
+
+  // Print a header
+  *ost << dawn::format("// gtclang (%s)\n// based on LLVM/Clang (%s), Dawn (%s)\n",
+                       GTCLANG_FULL_VERSION_STR, LLVM_VERSION_STRING, DAWN_VERSION_STR);
+  *ost << "// Generated on " << currentDateTime() << "\n\n";
+
+  // Add the macro definitions
+  for(const auto& macroDefine : DawnTranslationUnit->getPPDefines())
+    *ost << macroDefine << "\n";
+
+  ost->write(code.data(), code.size());
+  if(ec.value())
+    context_->getDiagnostics().report(Diagnostics::err_fs_error) << ec.message();
 }
 
 } // namespace gtclang
