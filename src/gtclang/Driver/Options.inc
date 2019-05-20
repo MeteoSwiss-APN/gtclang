@@ -50,5 +50,6 @@ OPT(bool, ClangFormat, true, "clang-format", "", "Run clang-format on the genera
 OPT(bool, ReportPassPreprocessor, false, "report-pass-preprocessor", "", 
     "Print each line of the preprocessed source prepended by the line number (comments and indentation are removed)", "", false, true)
 OPT(bool, Serialized, false, "loaded-serialized", "", "is the passed file serialized data", "", false, true)
+OPT(bool, WriteToStdOut, false, "write-stdout", "", "write to std out", "", false, true)
 
 // clang-format on
