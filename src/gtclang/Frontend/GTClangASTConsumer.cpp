@@ -277,7 +277,7 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   std::shared_ptr<llvm::raw_ostream> ost;
   std::error_code ec;
   llvm::sys::fs::OpenFlags flags = llvm::sys::fs::OpenFlags::F_RW;
-  if(context_->getOptions().WriteToStdOut) {
+  if(context_->getOptions().OutputFile.empty()) {
     ost = std::make_shared<llvm::raw_os_ostream>(std::cout);
   } else {
     ost = std::make_shared<llvm::raw_fd_ostream>(generatedFilename, ec, flags);
