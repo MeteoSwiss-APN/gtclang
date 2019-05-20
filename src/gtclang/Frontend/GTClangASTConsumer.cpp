@@ -283,7 +283,7 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
     ost = std::make_shared<llvm::raw_fd_ostream>(generatedFilename, ec, flags);
   }
 
-  // Write file to disk
+  // Write file to specified output
   DAWN_LOG(INFO) << "Writing file to output... ";
 
   // Print a header
