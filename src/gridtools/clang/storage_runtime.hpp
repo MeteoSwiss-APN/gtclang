@@ -47,15 +47,15 @@ using halo_j_t = gridtools::halo<0, 0, 0>;
 #endif
 
 /**
-  * @brief Backend type
-  */
+ * @brief Backend type
+ */
 using storage_traits_t = gridtools::storage_traits<backend_t::backend_id_t>;
 
 /**
  * @brief Meta-data types
  * @{
  */
-using meta_data_ijk_t = storage_traits_t::storage_info_t<0, 3, halo_ij_t>;
+using meta_data_ijk_t = storage_traits_t::storage_info_t<0, 3, halo_t>;
 using meta_data_ij_t =
     storage_traits_t::special_storage_info_t<1, gridtools::selector<1, 1, 0>, halo_ij_t>;
 using meta_data_i_t =
@@ -90,5 +90,5 @@ using storage_t = storage_ijk_t;
 #define GT_BACKEND_DECISION_viewmaker(x) make_device_view(x)
 #define GT_BACKEND_DECISION_bcapply gridtools::boundary_apply_gpu
 #endif
-}
-}
+} // namespace clang
+} // namespace gridtools
