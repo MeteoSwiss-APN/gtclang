@@ -91,7 +91,7 @@ yoda_find_package(
   ADDITIONAL
     DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
     GIT_REPOSITORY "git@github.com:Stagno/dawn.git"
-    GIT_TAG "fix_verbose_dump_tests" 
+    GIT_TAG "fix_verbose_dump" 
     YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
