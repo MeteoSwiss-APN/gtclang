@@ -36,14 +36,15 @@ namespace clang {
  */
 
 #ifdef GRIDTOOLS_CLANG_HALO_EXTEND
-using halo_t = gridtools::halo<GRIDTOOLS_CLANG_HALO_EXTEND, GRIDTOOLS_CLANG_HALO_EXTEND, 0>;
 using halo_ij_t = gridtools::halo<GRIDTOOLS_CLANG_HALO_EXTEND, GRIDTOOLS_CLANG_HALO_EXTEND, 0>;
 using halo_i_t = gridtools::halo<GRIDTOOLS_CLANG_HALO_EXTEND, 0, 0>;
 using halo_j_t = gridtools::halo<0, GRIDTOOLS_CLANG_HALO_EXTEND, 0>;
+using halo_t = halo_ij_t;
 #else
 using halo_ij_t = gridtools::halo<0, 0, 0>;
 using halo_i_t = gridtools::halo<0, 0, 0>;
 using halo_j_t = gridtools::halo<0, 0, 0>;
+using halo_t = halo_ij_t;
 #endif
 
 /**
@@ -55,7 +56,7 @@ using storage_traits_t = gridtools::storage_traits<backend_t::backend_id_t>;
  * @brief Meta-data types
  * @{
  */
-using meta_data_ijk_t = storage_traits_t::storage_info_t<0, 3, halo_t>;
+using meta_data_ijk_t = storage_traits_t::storage_info_t<0, 3, halo_ij_t>;
 using meta_data_ij_t =
     storage_traits_t::special_storage_info_t<1, gridtools::selector<1, 1, 0>, halo_ij_t>;
 using meta_data_i_t =
