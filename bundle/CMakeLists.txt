@@ -50,7 +50,7 @@ include(GTClangCloneRepository)
 
 set(GTCLANG_YODA_GIT_URL "https:///github.com/MeteoSwiss-APN/yoda.git" 
     CACHE PATH "URL of the yoda git repository to clone")
-set(GTCLANG_YODA_GIT_BRANCH "1.0.1" CACHE STRING "Branch of the yoda git repository to clone")
+set(GTCLANG_YODA_GIT_BRANCH "1.0.4" CACHE STRING "Branch of the yoda git repository to clone")
 
 gtclang_clone_repository(NAME yoda URL ${GTCLANG_YODA_GIT_URL} BRANCH ${GTCLANG_YODA_GIT_BRANCH} SOURCE_DIR GTCLANG_YODA_SOURCE_DIR )
 
@@ -110,14 +110,14 @@ if(GTCLANG_ENABLE_GRIDTOOLS)
     DEPENDS "boost"
     ADDITIONAL
       DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-      GIT_REPOSITORY "git@github.com:cosunae/gridtools.git"
-      GIT_TAG "16.10.2018" 
+      GIT_REPOSITORY "git@github.com:GridTools/gridtools.git"
+      GIT_TAG "v1.0.1" 
       YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
-      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DDISABLE_TESTING=ON -DENABLE_PERFORMANCE_METERS=ON -DINSTALL_GTEST=OFF
+      CMAKE_ARGS -DSTRUCTURED_GRIDS=ON -DBOOST_ROOT=${BOOST_ROOT} -DBUILD_TESTING=OFF -DENABLE_PERFORMANCE_METERS=ON -DINSTALL_GTEST=OFF
   )
   list(APPEND gtclang_dependencies "gridtools")
 
-  list(APPEND gtclang_cmake_args -DGRIDTOOLS_ROOT=${GridTools_DIR})
+  list(APPEND gtclang_cmake_args -DGridTools_DIR=${GridTools_DIR})
 else()
   list(APPEND gtclang_cmake_args -DGTCLANG_BUILD_EXAMPLES=OFF)
 endif()

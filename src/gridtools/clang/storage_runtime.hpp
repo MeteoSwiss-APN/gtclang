@@ -23,8 +23,12 @@
 #define GRIDTOOLS_CLANG_META_DATA_T_DEFINED
 #define GRIDTOOLS_CLANG_STORAGE_T_DEFINED
 
-#include <gridtools/common/defs.hpp>
-#include <gridtools/tools/backend_select.hpp>
+#include <gridtools/storage/storage_facility.hpp>
+#include <gridtools/stencil_composition/stencil_composition.hpp>
+
+//#include <gridtools/common/defs.hpp>
+//#include <gridtools/tools/backend_select.hpp>
+
 namespace gridtools {
 
 namespace clang {
@@ -49,13 +53,19 @@ using halo_j_t = gridtools::halo<0, 0, 0>;
 /**
   * @brief Backend type
   */
-using storage_traits_t = gridtools::storage_traits<backend_t::backend_id_t>;
+#ifdef __CUDACC__
+using backend_t = gridtools::backend::cuda;
+#else
+using backend_t = gridtools::backend::mc;
+#endif
 
+using storage_traits_t = gridtools::storage_traits<backend_t>;
 /**
  * @brief Meta-data types
  * @{
  */
 using meta_data_ijk_t = storage_traits_t::storage_info_t<0, 3, halo_ij_t>;
+
 using meta_data_ij_t =
     storage_traits_t::special_storage_info_t<1, gridtools::selector<1, 1, 0>, halo_ij_t>;
 using meta_data_i_t =

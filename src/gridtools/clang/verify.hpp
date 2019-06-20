@@ -164,7 +164,7 @@ public:
 
     storage.sync();
 
-    auto storage_v = make_host_view<access_mode::ReadOnly>(storage);
+    auto storage_v = make_host_view<access_mode::read_only>(storage);
     std::cout << "==============================================\n";
     std::cout << "printing Storage " << storage.name() << "\n";
     std::cout << "==============================================\n";
