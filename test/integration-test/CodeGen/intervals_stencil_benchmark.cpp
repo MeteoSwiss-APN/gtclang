@@ -54,8 +54,8 @@ TEST(intervals_stencil, test) {
   OPTBACKEND::intervals_stencil intervals_stencil_gt(dom, in, out_gt);
   cxxnaive::intervals_stencil intervals_stencil_naive(dom, in, out_naive);
 
-  intervals_stencil_gt.run();
-  intervals_stencil_naive.run();
+  intervals_stencil_gt.run(in, out_gt);
+  intervals_stencil_naive.run(in, out_naive);
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
 }

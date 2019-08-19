@@ -55,8 +55,8 @@ TEST(kcache_fill_kparallel, test) {
   OPTBACKEND::kcache_fill_kparallel kcache_fill_kparallel_gt(dom, in, out_gt);
   cxxnaive::kcache_fill_kparallel kcache_fill_kparallel_naive(dom, in, out_naive);
 
-  kcache_fill_kparallel_gt.run();
-  kcache_fill_kparallel_naive.run();
+  kcache_fill_kparallel_gt.run(in, out_gt);
+  kcache_fill_kparallel_naive.run(in, out_naive);
 
   ASSERT_TRUE(verif.verify(out_gt, out_naive));
 }
