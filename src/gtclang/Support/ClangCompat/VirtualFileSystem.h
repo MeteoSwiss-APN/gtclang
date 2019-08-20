@@ -14,22 +14,35 @@
 //
 //===------------------------------------------------------------------------------------------===//
 
-#include "gtclang/Support/FileUtil.h"
-#include "gtclang/Support/ClangCompat/VirtualFileSystem.h"
-#include "clang/Basic/SourceManager.h"
+#ifndef GTCLANG_SUPPORT_CLANGCOMPAT_VIRTUALFILESYSTEM_H
+#define GTCLANG_SUPPORT_CLANGCOMPAT_VIRTUALFILESYSTEM_H
+
+#include "clang/Basic/Version.h"
+
+#if CLANG_VERSION_MAJOR < 8
+#include "clang/Basic/VirtualFileSystem.h"
+#else
+#include "llvm/Support/VirtualFileSystem.h"
+#endif
 
 namespace gtclang {
+namespace clang_compat {
+#if CLANG_VERSION_MAJOR < 8
 
-llvm::StringRef getFilename(llvm::StringRef path) {
-  return path.substr(path.find_last_of('/') + 1);
+namespace llvm {
+namespace vfs {
+using InMemoryFileSystem = ::clang::vfs::InMemoryFileSystem;
 }
-
-clang::FileID createInMemoryFile(llvm::StringRef filename, llvm::MemoryBuffer* source,
-                                 clang::SourceManager& sources, clang::FileManager& files,
-                                 clang_compat::llvm::vfs::InMemoryFileSystem* memFS) {
-  memFS->addFileNoOwn(filename, 0, source);
-  return sources.createFileID(files.getFile(filename), clang::SourceLocation(),
-                              clang::SrcMgr::C_User);
+} // namespace llvm
+#else
+namespace llvm {
+namespace vfs {
+using InMemoryFileSystem = ::llvm::vfs::InMemoryFileSystem;
 }
+} // namespace llvm
+#endif
 
+} // namespace clang_compat
 } // namespace gtclang
+
+#endif
