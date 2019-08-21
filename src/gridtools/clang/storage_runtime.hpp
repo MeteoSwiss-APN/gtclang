@@ -26,8 +26,6 @@
 #include <gridtools/storage/storage_facility.hpp>
 #include <gridtools/stencil_composition/stencil_composition.hpp>
 #include <gridtools/stencil_composition/stencil_functions.hpp>
-//#include <gridtools/common/defs.hpp>
-//#include <gridtools/tools/backend_select.hpp>
 
 namespace gridtools {
 
@@ -40,11 +38,12 @@ namespace clang {
  */
 
 #ifdef GRIDTOOLS_CLANG_HALO_EXTEND
-using halo_t = gridtools::halo<GRIDTOOLS_CLANG_HALO_EXTEND, GRIDTOOLS_CLANG_HALO_EXTEND, 0>;
-using halo_ij_t = gridtools::halo<GRIDTOOLS_CLANG_HALO_EXTEND, GRIDTOOLS_CLANG_HALO_EXTEND, 0>;
-using halo_i_t = gridtools::halo<GRIDTOOLS_CLANG_HALO_EXTEND, 0, 0>;
-using halo_j_t = gridtools::halo<0, GRIDTOOLS_CLANG_HALO_EXTEND, 0>;
+using halo_ijk_t = gridtools::halo<halo::value, halo::value, 0>;
+using halo_ij_t = gridtools::halo<halo::value, halo::value, 0>;
+using halo_i_t = gridtools::halo<halo::value, 0, 0>;
+using halo_j_t = gridtools::halo<0, halo::value, 0>;
 #else
+using halo_ijk_t = gridtools::halo<0, 0, 0>;
 using halo_ij_t = gridtools::halo<0, 0, 0>;
 using halo_i_t = gridtools::halo<0, 0, 0>;
 using halo_j_t = gridtools::halo<0, 0, 0>;
@@ -65,7 +64,6 @@ using storage_traits_t = gridtools::storage_traits<backend_t>;
  * @{
  */
 using meta_data_ijk_t = storage_traits_t::storage_info_t<0, 3, halo_ij_t>;
-
 using meta_data_ij_t =
     storage_traits_t::special_storage_info_t<1, gridtools::selector<1, 1, 0>, halo_ij_t>;
 using meta_data_i_t =
