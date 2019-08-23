@@ -62,4 +62,4 @@ inline ::clang::SourceLocation getEndLoc(::clang::Stmt const& stmt) { return stm
 } // namespace clang_compat
 } // namespace gtclang
 
-#endif
+#endif // GTCLANG_SUPPORT_CLANGCOMPAT_SOURCELOCATION_H

@@ -36,4 +36,4 @@ inline int64_t getInt(EvalResultInt const& res) { return res.Val.getInt().getExt
 } // namespace clang_compat
 } // namespace gtclang
 
-#endif
+#endif // GTCLANG_SUPPORT_CLANGCOMPAT_EVALRESULT_H

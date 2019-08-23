@@ -45,4 +45,4 @@ using InMemoryFileSystem = ::llvm::vfs::InMemoryFileSystem;
 } // namespace clang_compat
 } // namespace gtclang
 
-#endif
+#endif // GTCLANG_SUPPORT_CLANGCOMPAT_VIRTUALFILESYSTEM_H
