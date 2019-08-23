@@ -982,7 +982,7 @@ StencilParser::parseBoundaryCondition(clang::CXXConstructExpr* boundaryCondition
                                       Diagnostics::DiagKind::err_boundary_condition_invalid_arg);
       builder << name;
     } else {
-      ASTBoundaryCondition->getFields().push_back(*it);
+      ASTBoundaryCondition->getFields().push_back((*it)->Name);
     }
   }
 
@@ -1014,8 +1014,8 @@ StencilParser::parseBoundaryConditions(clang::CXXMethodDecl* allBoundaryConditio
         // create that DeclStmt with the functor and add the Fields / Arugments, where the field to
         // apply to is at Field[0] and all the arguments follow
         auto bc = std::make_shared<dawn::sir::BoundaryConditionDeclStmt>(res.getFunctor());
-        for(const auto& field : res.getFields()) {
-          bc->getFields().emplace_back(std::make_shared<dawn::sir::Field>(field));
+        for(const auto& fieldName : res.getFields()) {
+          bc->getFields().emplace_back(fieldName);
         }
         parsedBoundayConditions.push_back(bc);
       } else {
