@@ -836,7 +836,7 @@ StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
     return nullptr;
   }
 
-  std::vector<std::shared_ptr<dawn::sir::Field>> fields;
+  std::vector<std::string> fieldNames;
 
   // Check if arguments are of type `gridtools::clang::storage` and the number of arguments match
   for(auto* arg : stencilCall->arguments()) {
@@ -854,7 +854,7 @@ StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
       }
 
       std::string name = member->getMemberDecl()->getNameAsString();
-      fields.push_back(std::make_shared<dawn::sir::Field>(name, getLocation(member)));
+      fieldNames.push_back(name);
     } else {
       DAWN_ASSERT_MSG(0, "expected `clang::MemberExpr` in argument-list of stencil call");
     }
@@ -862,7 +862,7 @@ StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
 
   // Check if number of arguments match. Note that temporaries don't need to be provided, we
   // implicitly generate a new temporary for each temporary storage in the stencil
-  std::size_t parsedArgs = fields.size();
+  std::size_t parsedArgs = fieldNames.size();
 
   const auto& requiredFields = stencilIt->second->Fields;
   std::size_t requiredArgs =
@@ -886,11 +886,11 @@ StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
     return nullptr;
   }
 
-  auto SIRStencilCall = std::make_shared<dawn::sir::StencilCall>(callee, getLocation(stencilCall));
-  SIRStencilCall->Args = std::move(fields);
+  auto astStencilCall = std::make_shared<dawn::ast::StencilCall>(callee, getLocation(stencilCall));
+  astStencilCall->Args = std::move(fieldNames);
 
   DAWN_LOG(INFO) << "Done parsing stencil call";
-  return std::make_shared<dawn::sir::StencilCallDeclStmt>(SIRStencilCall, SIRStencilCall->Loc);
+  return std::make_shared<dawn::sir::StencilCallDeclStmt>(astStencilCall, astStencilCall->Loc);
 }
 
 std::shared_ptr<dawn::sir::VerticalRegionDeclStmt>
