@@ -23,6 +23,8 @@
 #include "gtclang/Frontend/GTClangContext.h"
 #include "gtclang/Frontend/StencilParser.h"
 #include "gtclang/Support/ASTUtils.h"
+#include "gtclang/Support/ClangCompat/EvalResult.h"
+#include "gtclang/Support/ClangCompat/SourceLocation.h"
 #include "gtclang/Support/Logger.h"
 #include "gtclang/Support/StringUtil.h"
 #include "clang/AST/AST.h"
@@ -53,7 +55,7 @@ class FunctionResolver {
     std::shared_ptr<dawn::sir::StencilFunction> SIRStencilFunction = nullptr;
 
     /// AST node of the C++ or stencil function i.e the result of the parsing
-    std::shared_ptr<dawn::FunCallExpr> DAWNFunCallExpr = nullptr;
+    std::shared_ptr<dawn::sir::FunCallExpr> DAWNFunCallExpr = nullptr;
 
     /// Clang AST node of the call to the stencil function (e.g `avg(i+1, u)`)
     clang::CXXConstructExpr* ClangCXXConstructExpr = nullptr;
@@ -90,7 +92,7 @@ public:
     std::string callee = getClassNameFromConstructExpr(expr);
 
     scope_.top()->DAWNFunCallExpr =
-        std::make_shared<dawn::StencilFunCallExpr>(callee, resolver_->getSourceLocation(expr));
+        std::make_shared<dawn::sir::StencilFunCallExpr>(callee, resolver_->getSourceLocation(expr));
     scope_.top()->ClangCXXConstructExpr = expr;
 
     auto stencilFunPair = resolver_->getParser()->getStencilFunctionByName(callee);
@@ -115,7 +117,7 @@ public:
     scope_.top()->Kind = FK_CXXFunction;
 
     DAWN_ASSERT_MSG(expr->getDirectCallee(), "only C-function calls are supported");
-    scope_.top()->DAWNFunCallExpr = std::make_shared<dawn::FunCallExpr>(
+    scope_.top()->DAWNFunCallExpr = std::make_shared<dawn::sir::FunCallExpr>(
         expr->getDirectCallee()->getQualifiedNameAsString(), resolver_->getSourceLocation(expr));
 
     return true;
@@ -137,8 +139,8 @@ public:
   void skipNextArguments(int N) { scope_.top()->ArgumentsToSkip += N; }
 
   /// @brief Add an argument to the current stencil function
-  std::shared_ptr<dawn::Expr> addArgument(clang::Expr* expr,
-                                          const std::shared_ptr<dawn::Expr>& arg) {
+  std::shared_ptr<dawn::sir::Expr> addArgument(clang::Expr* expr,
+                                          const std::shared_ptr<dawn::sir::Expr>& arg) {
     // ignore implicit nodes
     expr = skipAllImplicitNodes(expr);
 
@@ -201,7 +203,7 @@ public:
   }
 
   /// @brief Get the StencilFunCallExpr and pop the current stencil function
-  std::shared_ptr<dawn::FunCallExpr> pop() {
+  std::shared_ptr<dawn::sir::FunCallExpr> pop() {
     auto expr = scope_.top()->DAWNFunCallExpr;
     scope_.pop();
     return expr;
@@ -256,7 +258,7 @@ private:
   }
 
   /// @brief Check if types of arguments match
-  void checkTypeOfArgumentMatches(clang::Expr* expr, dawn::Expr* parsedArg) {
+  void checkTypeOfArgumentMatches(clang::Expr* expr, dawn::sir::Expr* parsedArg) {
     // ignore implicit nodes
     expr = skipAllImplicitNodes(expr);
 
@@ -303,11 +305,11 @@ private:
   };
 
   /// @brief Convert an AST stencil function argument to the matching index in `TypeStr`
-  static ArgumentIndex getIndexFromASTArg(dawn::Expr* expr) {
-    if(dawn::isa<dawn::FieldAccessExpr>(expr) || dawn::isa<dawn::StencilFunCallExpr>(expr))
+  static ArgumentIndex getIndexFromASTArg(dawn::sir::Expr* expr) {
+    if(dawn::isa<dawn::sir::FieldAccessExpr>(expr) || dawn::isa<dawn::sir::StencilFunCallExpr>(expr))
       return AK_Field;
 
-    dawn::StencilFunArgExpr* arg = dawn::dyn_cast<dawn::StencilFunArgExpr>(expr);
+    dawn::sir::StencilFunArgExpr* arg = dawn::dyn_cast<dawn::sir::StencilFunArgExpr>(expr);
     if(!arg)
       return AK_Unknown;
 
@@ -366,9 +368,9 @@ public:
   /// @}
 
   /// @brief Assemble FieldAccessExpr
-  std::shared_ptr<dawn::FieldAccessExpr>
+  std::shared_ptr<dawn::sir::FieldAccessExpr>
   makeFieldAccessExpr(const dawn::SourceLocation& loc) const {
-    return std::make_shared<dawn::FieldAccessExpr>(name_, offset_, argumentMap_, argumentOffset_,
+    return std::make_shared<dawn::sir::FieldAccessExpr>(name_, offset_, argumentMap_, argumentOffset_,
                                                    negateOffset_, loc);
   }
 
@@ -392,7 +394,8 @@ public:
       } else if(declName == "offset") {
         currentArgumentKind_ = CK_Offset;
       } else {
-        resolver_->reportDiagnostic(expr->getLocStart(), Diagnostics::err_index_invalid_type)
+        resolver_->reportDiagnostic(clang_compat::getBeginLoc(*expr),
+                                    Diagnostics::err_index_invalid_type)
             << expr->getType().getAsString() << name << expr->getSourceRange();
         return;
       }
@@ -405,7 +408,8 @@ public:
       const auto& argDeclMap = resolver_->getParser()->getCurrentParserRecord()->CurrentArgDeclMap;
       auto it = argDeclMap.find(name);
       if(it == argDeclMap.end())
-        resolver_->reportDiagnostic(expr->getLocStart(), Diagnostics::err_index_illegal_argument)
+        resolver_->reportDiagnostic(clang_compat::getBeginLoc(*expr),
+                                    Diagnostics::err_index_illegal_argument)
             << name << expr->getSourceRange();
 
       argumentMap_[curArg_] = it->second.Index;
@@ -456,13 +460,13 @@ public:
           Expr* arg1 = skipAllImplicitNodes(expr->getArg(1));
 
           DeclRefExpr* var = dyn_cast<DeclRefExpr>(arg1);
-          llvm::APSInt res;
+          clang_compat::Expr::EvalResultInt res;
 
           if(var && var->EvaluateAsInt(res, resolver_->getContext()->getASTContext())) {
-            offset = static_cast<int>(res.getExtValue());
+            offset = static_cast<int>(clang_compat::Expr::getInt(res));
             offset *= expr->getOperator() == clang::OO_Minus ? -1 : 1;
           } else {
-            resolver_->reportDiagnostic(expr->getArg(1)->getLocStart(),
+            resolver_->reportDiagnostic(clang_compat::getBeginLoc(*expr->getArg(1)),
                                         Diagnostics::err_index_not_constexpr)
                 << expr->getSourceRange();
             return;
@@ -479,7 +483,7 @@ public:
             dimensionOutput += legalDimensions_[2] ? "k " : "";
             dimensionOutput.pop_back();
             dimensionOutput += " dimensions";
-            resolver_->reportDiagnostic(expr->getLocStart(),
+            resolver_->reportDiagnostic(clang_compat::getBeginLoc(*expr),
                                         Diagnostics::err_off_with_bad_storage_dim)
                 << name_ << dimensionOutput << expr->getSourceRange();
           }
@@ -550,13 +554,13 @@ public:
       Expr* arg1 = skipAllImplicitNodes(expr->getArg(1));
 
       DeclRefExpr* var = dyn_cast<DeclRefExpr>(arg1);
-      llvm::APSInt res;
+      clang_compat::Expr::EvalResultInt res;
 
       if(var && var->EvaluateAsInt(res, resolver_->getContext()->getASTContext())) {
-        offset_ = static_cast<int>(res.getExtValue());
+        offset_ = static_cast<int>(clang_compat::Expr::getInt(res));
         offset_ *= expr->getOperator() == clang::OO_Minus ? -1 : 1;
       } else {
-        resolver_->reportDiagnostic(expr->getArg(1)->getLocStart(),
+        resolver_->reportDiagnostic(clang_compat::getBeginLoc(*expr->getArg(1)),
                                     Diagnostics::err_index_not_constexpr)
             << expr->getSourceRange();
       }
@@ -582,7 +586,7 @@ public:
       const auto& argDeclMap = resolver_->getParser()->getCurrentParserRecord()->CurrentArgDeclMap;
       auto it = argDeclMap.find(name);
       if(it == argDeclMap.end()) {
-        resolver_->reportDiagnostic(expr->getLocStart(),
+        resolver_->reportDiagnostic(clang_compat::getBeginLoc(*expr),
                                     Diagnostics::err_stencilfun_invalid_argument)
             << name << expr->getSourceRange();
       }
@@ -594,10 +598,10 @@ public:
   ///
   /// This may return a nullptr if parsing failed. This can happen if the argument to the
   /// stencil function is a field, which will be resolved elsewhere
-  std::shared_ptr<dawn::StencilFunArgExpr>
+  std::shared_ptr<dawn::sir::StencilFunArgExpr>
   makeStencilFunArgExpr(const dawn::SourceLocation& loc) const {
     return isStorage_ ? nullptr
-                      : std::make_shared<dawn::StencilFunArgExpr>(direction_, offset_,
+                      : std::make_shared<dawn::sir::StencilFunArgExpr>(direction_, offset_,
                                                                   argumentIndex_, loc);
   }
 
@@ -628,7 +632,7 @@ ClangASTExprResolver::ClangASTExprResolver(GTClangContext* context, StencilParse
     : context_(context), parser_(parser),
       functionResolver_(std::make_shared<FunctionResolver>(this)) {}
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::BinaryOperator* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::BinaryOperator* expr) {
   resetInternals();
 
   switch(clang::BinaryOperator::getOverloadedOperator(expr->getOpcode())) {
@@ -637,10 +641,11 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::BinaryOpera
   case clang::OO_SlashEqual:
   case clang::OO_PlusEqual:
   case clang::OO_MinusEqual:
-    return std::make_shared<dawn::ExprStmt>(resolveAssignmentOp(expr), getSourceLocation(expr));
+    return std::make_shared<dawn::sir::ExprStmt>(resolveAssignmentOp(expr),
+                                                 getSourceLocation(expr));
   default:
-    return std::make_shared<dawn::ExprStmt>(
-        std::make_shared<dawn::BinaryOperator>(
+    return std::make_shared<dawn::sir::ExprStmt>(
+        std::make_shared<dawn::sir::BinaryOperator>(
             resolve(expr->getLHS()),
             clang::getOperatorSpelling(
                 clang::BinaryOperator::getOverloadedOperator(expr->getOpcode())),
@@ -649,7 +654,7 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::BinaryOpera
   }
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXOperatorCallExpr* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXOperatorCallExpr* expr) {
   resetInternals();
 
   switch(expr->getOperator()) {
@@ -658,53 +663,54 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXOperator
   case clang::OO_SlashEqual:
   case clang::OO_PlusEqual:
   case clang::OO_MinusEqual:
-    return std::make_shared<dawn::ExprStmt>(resolveAssignmentOp(expr), getSourceLocation(expr));
+    return std::make_shared<dawn::sir::ExprStmt>(resolveAssignmentOp(expr),
+                                                 getSourceLocation(expr));
   default:
     llvm_unreachable("invalid operator call expr");
   }
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXConstructExpr* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXConstructExpr* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXFunctionalCastExpr* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXFunctionalCastExpr* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::FloatingLiteral* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::FloatingLiteral* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::IntegerLiteral* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::IntegerLiteral* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXBoolLiteralExpr* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::CXXBoolLiteralExpr* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::DeclRefExpr* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::DeclRefExpr* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::UnaryOperator* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::UnaryOperator* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveExpr(clang::MemberExpr* expr) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveExpr(clang::MemberExpr* expr) {
   resetInternals();
-  return std::make_shared<dawn::ExprStmt>(resolve(expr), getSourceLocation(expr));
+  return std::make_shared<dawn::sir::ExprStmt>(resolve(expr), getSourceLocation(expr));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveDecl(clang::VarDecl* decl) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveDecl(clang::VarDecl* decl) {
   resetInternals();
   using namespace clang;
 
@@ -726,7 +732,7 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveDecl(clang::VarDecl* de
   const auto& argDeclMap = parser_->getCurrentParserRecord()->CurrentArgDeclMap;
   auto it = parser_->getCurrentParserRecord()->CurrentArgDeclMap.find(varname);
   if(it != argDeclMap.end()) {
-    reportDiagnostic(decl->getLocStart(), Diagnostics::err_do_method_var_shadowing)
+    reportDiagnostic(clang_compat::getBeginLoc(*decl), Diagnostics::err_do_method_var_shadowing)
         << varname
         << (parser_->getCurrentParserRecord()->CurrentKind == StencilParser::SK_Stencil
                 ? "stencil"
@@ -748,7 +754,8 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveDecl(clang::VarDecl* de
     else // int, float, double...
       builtinType = dawn::BuiltinTypeID::Float;
   } else {
-    reportDiagnostic(decl->getLocStart(), Diagnostics::err_do_method_invalid_type_of_local_var)
+    reportDiagnostic(clang_compat::getBeginLoc(*decl),
+                     Diagnostics::err_do_method_invalid_type_of_local_var)
         << qualType.getAsString() << varname;
     return nullptr;
   }
@@ -773,7 +780,8 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveDecl(clang::VarDecl* de
   int dimension = 0;
   if(qualType->isArrayType()) {
     if(!qualType->isConstantArrayType()) {
-      reportDiagnostic(decl->getLocStart(), Diagnostics::err_do_method_non_const_array_type)
+      reportDiagnostic(clang_compat::getBeginLoc(*decl),
+                       Diagnostics::err_do_method_non_const_array_type)
           << qualType.getAsString() << varname;
       return nullptr;
     }
@@ -782,7 +790,7 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveDecl(clang::VarDecl* de
   }
 
   // Resolve initializer list
-  std::vector<std::shared_ptr<dawn::Expr>> initList;
+  std::vector<std::shared_ptr<dawn::sir::Expr>> initList;
   if(decl->hasInit()) {
     if(InitListExpr* varInitList = dyn_cast<InitListExpr>(decl->getInit())) {
       for(Expr* init : varInitList->inits())
@@ -791,29 +799,32 @@ std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveDecl(clang::VarDecl* de
       initList.push_back(resolve(decl->getInit()));
   }
 
-  return std::make_shared<dawn::VarDeclStmt>(DAWNType, varname, dimension, "=", std::move(initList),
-                                             getSourceLocation(decl));
+  return std::make_shared<dawn::sir::VarDeclStmt>(DAWNType, varname, dimension, "=",
+                                                  std::move(initList), getSourceLocation(decl));
 }
 
-std::shared_ptr<dawn::Stmt> ClangASTExprResolver::resolveStmt(clang::ReturnStmt* stmt) {
+std::shared_ptr<dawn::sir::Stmt> ClangASTExprResolver::resolveStmt(clang::ReturnStmt* stmt) {
   resetInternals();
-  return std::make_shared<dawn::ReturnStmt>(resolve(stmt->getRetValue()), getSourceLocation(stmt));
+  return std::make_shared<dawn::sir::ReturnStmt>(resolve(stmt->getRetValue()),
+                                                 getSourceLocation(stmt));
 }
 
 dawn::SourceLocation ClangASTExprResolver::getSourceLocation(clang::Stmt* stmt) const {
-  clang::PresumedLoc ploc = context_->getSourceManager().getPresumedLoc(stmt->getLocStart());
+  clang::PresumedLoc ploc =
+      context_->getSourceManager().getPresumedLoc(clang_compat::getBeginLoc(*stmt));
   return dawn::SourceLocation(ploc.getLine(), ploc.getColumn());
 }
 
 dawn::SourceLocation ClangASTExprResolver::getSourceLocation(clang::Decl* decl) const {
-  clang::PresumedLoc ploc = context_->getSourceManager().getPresumedLoc(decl->getLocStart());
+  clang::PresumedLoc ploc =
+      context_->getSourceManager().getPresumedLoc(clang_compat::getBeginLoc(*decl));
   return dawn::SourceLocation(ploc.getLine(), ploc.getColumn());
 }
 
 //===------------------------------------------------------------------------------------------===//
 //     Internal expression resolver
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::Expr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::Expr* expr) {
   using namespace clang;
   // ignore implicit nodes
   expr = skipAllImplicitNodes(expr);
@@ -861,11 +872,11 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::Expr* expr) {
   llvm_unreachable("invalid expr");
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::ArraySubscriptExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::ArraySubscriptExpr* expr) {
   // Resolve the variable
   auto DAWNExpr = resolve(expr->getBase());
 
-  auto DAWNVarAccessExpr = dawn::dyn_cast<dawn::VarAccessExpr>(DAWNExpr.get());
+  auto DAWNVarAccessExpr = dawn::dyn_cast<dawn::sir::VarAccessExpr>(DAWNExpr.get());
   DAWN_ASSERT(DAWNVarAccessExpr);
 
   // Resolve the index
@@ -873,11 +884,11 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::ArraySubscriptE
   return DAWNExpr;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::BinaryOperator* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::BinaryOperator* expr) {
   if(functionResolver_->isActive())
     functionResolver_->skipNextArguments(2);
 
-  auto binary = std::make_shared<dawn::BinaryOperator>(
+  auto binary = std::make_shared<dawn::sir::BinaryOperator>(
       resolve(expr->getLHS()),
       clang::getOperatorSpelling(clang::BinaryOperator::getOverloadedOperator(expr->getOpcode())),
       resolve(expr->getRHS()), getSourceLocation(expr));
@@ -886,13 +897,14 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::BinaryOperator*
     functionResolver_->addArgument(expr, binary);
 
   if(functionResolver_->isActiveOnStencilFunction())
-    reportDiagnostic(expr->getLocStart(), Diagnostics::err_stencilfun_expression_in_arg_list)
+    reportDiagnostic(clang_compat::getBeginLoc(*expr),
+                     Diagnostics::err_stencilfun_expression_in_arg_list)
         << expr->getSourceRange();
 
   return binary;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CallExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::CallExpr* expr) {
   bool isNestedFunction = functionResolver_->isActive();
   functionResolver_->push(expr);
 
@@ -906,13 +918,13 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CallExpr* expr)
   return function;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CStyleCastExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::CStyleCastExpr* expr) {
   currentCStyleCastExpr_ = expr;
   return resolve(expr->getSubExpr());
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXBoolLiteralExpr* expr) {
-  auto booleanLiteral = std::make_shared<dawn::LiteralAccessExpr>(
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::CXXBoolLiteralExpr* expr) {
+  auto booleanLiteral = std::make_shared<dawn::sir::LiteralAccessExpr>(
       expr->getValue() ? "true" : "false", resolveBuiltinType(expr), getSourceLocation(expr));
 
   if(functionResolver_->isActive())
@@ -922,7 +934,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXBoolLiteralE
   return booleanLiteral;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXOperatorCallExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::CXXOperatorCallExpr* expr) {
   if(expr->getOperator() == clang::OO_Call) {
 
     // This should be a call to a storage with offset (e.g `u(i, j, k)`)
@@ -948,7 +960,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXOperatorCall
   llvm_unreachable("invalid operator");
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXConstructExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::CXXConstructExpr* expr) {
   if(StorageResolver::isaStorage(getClassNameFromConstructExpr(expr)) && expr->getNumArgs() == 1) {
     // This is an access to a storage e.g `u = ...`
     return resolve(expr->getArg(0));
@@ -986,8 +998,8 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXConstructExp
     functionResolver_->checkNumOfArgumentsMatch();
 
     // If we parse a nested stencil function, we need to register it as an argument
-    std::shared_ptr<dawn::StencilFunCallExpr> stencilFunctionFun =
-        std::static_pointer_cast<dawn::StencilFunCallExpr>(functionResolver_->pop());
+    std::shared_ptr<dawn::sir::StencilFunCallExpr> stencilFunctionFun =
+        std::static_pointer_cast<dawn::sir::StencilFunCallExpr>(functionResolver_->pop());
     if(isNestedFunction)
       functionResolver_->addArgument(expr, stencilFunctionFun);
 
@@ -995,7 +1007,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXConstructExp
   }
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXMemberCallExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::CXXMemberCallExpr* expr) {
   std::string methodName = expr->getMethodDecl()->getNameInfo().getName().getAsString();
   if(methodName == "operator double") {
     // This covers 2 cases:
@@ -1014,16 +1026,16 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXMemberCallEx
   llvm_unreachable("invalid CXXMemberCallExpr");
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::CXXFunctionalCastExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::CXXFunctionalCastExpr* expr) {
   return resolve(expr->getSubExpr());
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::ConditionalOperator* expr) {
-  return std::make_shared<dawn::TernaryOperator>(resolve(expr->getCond()), resolve(expr->getLHS()),
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::ConditionalOperator* expr) {
+  return std::make_shared<dawn::sir::TernaryOperator>(resolve(expr->getCond()), resolve(expr->getLHS()),
                                                  resolve(expr->getRHS()));
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::DeclRefExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::DeclRefExpr* expr) {
   // Check we don't reference non-local variables (this will not end well in CUDA code)
   if(clang::VarDecl* varDecl = clang::dyn_cast<clang::VarDecl>(expr->getDecl())) {
     if(!varDecl->isLocalVarDecl()) {
@@ -1035,7 +1047,7 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::DeclRefExpr* ex
   }
 
   // Access to a locally declared variable
-  auto var = std::make_shared<dawn::VarAccessExpr>(expr->getNameInfo().getAsString(), nullptr,
+  auto var = std::make_shared<dawn::sir::VarAccessExpr>(expr->getNameInfo().getAsString(), nullptr,
                                                    getSourceLocation(expr));
 
   if(functionResolver_->isActive())
@@ -1043,11 +1055,11 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::DeclRefExpr* ex
   return var;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::FloatingLiteral* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::FloatingLiteral* expr) {
   llvm::SmallVector<char, 10> valueVec;
   expr->getValue().toString(valueVec);
   auto floatLiteral =
-      std::make_shared<dawn::LiteralAccessExpr>(std::string(valueVec.data(), valueVec.size()),
+      std::make_shared<dawn::sir::LiteralAccessExpr>(std::string(valueVec.data(), valueVec.size()),
                                                 resolveBuiltinType(expr), getSourceLocation(expr));
 
   if(functionResolver_->isActive())
@@ -1057,8 +1069,8 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::FloatingLiteral
   return floatLiteral;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::IntegerLiteral* expr) {
-  auto integerLiteral = std::make_shared<dawn::LiteralAccessExpr>(
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::IntegerLiteral* expr) {
+  auto integerLiteral = std::make_shared<dawn::sir::LiteralAccessExpr>(
       expr->getValue().toString(10, true), resolveBuiltinType(expr), getSourceLocation(expr));
 
   if(functionResolver_->isActive())
@@ -1068,12 +1080,12 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::IntegerLiteral*
   return integerLiteral;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::MemberExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::MemberExpr* expr) {
   llvm::StringRef baseIdentifier = expr->getBase()->getType().getBaseTypeIdentifier()->getName();
 
   if(baseIdentifier == "globals") {
     // Access to a global variable
-    auto var = std::make_shared<dawn::VarAccessExpr>(expr->getMemberNameInfo().getAsString(),
+    auto var = std::make_shared<dawn::sir::VarAccessExpr>(expr->getMemberNameInfo().getAsString(),
                                                      nullptr, getSourceLocation(expr));
     var->setIsExternal(true);
     DAWN_ASSERT_MSG(parser_->isGlobalVariable(var->getName()),
@@ -1109,15 +1121,15 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::MemberExpr* exp
   return field;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::ParenExpr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::ParenExpr* expr) {
   return resolve(expr->getSubExpr());
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::UnaryOperator* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolve(clang::UnaryOperator* expr) {
   if(functionResolver_->isActive())
     functionResolver_->skipNextArguments(1);
 
-  auto unary = std::make_shared<dawn::UnaryOperator>(
+  auto unary = std::make_shared<dawn::sir::UnaryOperator>(
       resolve(expr->getSubExpr()),
       clang::getOperatorSpelling(clang::UnaryOperator::getOverloadedOperator(expr->getOpcode())),
       getSourceLocation(expr));
@@ -1126,20 +1138,21 @@ std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolve(clang::UnaryOperator* 
     functionResolver_->addArgument(expr, unary);
 
   if(functionResolver_->isActiveOnStencilFunction())
-    reportDiagnostic(expr->getLocStart(), Diagnostics::err_stencilfun_expression_in_arg_list)
+    reportDiagnostic(clang_compat::getBeginLoc(*expr),
+                     Diagnostics::err_stencilfun_expression_in_arg_list)
         << expr->getSourceRange();
 
   return unary;
 }
 
-std::shared_ptr<dawn::Expr> ClangASTExprResolver::resolveAssignmentOp(clang::Expr* expr) {
+std::shared_ptr<dawn::sir::Expr> ClangASTExprResolver::resolveAssignmentOp(clang::Expr* expr) {
   if(clang::CXXOperatorCallExpr* e = clang::dyn_cast<clang::CXXOperatorCallExpr>(expr)) {
     DAWN_ASSERT(e->getNumArgs() == 2);
-    return std::make_shared<dawn::AssignmentExpr>(resolve(e->getArg(0)), resolve(e->getArg(1)),
+    return std::make_shared<dawn::sir::AssignmentExpr>(resolve(e->getArg(0)), resolve(e->getArg(1)),
                                                   clang::getOperatorSpelling(e->getOperator()),
                                                   getSourceLocation(e));
   } else if(clang::BinaryOperator* e = clang::dyn_cast<clang::BinaryOperator>(expr)) {
-    return std::make_shared<dawn::AssignmentExpr>(
+    return std::make_shared<dawn::sir::AssignmentExpr>(
         resolve(e->getLHS()), resolve(e->getRHS()),
         clang::getOperatorSpelling(clang::BinaryOperator::getOverloadedOperator(e->getOpcode())),
         getSourceLocation(e));

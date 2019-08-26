@@ -25,6 +25,8 @@
 #include "gtclang/Frontend/GTClangContext.h"
 #include "gtclang/Frontend/GlobalVariableParser.h"
 #include "gtclang/Support/ASTUtils.h"
+#include "gtclang/Support/ClangCompat/EvalResult.h"
+#include "gtclang/Support/ClangCompat/SourceLocation.h"
 #include "gtclang/Support/FileUtil.h"
 #include "clang/AST/AST.h"
 #include <numeric>
@@ -71,7 +73,8 @@ private:
       DAWN_ASSERT(expr->getNumArgs() == 1);
       resolve(expr->getArg(0));
     } else {
-      clang::SourceLocation locEnd = varDecl_->getLocEnd().getLocWithOffset(name_.size());
+      clang::SourceLocation locEnd =
+          clang_compat::getEndLoc(*varDecl_).getLocWithOffset(name_.size());
       auto builder = parser_->reportDiagnostic(
           locEnd, Diagnostics::DiagKind::err_interval_custom_missing_init);
       builder << name_;
@@ -96,14 +99,14 @@ private:
       Expr* arg1 = skipAllImplicitNodes(expr->getArg(1));
 
       DeclRefExpr* var = dyn_cast<DeclRefExpr>(arg1);
-      llvm::APSInt res;
+      clang_compat::Expr::EvalResultInt res;
 
       if(var && var->EvaluateAsInt(res, parser_->getContext()->getASTContext())) {
-        int offset = static_cast<int>(res.getExtValue());
+        int offset = static_cast<int>(clang_compat::Expr::getInt(res));
         offset *= expr->getOperator() == clang::OO_Minus ? -1 : 1;
         offset_ = offset;
       } else {
-        parser_->reportDiagnostic(expr->getArg(1)->getLocStart(),
+        parser_->reportDiagnostic(clang_compat::getBeginLoc(*expr->getArg(1)),
                                   Diagnostics::DiagKind::err_interval_custom_not_constexpr)
             << expr->getSourceRange()
             << (builtinLevel_ == dawn::sir::Interval::Start ? "k_start" : "k_end");
@@ -118,10 +121,10 @@ private:
     else if(name == "k_end")
       builtinLevel_ = dawn::sir::Interval::End;
     else {
-      parser_->reportDiagnostic(expr->getLocStart(),
+      parser_->reportDiagnostic(clang_compat::getBeginLoc(*expr),
                                 Diagnostics::DiagKind::err_interval_custom_not_builtin)
           << expr->getSourceRange() << name;
-      parser_->reportDiagnostic(expr->getLocStart(),
+      parser_->reportDiagnostic(clang_compat::getBeginLoc(*expr),
                                 Diagnostics::DiagKind::note_only_builtin_interval_allowed);
     }
   }
@@ -190,12 +193,12 @@ public:
     auto resolveParameter = [&](clang::ParmVarDecl* param, clang::StringRef name) {
       if(param->getName() != name)
         parser_->reportDiagnostic(
-            param->getLocStart(),
+            clang_compat::getBeginLoc(*param),
             Diagnostics::DiagKind::err_stencilfun_do_method_invalid_range_keyword)
             << param->getNameAsString();
 
       if(!param->hasDefaultArg())
-        parser_->reportDiagnostic(param->getLocStart(),
+        parser_->reportDiagnostic(clang_compat::getBeginLoc(*param),
                                   Diagnostics::DiagKind::err_stencilfun_do_method_missing_interval)
             << param->getNameAsString();
 
@@ -253,14 +256,14 @@ private:
       Expr* arg1 = skipAllImplicitNodes(expr->getArg(1));
 
       DeclRefExpr* var = dyn_cast<DeclRefExpr>(arg1);
-      llvm::APSInt res;
+      clang_compat::Expr::EvalResultInt res;
 
       if(var && var->EvaluateAsInt(res, parser_->getContext()->getASTContext())) {
-        int offset = static_cast<int>(res.getExtValue());
+        int offset = static_cast<int>(clang_compat::Expr::getInt(res));
         offset *= expr->getOperator() == clang::OO_Minus ? -1 : 1;
         offset_[curIndex_] = offset;
       } else {
-        parser_->reportDiagnostic(expr->getArg(1)->getLocStart(),
+        parser_->reportDiagnostic(clang_compat::getBeginLoc(*expr->getArg(1)),
                                   Diagnostics::DiagKind::err_interval_not_constexpr)
             << expr->getSourceRange();
       }
@@ -300,7 +303,8 @@ private:
 
   void resolve(clang::MemberExpr* expr) {
     std::string typeStr = expr->getType().getAsString();
-    parser_->reportDiagnostic(expr->getLocStart(), Diagnostics::DiagKind::err_interval_invalid_type)
+    parser_->reportDiagnostic(clang_compat::getBeginLoc(*expr),
+                              Diagnostics::DiagKind::err_interval_invalid_type)
         << typeStr;
   }
 
@@ -507,7 +511,7 @@ void StencilParser::parseStencilImpl(clang::CXXRecordDecl* recordDecl, const std
             .first->second.get();
     currentParserRecord_->CurrentStencil->Name = name;
     currentParserRecord_->CurrentStencil->Loc = getLocation(recordDecl);
-    currentParserRecord_->CurrentStencil->StencilDescAst = std::make_shared<dawn::AST>();
+    currentParserRecord_->CurrentStencil->StencilDescAst = std::make_shared<dawn::sir::AST>();
 
     // Parse the arguments
     for(FieldDecl* field : recordDecl->fields())
@@ -607,9 +611,11 @@ void StencilParser::parseStorage(clang::FieldDecl* field) {
 
   } else {
 
-    reportDiagnostic(field->getLocStart(), Diagnostics::DiagKind::err_stencil_invalid_storage_decl)
+    reportDiagnostic(clang_compat::getBeginLoc(*field),
+                     Diagnostics::DiagKind::err_stencil_invalid_storage_decl)
         << field->getType().getAsString() << name;
-    reportDiagnostic(field->getLocStart(), Diagnostics::DiagKind::note_only_storages_allowed);
+    reportDiagnostic(clang_compat::getBeginLoc(*field),
+                     Diagnostics::DiagKind::note_only_storages_allowed);
   }
 }
 
@@ -646,7 +652,7 @@ void StencilParser::parseArgument(clang::FieldDecl* arg) {
 
     DAWN_LOG(INFO) << "Parsing temporary field: " << name;
 
-    reportDiagnostic(arg->getLocStart(),
+    reportDiagnostic(clang_compat::getBeginLoc(*arg),
                      Diagnostics::DiagKind::err_stencilfun_invalid_argument_type)
         << typeStr << name;
 
@@ -665,7 +671,7 @@ void StencilParser::parseArgument(clang::FieldDecl* arg) {
     currentParserRecord_->addArgDecl(name, arg);
 
   } else {
-    reportDiagnostic(arg->getLocStart(),
+    reportDiagnostic(clang_compat::getBeginLoc(*arg),
                      Diagnostics::DiagKind::err_stencilfun_invalid_argument_type)
         << typeStr << name;
   }
@@ -683,7 +689,7 @@ void StencilParser::parseStencilFunctionDoMethod(clang::CXXMethodDecl* DoMethod)
   std::shared_ptr<dawn::sir::Interval> intervals = nullptr;
   if(DoMethod->getNumParams() > 0) {
     if(DoMethod->getNumParams() != 2) {
-      reportDiagnostic(DoMethod->getLocStart(),
+      reportDiagnostic(clang_compat::getBeginLoc(*DoMethod),
                        Diagnostics::DiagKind::err_stencilfun_do_method_invalid_num_arg)
           << DoMethod->getNumParams();
       return;
@@ -697,7 +703,7 @@ void StencilParser::parseStencilFunctionDoMethod(clang::CXXMethodDecl* DoMethod)
   if(DoMethod->hasBody()) {
 
     ClangASTStmtResolver stmtResolver(context_, this);
-    auto SIRBlockStmt = std::make_shared<dawn::BlockStmt>(getLocation(DoMethod->getBody()));
+    auto SIRBlockStmt = std::make_shared<dawn::sir::BlockStmt>(getLocation(DoMethod->getBody()));
 
     if(CompoundStmt* bodyStmt = dyn_cast<CompoundStmt>(DoMethod->getBody())) {
 
@@ -708,7 +714,7 @@ void StencilParser::parseStencilFunctionDoMethod(clang::CXXMethodDecl* DoMethod)
 
         // Stmt is a range-based for loop which corresponds to a vertical region (not allowed here!)
         if(isa<CXXForRangeStmt>(stmt)) {
-          reportDiagnostic(stmt->getLocStart(),
+          reportDiagnostic(clang_compat::getBeginLoc(*stmt),
                            Diagnostics::DiagKind::err_stencilfun_vertical_region);
           break;
         } else {
@@ -721,7 +727,7 @@ void StencilParser::parseStencilFunctionDoMethod(clang::CXXMethodDecl* DoMethod)
 
     // Assemble the stencil function
     currentParserRecord_->CurrentStencilFunction->Asts.emplace_back(
-        std::make_shared<dawn::AST>(std::move(SIRBlockStmt)));
+        std::make_shared<dawn::sir::AST>(std::move(SIRBlockStmt)));
 
     if(intervals)
       currentParserRecord_->CurrentStencilFunction->Intervals.emplace_back(std::move(intervals));
@@ -748,7 +754,7 @@ void StencilParser::parseStencilDoMethod(clang::CXXMethodDecl* DoMethod) {
 
       ClangASTStmtResolver stmtResolver(context_, this);
 
-      std::shared_ptr<dawn::AST>& stencilDescAst =
+      std::shared_ptr<dawn::sir::AST>& stencilDescAst =
           currentParserRecord_->CurrentStencil->StencilDescAst;
 
       // DoMethod is a CompoundStmt, start iterating
@@ -786,7 +792,8 @@ void StencilParser::parseStencilDoMethod(clang::CXXMethodDecl* DoMethod) {
 
         } else {
           // Not a valid statement inside a Do-Method
-          reportDiagnostic(stmt->getLocStart(), Diagnostics::DiagKind::err_do_method_illegal_stmt);
+          reportDiagnostic(clang_compat::getBeginLoc(*stmt),
+                           Diagnostics::DiagKind::err_do_method_illegal_stmt);
         }
       }
 
@@ -799,7 +806,7 @@ void StencilParser::parseStencilDoMethod(clang::CXXMethodDecl* DoMethod) {
   DAWN_LOG(INFO) << "Done parsing Do-Method";
 }
 
-std::shared_ptr<dawn::StencilCallDeclStmt>
+std::shared_ptr<dawn::sir::StencilCallDeclStmt>
 StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
 
   std::string callee = getClassNameFromConstructExpr(stencilCall);
@@ -845,10 +852,10 @@ StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
       std::string declType = member->getType()->getAsCXXRecordDecl()->getName();
 
       if((declType.find("storage") == std::string::npos) && declType != "var") {
-        reportDiagnostic(member->getLocStart(),
+        reportDiagnostic(clang_compat::getBeginLoc(*member),
                          Diagnostics::DiagKind::err_stencilcall_invalid_argument_type)
             << member->getSourceRange() << type << callee;
-        reportDiagnostic(member->getLocStart(),
+        reportDiagnostic(clang_compat::getBeginLoc(*member),
                          Diagnostics::DiagKind::note_stencilcall_only_storage_allowed);
         return nullptr;
       }
@@ -890,10 +897,10 @@ StencilParser::parseStencilCall(clang::CXXConstructExpr* stencilCall) {
   SIRStencilCall->Args = std::move(fields);
 
   DAWN_LOG(INFO) << "Done parsing stencil call";
-  return std::make_shared<dawn::StencilCallDeclStmt>(SIRStencilCall, SIRStencilCall->Loc);
+  return std::make_shared<dawn::sir::StencilCallDeclStmt>(SIRStencilCall, SIRStencilCall->Loc);
 }
 
-std::shared_ptr<dawn::VerticalRegionDeclStmt>
+std::shared_ptr<dawn::sir::VerticalRegionDeclStmt>
 StencilParser::parseVerticalRegion(clang::CXXForRangeStmt* verticalRegion) {
   using namespace clang;
   using namespace llvm;
@@ -908,7 +915,7 @@ StencilParser::parseVerticalRegion(clang::CXXForRangeStmt* verticalRegion) {
   intervalResolver.resolve(verticalRegion);
 
   // Extract the Do-Method body (AST) from the loop body
-  auto SIRBlockStmt = std::make_shared<dawn::BlockStmt>(getLocation(verticalRegion));
+  auto SIRBlockStmt = std::make_shared<dawn::sir::BlockStmt>(getLocation(verticalRegion));
 
   // There is a difference between
   //
@@ -939,7 +946,7 @@ StencilParser::parseVerticalRegion(clang::CXXForRangeStmt* verticalRegion) {
   }
 
   // Assemble the vertical region and register it within the current Stencil
-  auto SIRAST = std::make_shared<dawn::AST>(std::move(SIRBlockStmt));
+  auto SIRAST = std::make_shared<dawn::sir::AST>(std::move(SIRBlockStmt));
 
   auto intervalPair = intervalResolver.getInterval();
 
@@ -947,10 +954,11 @@ StencilParser::parseVerticalRegion(clang::CXXForRangeStmt* verticalRegion) {
       SIRAST, intervalPair.first, intervalPair.second, getLocation(verticalRegion));
 
   DAWN_LOG(INFO) << "Done parsing vertical region";
-  return std::make_shared<dawn::VerticalRegionDeclStmt>(SIRVerticalRegion, SIRVerticalRegion->Loc);
+  return std::make_shared<dawn::sir::VerticalRegionDeclStmt>(SIRVerticalRegion,
+                                                             SIRVerticalRegion->Loc);
 }
 
-std::shared_ptr<dawn::BoundaryConditionDeclStmt>
+std::shared_ptr<dawn::sir::BoundaryConditionDeclStmt>
 StencilParser::parseBoundaryCondition(clang::CXXConstructExpr* boundaryCondition) {
   using namespace clang;
   using namespace llvm;
@@ -966,7 +974,7 @@ StencilParser::parseBoundaryCondition(clang::CXXConstructExpr* boundaryCondition
   BoundaryConditionResolver resolver(this);
   resolver.resolve(boundaryCondition);
 
-  auto ASTBoundaryCondition = std::make_shared<dawn::BoundaryConditionDeclStmt>(
+  auto ASTBoundaryCondition = std::make_shared<dawn::sir::BoundaryConditionDeclStmt>(
       resolver.getFunctor(), getLocation(boundaryCondition));
 
   for(const auto& name : resolver.getFields()) {
@@ -989,13 +997,13 @@ StencilParser::parseBoundaryCondition(clang::CXXConstructExpr* boundaryCondition
   return ASTBoundaryCondition;
 }
 
-std::vector<std::shared_ptr<dawn::BoundaryConditionDeclStmt>>
+std::vector<std::shared_ptr<dawn::sir::BoundaryConditionDeclStmt>>
 StencilParser::parseBoundaryConditions(clang::CXXMethodDecl* allBoundaryConditions) {
   using namespace clang;
   using namespace llvm;
   DAWN_LOG(INFO) << "Parsing all the boundary conditions at " << getLocation(allBoundaryConditions);
 
-  std::vector<std::shared_ptr<dawn::BoundaryConditionDeclStmt>> parsedBoundayConditions;
+  std::vector<std::shared_ptr<dawn::sir::BoundaryConditionDeclStmt>> parsedBoundayConditions;
   CompoundStmt* bodyStmt = dyn_cast<CompoundStmt>(allBoundaryConditions->getBody());
 
   // loop over all the bounary condition stmts
@@ -1012,7 +1020,7 @@ StencilParser::parseBoundaryConditions(clang::CXXMethodDecl* allBoundaryConditio
 
         // create that DeclStmt with the functor and add the Fields / Arugments, where the field to
         // apply to is at Field[0] and all the arguments follow
-        auto bc = std::make_shared<dawn::BoundaryConditionDeclStmt>(res.getFunctor());
+        auto bc = std::make_shared<dawn::sir::BoundaryConditionDeclStmt>(res.getFunctor());
         for(const auto& field : res.getFields()) {
           bc->getFields().emplace_back(std::make_shared<dawn::sir::Field>(field));
         }
@@ -1036,7 +1044,8 @@ dawn::SourceLocation StencilParser::getLocation(clang::Decl* decl) const {
 }
 
 dawn::SourceLocation StencilParser::getLocation(clang::Stmt* stmt) const {
-  clang::PresumedLoc ploc = context_->getSourceManager().getPresumedLoc(stmt->getLocStart());
+  clang::PresumedLoc ploc =
+      context_->getSourceManager().getPresumedLoc(clang_compat::getBeginLoc(*stmt));
   return dawn::SourceLocation(ploc.getLine(), ploc.getColumn());
 }
 
