@@ -226,7 +226,10 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
              clang::SourceRange(stencilDecl->getSourceRange().getBegin(), semiAfterDef),
              stencilPair.second->Attributes.has(dawn::sir::Attr::AK_NoCodeGen)
                  ? ""
-                 : DawnTranslationUnit->getStencils().at(stencilPair.second->Name)))
+                 : DawnTranslationUnit->getStencils().at(
+                       DawnTranslationUnit->getStencils().count("Stencil") > 0
+                           ? "Stencil"
+                           : stencilPair.second->Name)))
         context_->getDiagnostics().report(Diagnostics::err_fs_error) << dawn::format(
             "unable to replace stencil code at: %s", stencilDecl->getLocation().printToString(SM));
     }
