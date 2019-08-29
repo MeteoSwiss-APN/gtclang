@@ -19,6 +19,7 @@
 #include "gtclang/Frontend/ClangASTExprResolver.h"
 #include "gtclang/Frontend/StencilParser.h"
 #include "gtclang/Support/ASTUtils.h"
+#include "gtclang/Support/ClangCompat/SourceLocation.h"
 #include "clang/AST/AST.h"
 
 namespace gtclang {
@@ -30,19 +31,19 @@ ClangASTStmtResolver::ClangASTStmtResolver(GTClangContext* context, StencilParse
 ClangASTStmtResolver::ClangASTStmtResolver(const std::shared_ptr<ClangASTExprResolver>& resolver)
     : clangASTExprResolver_(resolver), AstKind_(AK_Unknown) {}
 
-llvm::ArrayRef<std::shared_ptr<dawn::Stmt>> ClangASTStmtResolver::resolveStmt(clang::Stmt* stmt,
+llvm::ArrayRef<std::shared_ptr<dawn::sir::Stmt>> ClangASTStmtResolver::resolveStmt(clang::Stmt* stmt,
                                                                               ASTKind kind) {
   resetInternals();
   AstKind_ = kind;
   resolve(stmt);
-  return llvm::ArrayRef<std::shared_ptr<dawn::Stmt>>(statements_);
+  return llvm::ArrayRef<std::shared_ptr<dawn::sir::Stmt>>(statements_);
 }
 
-std::vector<std::shared_ptr<dawn::Stmt>>& ClangASTStmtResolver::getStatements() {
+std::vector<std::shared_ptr<dawn::sir::Stmt>>& ClangASTStmtResolver::getStatements() {
   return statements_;
 }
 
-const std::vector<std::shared_ptr<dawn::Stmt>>& ClangASTStmtResolver::getStatements() const {
+const std::vector<std::shared_ptr<dawn::sir::Stmt>>& ClangASTStmtResolver::getStatements() const {
   return statements_;
 }
 
@@ -67,7 +68,7 @@ void ClangASTStmtResolver::resolve(clang::Stmt* stmt) {
       resolve(s);
     else
       clangASTExprResolver_->getParser()->reportDiagnostic(
-          stmt->getLocStart(), Diagnostics::err_do_method_nested_vertical_region);
+          clang_compat::getBeginLoc(*stmt), Diagnostics::err_do_method_nested_vertical_region);
   } else if(DeclStmt* s = dyn_cast<DeclStmt>(stmt))
     resolve(s);
   else if(DeclRefExpr* s = dyn_cast<DeclRefExpr>(stmt))
@@ -142,12 +143,12 @@ void ClangASTStmtResolver::resolve(clang::ReturnStmt* stmt) {
 
 void ClangASTStmtResolver::resolve(clang::IfStmt* stmt) {
   using namespace clang;
-  std::shared_ptr<dawn::Stmt> condStmt = nullptr;
+  std::shared_ptr<dawn::sir::Stmt> condStmt = nullptr;
 
   // We currently don't support expression with variable decls in the condition
   if(stmt->getConditionVariable())
     clangASTExprResolver_->getParser()->reportDiagnostic(
-        stmt->getConditionVariable()->getLocStart(),
+        clang_compat::getBeginLoc(*stmt->getConditionVariable()),
         Diagnostics::DiagKind::err_do_method_invalid_expr_if_cond)
         << stmt->getConditionVariable()->getSourceRange();
 
@@ -175,16 +176,17 @@ void ClangASTStmtResolver::resolve(clang::IfStmt* stmt) {
     condStmt = clangASTExprResolver_->resolveExpr(s);
   else {
     clangASTExprResolver_->getParser()->reportDiagnostic(
-        clangCond->getLocStart(), Diagnostics::DiagKind::err_do_method_invalid_expr_if_cond)
+        clang_compat::getBeginLoc(*clangCond),
+        Diagnostics::DiagKind::err_do_method_invalid_expr_if_cond)
         << clangCond->getSourceRange();
   }
 
-  auto parseBody = [&](clang::Stmt* clangStmt) -> std::shared_ptr<dawn::BlockStmt> {
+  auto parseBody = [&](clang::Stmt* clangStmt) -> std::shared_ptr<dawn::sir::BlockStmt> {
     if(!clangStmt)
       return nullptr;
 
     auto blockStmt =
-        std::make_shared<dawn::BlockStmt>(clangASTExprResolver_->getSourceLocation(clangStmt));
+        std::make_shared<dawn::sir::BlockStmt>(clangASTExprResolver_->getSourceLocation(clangStmt));
     ClangASTStmtResolver resolver(clangASTExprResolver_);
 
     if(CompoundStmt* compound = dyn_cast<CompoundStmt>(clangStmt)) {
@@ -198,7 +200,7 @@ void ClangASTStmtResolver::resolve(clang::IfStmt* stmt) {
     return blockStmt;
   };
 
-  statements_.emplace_back(std::make_shared<dawn::IfStmt>(
+  statements_.emplace_back(std::make_shared<dawn::sir::IfStmt>(
       condStmt, parseBody(stmt->getThen()), parseBody(stmt->getElse()),
       clangASTExprResolver_->getSourceLocation(stmt)));
 }
