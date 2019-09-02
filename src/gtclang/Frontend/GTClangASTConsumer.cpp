@@ -205,6 +205,8 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
       code += p.second;
     }
   } else {
+    int num_stencils_generated = 0;
+
     // Get a copy of the main-file's code
     std::unique_ptr<llvm::MemoryBuffer> generatedCode =
         llvm::MemoryBuffer::getMemBufferCopy(SM.getBufferData(SM.getMainFileID()));
@@ -229,9 +231,16 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
                  : DawnTranslationUnit->getStencils().at(
                        DawnTranslationUnit->getStencils().count("<restored>") > 0
                            ? "<restored>"
-                           : stencilPair.second->Name)))
+                           : stencilPair.second->Name))) {
         context_->getDiagnostics().report(Diagnostics::err_fs_error) << dawn::format(
             "unable to replace stencil code at: %s", stencilDecl->getLocation().printToString(SM));
+      } else {
+        num_stencils_generated++;
+      }
+      if(context_->getOptions().DeserializeIIR != "" && num_stencils_generated > 1) {
+        printf("WARNING: more than one stencil generated but only one stencil deserialized from IIR!\n");
+        DAWN_LOG(WARNING) << "more than one stencil generated but only one stencil deserialized from IIR";
+      }
     }
 
     // Replace globals struct
