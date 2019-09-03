@@ -16,6 +16,7 @@
 
 #include "gtclang/Frontend/ClangASTStmtResolver.h"
 #include "dawn/SIR/AST.h"
+#include "dawn/SIR/ASTStmt.h"
 #include "gtclang/Frontend/ClangASTExprResolver.h"
 #include "gtclang/Frontend/StencilParser.h"
 #include "gtclang/Support/ASTUtils.h"
@@ -31,8 +32,8 @@ ClangASTStmtResolver::ClangASTStmtResolver(GTClangContext* context, StencilParse
 ClangASTStmtResolver::ClangASTStmtResolver(const std::shared_ptr<ClangASTExprResolver>& resolver)
     : clangASTExprResolver_(resolver), AstKind_(AK_Unknown) {}
 
-llvm::ArrayRef<std::shared_ptr<dawn::sir::Stmt>> ClangASTStmtResolver::resolveStmt(clang::Stmt* stmt,
-                                                                              ASTKind kind) {
+llvm::ArrayRef<std::shared_ptr<dawn::sir::Stmt>>
+ClangASTStmtResolver::resolveStmt(clang::Stmt* stmt, ASTKind kind) {
   resetInternals();
   AstKind_ = kind;
   resolve(stmt);

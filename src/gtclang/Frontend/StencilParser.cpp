@@ -15,6 +15,7 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "gtclang/Frontend/StencilParser.h"
+#include "dawn/SIR/ASTStmt.h"
 #include "dawn/SIR/SIR.h"
 #include "dawn/Support/Array.h"
 #include "dawn/Support/Assert.h"
@@ -951,10 +952,10 @@ StencilParser::parseVerticalRegion(clang::CXXForRangeStmt* verticalRegion) {
   auto intervalPair = intervalResolver.getInterval();
 
   auto SIRVerticalRegion = std::make_shared<dawn::sir::VerticalRegion>(
-      SIRAST, intervalPair.first, intervalPair.second, getLocation(verticalRegion));
+      intervalPair.first, intervalPair.second, getLocation(verticalRegion));
 
   DAWN_LOG(INFO) << "Done parsing vertical region";
-  return std::make_shared<dawn::sir::VerticalRegionDeclStmt>(SIRVerticalRegion,
+  return std::make_shared<dawn::sir::VerticalRegionDeclStmt>(SIRAST, SIRVerticalRegion,
                                                              SIRVerticalRegion->Loc);
 }
 

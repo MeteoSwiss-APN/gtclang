@@ -225,10 +225,10 @@ void ParsingComparison::wrapStatementInStencil(std::unique_ptr<dawn::SIR>& sir,
   if(sir::BlockStmt* blockstmt = dawn::dyn_cast<sir::BlockStmt>(stmt.get())) {
     sir->Stencils.push_back(std::make_shared<sir::Stencil>());
     sir->Stencils[0]->Name = "test01";
-    sir->Stencils[0]->StencilDescAst = std::make_shared<sir::AST>(
-        std::make_shared<sir::BlockStmt>(std::vector<std::shared_ptr<sir::Stmt>>{
-            std::make_shared<sir::VerticalRegionDeclStmt>(std::make_shared<sir::VerticalRegion>(
-                std::make_shared<sir::AST>(std::make_shared<sir::BlockStmt>(*blockstmt)),
+    sir->Stencils[0]->StencilDescAst = std::make_shared<sir::AST>(std::make_shared<sir::BlockStmt>(
+        std::vector<std::shared_ptr<sir::Stmt>>{std::make_shared<sir::VerticalRegionDeclStmt>(
+            std::make_shared<sir::AST>(std::make_shared<sir::BlockStmt>(*blockstmt)),
+            std::make_shared<sir::VerticalRegion>(
                 std::make_shared<sir::Interval>(sir::Interval::Start, sir::Interval::End),
                 sir::VerticalRegion::LoopOrderKind::LK_Forward))}));
     auto allFields = dawn::sir::getFieldFromStencilAST(sir->Stencils[0]->StencilDescAst);
