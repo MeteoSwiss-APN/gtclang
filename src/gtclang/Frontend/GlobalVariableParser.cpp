@@ -69,17 +69,6 @@ public:
   std::string getStr() { return str_; }
 };
 
-template <class T>
-void setValue(dawn::sir::Value& value, const dawn::json::json& jnode) {
-  value.setValue(T(jnode));
-}
-
-template <>
-void setValue<std::string>(dawn::sir::Value& value, const dawn::json::json& jnode) {
-  std::string v = jnode;
-  value.setValue(v);
-}
-
 } // anonymous namespace
 
 //===------------------------------------------------------------------------------------------===//
@@ -136,8 +125,7 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
       return;
     }
 
-    auto value = std::make_shared<dawn::sir::Value>();
-    value->setType(typeKind);
+    std::shared_ptr<dawn::sir::Value> value;
 
     // Check if we have a default value `value` i.e `T var = value`
     if(arg->hasInClassInitializer()) {
@@ -149,20 +137,21 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
             << init->getType().getAsString() << name;
       };
 
+      //TODO: fix this again w.r.t. double vs. int literals (PR 154)
       if(IntegerLiteral* il = dyn_cast<IntegerLiteral>(init)) {
         std::string valueStr = il->getValue().toString(10, true);
-        value->setValue((int)std::atoi(valueStr.c_str()));
+        value = std::make_shared<dawn::sir::Value>((int)std::atoi(valueStr.c_str()));
         DAWN_LOG(INFO) << "Setting default value of '" << name << "' to '" << valueStr << "'";
 
       } else if(FloatingLiteral* fl = dyn_cast<FloatingLiteral>(init)) {
         llvm::SmallVector<char, 10> valueVec;
         fl->getValue().toString(valueVec);
         std::string valueStr(valueVec.data(), valueVec.size());
-        value->setValue((double)std::atof(valueStr.c_str()));
+         value = std::make_shared<dawn::sir::Value>( (double) std::atof(valueStr.c_str() ));
         DAWN_LOG(INFO) << "Setting default value of '" << name << "' to '" << valueStr << "'";
 
       } else if(CXXBoolLiteralExpr* bl = dyn_cast<CXXBoolLiteralExpr>(init)) {
-        value->setValue(bl->getValue());
+         value = std::make_shared<dawn::sir::Value>((bool) bl->getValue());
         DAWN_LOG(INFO) << "Setting default value of '" << name << "' to '" << bl->getValue() << "'";
 
       } else if(typeKind == dawn::sir::Value::String) {
@@ -171,7 +160,7 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
         std::string valueStr = resolver.getStr();
 
         if(!valueStr.empty()) {
-          value->setValue(valueStr);
+          value = std::make_shared<dawn::sir::Value>(valueStr);
           DAWN_LOG(INFO) << "Setting default value of '" << name << "' to '" << valueStr << "'";
         } else
           reportError();
@@ -179,6 +168,8 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
       } else {
         reportError();
       }
+    } else {
+      value = std::make_shared<dawn::sir::Value>(typeKind);
     }
 
     variableMap_->emplace(name, value);
@@ -227,19 +218,20 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
       }
 
       dawn::sir::Value& value = *varIt->second;
+      std::shared_ptr<dawn::sir::Value> parsed_value;
       try {
         switch(value.getType()) {
         case dawn::sir::Value::Boolean:
-          setValue<bool>(value, *it);
+          parsed_value = std::make_shared<dawn::sir::Value>(std::stoi(varIt->first));
           break;
         case dawn::sir::Value::Integer:
-          setValue<int>(value, *it);
+          parsed_value = std::make_shared<dawn::sir::Value>(atoi(varIt->first.c_str()));
           break;
         case dawn::sir::Value::Double:
-          setValue<double>(value, *it);
+          parsed_value = std::make_shared<dawn::sir::Value>(atof(varIt->first.c_str()));
           break;
         case dawn::sir::Value::String:
-          setValue<std::string>(value, *it);
+          parsed_value = std::make_shared<dawn::sir::Value>(varIt->first);
           break;
         default:
           dawn_unreachable("invalid type");
@@ -248,6 +240,8 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
         configError("invalid key '" + key + "': " + e.what());
         return;
       }
+
+      varIt->second = parsed_value;
 
       // Treat the value as a compile time constant
       value.setIsConstexpr(true);
