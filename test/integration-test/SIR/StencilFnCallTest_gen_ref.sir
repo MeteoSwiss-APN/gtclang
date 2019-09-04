@@ -13,12 +13,7 @@
       "statements": [
        {
         "vertical_region_decl_stmt": {
-         "vertical_region": {
-          "loc": {
-           "Line": 35,
-           "Column": 5
-          },
-          "ast": {
+         "ast": {
            "root": {
             "block_stmt": {
              "statements": [
@@ -113,6 +108,11 @@
              "ID": 6
             }
            }
+          },
+         "vertical_region": {
+          "loc": {
+           "Line": 35,
+           "Column": 5
           },
           "interval": {
            "lower_offset": 0,
