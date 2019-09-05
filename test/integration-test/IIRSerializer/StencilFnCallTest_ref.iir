@@ -1,31 +1,31 @@
 {
  "metadata": {
   "accessIDToName": {
-   "13": "a",
-   "14": "b",
+   "16": "a",
+   "17": "b",
    "33": "__local_fn_33"
   },
   "exprIDToAccessID": {
-   "16": 13,
+   "18": 17,
    "34": 33,
-   "15": 14,
-   "31": 13
+   "19": 16,
+   "31": 16
   },
   "stmtIDToAccessID": {
    "35": 33
   },
   "accessIDToType": {
-   "13": 6,
-   "14": 6
+   "16": 6,
+   "17": 6
   },
   "literalIDToName": {},
   "fieldAccessIDs": [
-   13,
-   14
+   16,
+   17
   ],
   "APIFieldIDs": [
-   13,
-   14
+   16,
+   17
   ],
   "temporaryFieldIDs": [],
   "globalVariableIDs": [],
@@ -34,12 +34,12 @@
   },
   "fieldnameToBoundaryCondition": {},
   "fieldIDtoLegalDimensions": {
-   "13": {
+   "16": {
     "int1": 1,
     "int2": 1,
     "int3": 1
    },
-   "14": {
+   "17": {
     "int1": 1,
     "int2": 1,
     "int3": 1
@@ -149,7 +149,7 @@
               }
              },
              "readAccess": {
-              "13": {
+              "16": {
                "extents": [
                 {
                  "minus": 0,
@@ -196,7 +196,7 @@
                    "Line": 32,
                    "Column": 59
                   },
-                  "ID": 15
+                  "ID": 18
                  }
                 },
                 "op": "=",
@@ -215,19 +215,19 @@
                  "Line": 32,
                  "Column": 59
                 },
-                "ID": 18
+                "ID": 21
                }
               },
               "loc": {
                "Line": 32,
                "Column": 59
               },
-              "ID": 19
+              "ID": 22
              }
             },
             "accesses": {
              "writeAccess": {
-              "14": {
+              "17": {
                "extents": [
                 {
                  "minus": 0,
