@@ -108,7 +108,7 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
     auto type = arg->getType();
     DAWN_ASSERT(!type.isNull());
 
-    dawn::sir::Value::TypeKind typeKind = dawn::sir::Value::None;
+    dawn::sir::Value::TypeKind typeKind;
     if(type->isBooleanType()) // bool
       typeKind = dawn::sir::Value::Boolean;
     else if(type->isIntegerType()) // int
@@ -147,7 +147,7 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
         llvm::SmallVector<char, 10> valueVec;
         fl->getValue().toString(valueVec);
         std::string valueStr(valueVec.data(), valueVec.size());
-         value = std::make_shared<dawn::sir::Value>( (double) std::atof(valueStr.c_str() ));
+        value = std::make_shared<dawn::sir::Value>( (double) std::atof(valueStr.c_str() ));
         DAWN_LOG(INFO) << "Setting default value of '" << name << "' to '" << valueStr << "'";
 
       } else if(CXXBoolLiteralExpr* bl = dyn_cast<CXXBoolLiteralExpr>(init)) {
@@ -219,19 +219,22 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
 
       dawn::sir::Value& value = *varIt->second;
       std::shared_ptr<dawn::sir::Value> parsed_value;
+      // Treat the value as a compile time constant
+      bool isConstExpr = true;
+
       try {
         switch(value.getType()) {
         case dawn::sir::Value::Boolean:
-          parsed_value = std::make_shared<dawn::sir::Value>(std::stoi(varIt->first));
+          parsed_value = std::make_shared<dawn::sir::Value>(std::stoi(varIt->first), isConstExpr);
           break;
         case dawn::sir::Value::Integer:
-          parsed_value = std::make_shared<dawn::sir::Value>(atoi(varIt->first.c_str()));
+          parsed_value = std::make_shared<dawn::sir::Value>(atoi(varIt->first.c_str()), isConstExpr);
           break;
         case dawn::sir::Value::Double:
-          parsed_value = std::make_shared<dawn::sir::Value>(atof(varIt->first.c_str()));
+          parsed_value = std::make_shared<dawn::sir::Value>(atof(varIt->first.c_str()), isConstExpr);
           break;
         case dawn::sir::Value::String:
-          parsed_value = std::make_shared<dawn::sir::Value>(varIt->first);
+          parsed_value = std::make_shared<dawn::sir::Value>(varIt->first, isConstExpr);
           break;
         default:
           dawn_unreachable("invalid type");
@@ -242,9 +245,6 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
       }
 
       varIt->second = parsed_value;
-
-      // Treat the value as a compile time constant
-      value.setIsConstexpr(true);
 
       DAWN_LOG(INFO) << "Setting constant value of '" << key << " to '" << value.toString() << "'";
     }
