@@ -234,5 +234,5 @@
   ],
   "boundaryConditions": []
  },
- "filename": "/scratch/mroeth/gtclang/gtclang/test/integration-test/IIRSerializer/NestedStencils.cpp"
+ "filename": "/code/gtclang/test/integration-test/IIRSerializer/NestedStencils.cpp"
 }
