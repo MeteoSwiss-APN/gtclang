@@ -232,7 +232,7 @@
     }
    }
   ],
-  "boundaryConditions": []
+  "stencilFunctions": []
  },
- "filename": "/code/gtclang/test/integration-test/IIRSerializer/NestedStencils.cpp"
+ "filename": "/home/giacomo/gtclang/test/integration-test/IIRSerializer/NestedStencils.cpp"
 }

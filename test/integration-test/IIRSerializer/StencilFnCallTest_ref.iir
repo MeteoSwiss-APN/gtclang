@@ -309,7 +309,83 @@
     }
    }
   ],
-  "boundaryConditions": []
+  "stencilFunctions": [
+   {
+    "name": "fn",
+    "loc": {
+     "Line": -1,
+     "Column": -1
+    },
+    "asts": [
+     {
+      "root": {
+       "block_stmt": {
+        "statements": [
+         {
+          "return_stmt": {
+           "expr": {
+            "field_access_expr": {
+             "name": "a",
+             "offset": [
+              0,
+              0,
+              0
+             ],
+             "argument_map": [
+              -1,
+              -1,
+              -1
+             ],
+             "argument_offset": [
+              0,
+              0,
+              0
+             ],
+             "negate_offset": false,
+             "loc": {
+              "Line": 26,
+              "Column": 25
+             },
+             "ID": 13
+            }
+           },
+           "loc": {
+            "Line": 26,
+            "Column": 18
+           },
+           "ID": 14
+          }
+         }
+        ],
+        "loc": {
+         "Line": 26,
+         "Column": 16
+        },
+        "ID": 15
+       }
+      }
+     }
+    ],
+    "intervals": [],
+    "arguments": [
+     {
+      "field_value": {
+       "name": "a",
+       "loc": {
+        "Line": 25,
+        "Column": 11
+       },
+       "is_temporary": false,
+       "field_dimensions": [
+        1,
+        1,
+        1
+       ]
+      }
+     }
+    ]
+   }
+  ]
  },
- "filename": "/code/gtclang/test/integration-test/IIRSerializer/StencilFnCallTest.cpp"
+ "filename": "/home/giacomo/gtclang/test/integration-test/IIRSerializer/StencilFnCallTest.cpp"
 }

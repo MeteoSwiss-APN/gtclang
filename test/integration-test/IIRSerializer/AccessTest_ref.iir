@@ -5,13 +5,13 @@
    "19": "a"
   },
   "exprIDToAccessID": {
-   "29": 19,
    "31": 19,
    "21": 20,
    "22": 19,
    "23": 19,
    "25": 19,
-   "27": 19
+   "27": 19,
+   "29": 19
   },
   "stmtIDToAccessID": {},
   "accessIDToType": {
@@ -417,7 +417,7 @@
     }
    }
   ],
-  "boundaryConditions": []
+  "stencilFunctions": []
  },
- "filename": "/code/gtclang/test/integration-test/IIRSerializer/AccessTest.cpp"
+ "filename": "/home/giacomo/gtclang/test/integration-test/IIRSerializer/AccessTest.cpp"
 }
