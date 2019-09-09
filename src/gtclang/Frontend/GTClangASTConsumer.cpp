@@ -193,10 +193,8 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   clang::SourceManager sources(context_->getASTContext().getDiagnostics(), files);
 
   std::string code;
-  if(context_->getOptions().Serialized) {
-    DAWN_LOG(INFO) << "Data was loaded from serialized IR, codegen ";
-    std::cout << "Data was loaded from serialized IR, codegen " << std::endl;
-
+  if(context_->getOptions().NewFile) {
+    DAWN_LOG(INFO) << "Codegen into empty file";
     code += DawnTranslationUnit->getGlobals();
 
     code += "\n\n";
