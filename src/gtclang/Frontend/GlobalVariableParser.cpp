@@ -137,17 +137,29 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
             << init->getType().getAsString() << name;
       };
 
-      //TODO: fix this again w.r.t. double vs. int literals (PR 154)
-      if(IntegerLiteral* il = dyn_cast<IntegerLiteral>(init)) {
+      // demotion to integer (`double ->12<-' would dyncast to int)
+      if(dyn_cast<IntegerLiteral>(init) != nullptr && typeKind == dawn::sir::Value::Integer) {
+        IntegerLiteral* il = dyn_cast<IntegerLiteral>(init);
         std::string valueStr = il->getValue().toString(10, true);
         value = std::make_shared<dawn::sir::Value>((int)std::atoi(valueStr.c_str()));
         DAWN_LOG(INFO) << "Setting default value of '" << name << "' to '" << valueStr << "'";
 
-      } else if(FloatingLiteral* fl = dyn_cast<FloatingLiteral>(init)) {
-        llvm::SmallVector<char, 10> valueVec;
-        fl->getValue().toString(valueVec);
-        std::string valueStr(valueVec.data(), valueVec.size());
-        value = std::make_shared<dawn::sir::Value>( (double) std::atof(valueStr.c_str() ));
+      // this slightly unelegant procedure is needed since FloatingLiteral does not cast from
+      // expressions without trailing do (e.g. `12.' would cast, `12' wouldn't.)
+      } else if((dyn_cast<FloatingLiteral>(init) != nullptr || dyn_cast<IntegerLiteral>(init) != nullptr)
+          && typeKind == dawn::sir::Value::Double) {
+        IntegerLiteral* il = dyn_cast<IntegerLiteral>(init);
+        FloatingLiteral* fl = dyn_cast<FloatingLiteral>(init);
+        std::string valueStr;
+        if (fl != nullptr) {
+          llvm::SmallVector<char, 10> valueVec;
+          fl->getValue().toString(valueVec);
+          valueStr = std::string(valueVec.data(), valueVec.size());
+          value = std::make_shared<dawn::sir::Value>( (double) std::atof(valueStr.c_str() ));
+        } else {
+          valueStr = il->getValue().toString(10, true);
+          value = std::make_shared<dawn::sir::Value>( (double) std::atof(valueStr.c_str() ));
+        }
         DAWN_LOG(INFO) << "Setting default value of '" << name << "' to '" << valueStr << "'";
 
       } else if(CXXBoolLiteralExpr* bl = dyn_cast<CXXBoolLiteralExpr>(init)) {
