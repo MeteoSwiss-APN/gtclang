@@ -231,22 +231,26 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
 
       dawn::sir::Value& value = *varIt->second;
       std::shared_ptr<dawn::sir::Value> parsed_value;
+      
       // Treat the value as a compile time constant
-      bool isConstExpr = true;
+      //  i.e., at this point in time we are sure that this is a compile time constant
+      const bool isConstExpr = true;
 
       try {
         switch(value.getType()) {
         case dawn::sir::Value::Boolean:
-          parsed_value = std::make_shared<dawn::sir::Value>(std::stoi(varIt->first), isConstExpr);
+          parsed_value = std::make_shared<dawn::sir::Value>(bool(*it), isConstExpr);
           break;
         case dawn::sir::Value::Integer:
-          parsed_value = std::make_shared<dawn::sir::Value>(atoi(varIt->first.c_str()), isConstExpr);
+          parsed_value = std::make_shared<dawn::sir::Value>(int(*it), isConstExpr);
           break;
         case dawn::sir::Value::Double:
-          parsed_value = std::make_shared<dawn::sir::Value>(atof(varIt->first.c_str()), isConstExpr);
+          parsed_value = std::make_shared<dawn::sir::Value>(double(*it), isConstExpr);
           break;
-        case dawn::sir::Value::String:
-          parsed_value = std::make_shared<dawn::sir::Value>(varIt->first, isConstExpr);
+        case dawn::sir::Value::String: {
+          std::string v = *it;
+          parsed_value = std::make_shared<dawn::sir::Value>(v, isConstExpr);
+          }
           break;
         default:
           dawn_unreachable("invalid type");
@@ -256,9 +260,10 @@ void GlobalVariableParser::parseGlobals(clang::CXXRecordDecl* recordDecl) {
         return;
       }
 
-      varIt->second = parsed_value;
+      variableMap_->at(key) = parsed_value;  //update varIt in map
+      assert(variableMap_->at(key)->has_value());
 
-      DAWN_LOG(INFO) << "Setting constant value of '" << key << " to '" << value.toString() << "'";
+      DAWN_LOG(INFO) << "Setting constant value of '" << key << " to '" << variableMap_->at(key)->toString() << "'";     
     }
   }
 
