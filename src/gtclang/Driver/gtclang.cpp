@@ -15,8 +15,11 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "gtclang/Driver/Driver.h"
+#include "dawn/Compiler/test_proto.h"
 
 int main(int argc, const char* argv[]) {
+  deserialization_test_mat();
+
   llvm::SmallVector<const char*, 16> args(argv, argv + argc);
   return gtclang::Driver::run(args);
 }

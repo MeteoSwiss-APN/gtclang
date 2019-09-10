@@ -193,7 +193,8 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
   clang::SourceManager sources(context_->getASTContext().getDiagnostics(), files);
 
   std::string code;
-  if(context_->getOptions().NewFile) {
+  // if(context_->getOptions().NewFile) {
+  if(true) {
     DAWN_LOG(INFO) << "Codegen into empty file";
     code += DawnTranslationUnit->getGlobals();
 
