@@ -113,6 +113,7 @@ DAWN_ATTRIBUTE_NORETURN static void helpPrinter() {
   llvm::outs() << "\nDAWN OPTIONS:\n";
 
 #include "dawn/Compiler/Options.inc"
+#include "dawn/Optimizer/OptimizerOptions.inc"
 #undef OPT
 
   llvm::outs().flush();
@@ -187,6 +188,7 @@ OptionsParser::OptionsParser(Options* options) : options_(options) {
     }                                                                                              \
   }
 #include "dawn/Compiler/Options.inc"
+#include "dawn/Optimizer/OptimizerOptions.inc"
 #include "gtclang/Driver/Options.inc"
 #undef OPT
 }

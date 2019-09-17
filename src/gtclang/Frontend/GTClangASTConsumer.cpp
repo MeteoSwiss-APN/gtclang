@@ -69,6 +69,7 @@ static std::unique_ptr<dawn::Options> makeDAWNOptions(const Options& options) {
 #define OPT(TYPE, NAME, DEFAULT_VALUE, OPTION, OPTION_SHORT, HELP, VALUE_NAME, HAS_VALUE, F_GROUP) \
   DAWNOptions->NAME = options.NAME;
 #include "dawn/Compiler/Options.inc"
+#include "dawn/Optimizer/OptimizerOptions.inc"
 #undef OPT
   return DAWNOptions;
 }
@@ -237,8 +238,9 @@ void GTClangASTConsumer::HandleTranslationUnit(clang::ASTContext& ASTContext) {
       } else {
         num_stencils_generated++;
       }
-      if(context_->getOptions().DeserializeIIR != "" && num_stencils_generated > 1) {        
-        DAWN_LOG(ERROR)<< "more than one stencil present in DSL but only one stencil deserialized from IIR";
+      if(context_->getOptions().DeserializeIIR != "" && num_stencils_generated > 1) {
+        DAWN_LOG(ERROR)
+            << "more than one stencil present in DSL but only one stencil deserialized from IIR";
         return;
       }
     }
