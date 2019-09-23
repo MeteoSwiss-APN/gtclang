@@ -19,6 +19,7 @@
 
 int main(int argc, const char* argv[]) {
   // deserialization_test_mat();
+  // return 0;
 
   llvm::SmallVector<const char*, 16> args(argv, argv + argc);
   return gtclang::Driver::run(args);
