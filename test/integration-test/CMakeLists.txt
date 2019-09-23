@@ -112,6 +112,7 @@ function(compile_generated_examples)
 endfunction(compile_generated_examples)
 
 function(cuda_compile_generated_examples)
+  yoda_set_cxx_standard(c++11)
   set(oneValueArgs BACKEND)
   set(multiValueArgs EXAMPLES)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
@@ -148,6 +149,7 @@ function(cuda_compile_generated_examples)
 
       add_test(NAME CTest-${example}_benchmarks_${backend}_cuda COMMAND ${CTEST_SUBMIT_COMMAND} $<TARGET_FILE:${example}_benchmarks_${backend}_cuda> 12 12 10 --gtest_output=xml:${example}_cuda_unittest.xml)
   endforeach()
+  yoda_set_cxx_standard(c++17)
 endfunction(cuda_compile_generated_examples)
 
 
