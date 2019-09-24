@@ -15,7 +15,6 @@
 //===------------------------------------------------------------------------------------------===//
 
 #include "gtclang/Driver/Driver.h"
-#include "dawn/Compiler/test_proto.h"
 
 int main(int argc, const char* argv[]) {
   llvm::SmallVector<const char*, 16> args(argv, argv + argc);

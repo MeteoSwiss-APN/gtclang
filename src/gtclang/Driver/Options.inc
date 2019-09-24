@@ -1,15 +1,15 @@
 //===--------------------------------------------------------------------------------*- C++ -*-===//
-//                         _       _
-//                        | |     | |
-//                    __ _| |_ ___| | __ _ _ __   __ _
+//                         _       _                   
+//                        | |     | |                  
+//                    __ _| |_ ___| | __ _ _ __   __ _ 
 //                   / _` | __/ __| |/ _` | '_ \ / _` |
 //                  | (_| | || (__| | (_| | | | | (_| |
 //                   \__, |\__\___|_|\__,_|_| |_|\__, | - GridTools Clang DSL
 //                    __/ |                       __/ |
-//                   |___/                       |___/
+//                   |___/                       |___/ 
 //
 //
-//  This file is distributed under the MIT License (MIT).
+//  This file is distributed under the MIT License (MIT). 
 //  See LICENSE.txt for details.
 //
 //===------------------------------------------------------------------------------------------===//
@@ -48,6 +48,6 @@ OPT(bool, CodeGen, true, "codegen", "", "Generate code", "", false, true)
 OPT(bool, ClangFormat, true, "clang-format", "", "Run clang-format on the generated code", "", false, true)
 OPT(bool, ReportPassPreprocessor, false, "report-pass-preprocessor", "", 
     "Print each line of the preprocessed source prepended by the line number (comments and indentation are removed)", "", false, true)
-OPT(bool, NewFile, false, "new-file", "", "we generate code into an empty file", "", false, true)
+OPT(bool, Serialized, false, "loaded-serialized", "", "is the passed file serialized data", "", false, true)
 
 // clang-format on
