@@ -34,8 +34,8 @@ bool Driver::isInitialized = false;
 ReturnValue Driver::run(const llvm::SmallVectorImpl<const char*>& args) {
   // Print a stack trace if we signal out
   if(!isInitialized) {
-    llvm::sys::PrintStackTraceOnErrorSignal(
-        args[0]); // we must call this only once, otherwise we register a signal on each call
+    // we must call this only once, otherwise we register a signal on each call
+    llvm::sys::PrintStackTraceOnErrorSignal(args[0]);
     isInitialized = true;
   }
   llvm::PrettyStackTraceProgram X(args.size(), args.data());
