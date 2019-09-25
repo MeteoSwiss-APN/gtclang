@@ -1,7 +1,7 @@
 ##===------------------------------------------------------------------------------*- CMake -*-===##
 ##                         _       _
 ##                        | |     | |
-##                    __ _| |_ ___| | __ _ _ __   __ _ 
+##                    __ _| |_ ___| | __ _ _ __   __ _
 ##                   / _` | __/ __| |/ _` | '_ \ / _` |
 ##                  | (_| | || (__| | (_| | | | | (_| |
 ##                   \__, |\__\___|_|\__,_|_| |_|\__, | - GridTools Clang DSL
@@ -9,13 +9,13 @@
 ##                   |___/                       |___/
 ##
 ##
-##  This file is distributed under the MIT License (MIT). 
+##  This file is distributed under the MIT License (MIT).
 ##  See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING 
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING
       "Choose the type of build, options are: Debug Release RelWithDebInfo." FORCE)
 endif()
 
@@ -67,7 +67,7 @@ if(GTCLANG_HAS_CUDA)
 endif(GTCLANG_HAS_CUDA)
 
 # Set C++ standard
-yoda_set_cxx_standard(c++17)
+set(CMAKE_CXX_STANDARD 17)
 
 # Set C++ flags (Note that the LLVM/Clang package might add some other flags)
 gtclang_set_cxx_flags()
@@ -128,7 +128,7 @@ endif()
 yoda_enable_full_rpath("${DAWN_RPATH_DIR}")
 
 # Add clang-format target
-set(format_directories 
+set(format_directories
   "${CMAKE_SOURCE_DIR}/src"
   "${CMAKE_SOURCE_DIR}/test/unit-test"
 )
@@ -159,8 +159,7 @@ gtclang_gen_install_config()
 
 # Install headers
 install(
-  DIRECTORY src/ 
-  DESTINATION ${GTCLANG_INSTALL_INCLUDE_DIR} 
+  DIRECTORY src/
+  DESTINATION ${GTCLANG_INSTALL_INCLUDE_DIR}
   FILES_MATCHING PATTERN "*.h" PATTERN "*.inc" PATTERN "*.hpp"
 )
-
