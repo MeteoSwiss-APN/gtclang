@@ -1,13 +1,13 @@
 ##===------------------------------------------------------------------------------*- CMake -*-===##
-##                          _                      
-##                         | |                     
-##                       __| | __ ___      ___ ___  
-##                      / _` |/ _` \ \ /\ / / '_  | 
+##                          _
+##                         | |
+##                       __| | __ ___      ___ ___
+##                      / _` |/ _` \ \ /\ / / '_  |
 ##                     | (_| | (_| |\ V  V /| | | |
 ##                      \__,_|\__,_| \_/\_/ |_| |_| - Compiler Toolchain
 ##
 ##
-##  This file is distributed under the MIT License (MIT). 
+##  This file is distributed under the MIT License (MIT).
 ##  See LICENSE.txt for details.
 ##
 ##===------------------------------------------------------------------------------------------===##
@@ -27,9 +27,8 @@ set(GTCLANG_CMAKE_DIR "@PACKAGE_GTCLANG_INSTALL_CMAKE_DIR@")
 set(GTCLANG_BIN_DIR "@PACKAGE_GTCLANG_INSTALL_BIN_DIR@")
 
 if(NOT DEFINED GridTools_DIR)
-  set(GridTools_DIR "@GridTools_DIR@")
+  set(GridTools_DIR "@PACKAGE_GridTools_DIR@")
 endif()
 
 # Report findings
 message(STATUS "Found gtclang version: ${GTCLANG_VERSION}")
-
