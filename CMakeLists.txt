@@ -102,7 +102,7 @@ foreach(package bash ccache Python3 Boost clang-format Clang Dawn OpenMP Threads
   endif()
 endforeach()
 
-if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_GT_GPU_EXAMPLES)
+if(GTCLANG_BUILD_GT_CPU_EXAMPLES OR GTCLANG_BUILD_GT_GPU_EXAMPLES OR GTCLANG_BUILD_CUDA_EXAMPLES)
   include("AddGridTools")
   if(GridTools_FOUND)
     yoda_create_package_string(GridTools info)
