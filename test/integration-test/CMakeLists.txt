@@ -136,7 +136,7 @@ function(cuda_compile_generated_examples)
       target_link_libraries(${example}_benchmarks_${backend}_cuda gtest ${CUDA_CUDART_LIBRARY})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DOPTBACKEND=${backend})
-      target_compile_features(${example}_benchmarks_${backend}_cuda PRIVATE cxx_std_11)
+      target_compile_options(${example}_benchmarks_${backend}_cuda PRIVATE "-std=c++11")
 
       add_custom_target(
         dummy_${example}_${backend}
