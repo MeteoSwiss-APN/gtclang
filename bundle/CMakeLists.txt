@@ -90,8 +90,8 @@ yoda_find_package(
   REQUIRED_VARS dawn_DIR
   ADDITIONAL
     DOWNLOAD_DIR ${YODA_DOWNLOAD_DIR}
-    GIT_REPOSITORY "git@github.com:MeteoSwiss-APN/dawn.git"
-    GIT_TAG "master"
+    GIT_REPOSITORY "git@github.com:havogt/dawn.git"
+    GIT_TAG "enable_cxx17"
     YODA_ROOT "${GTCLANG_YODA_SOURCE_DIR}"
     CMAKE_ARGS ${dawn_cmake_args}
 )
