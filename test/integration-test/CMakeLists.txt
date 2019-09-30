@@ -16,6 +16,9 @@
 
 include(yodaAddCustomDummyTarget)
 
+# TODO cleanup when switching to cuda as a language
+set(CUDA_NVCC_FLAGS "-std=c++11")
+
 macro(ADD_COMPILER_FLAG_TO_EXAMPLE _KEY _VALUE)
   set("MyMap_${_KEY}" "${MyMap_${_KEY}}" "${_VALUE}")
 endmacro(ADD_COMPILER_FLAG_TO_EXAMPLE)
@@ -136,7 +139,6 @@ function(cuda_compile_generated_examples)
       target_link_libraries(${example}_benchmarks_${backend}_cuda gtest ${CUDA_CUDART_LIBRARY})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PUBLIC GRIDTOOLS_CLANG_CUDA ${GTCLANG_DEFINITIONS})
       target_compile_definitions(${example}_benchmarks_${backend}_cuda PRIVATE -DOPTBACKEND=${backend})
-      target_compile_options(${example}_benchmarks_${backend}_cuda PRIVATE "-std=c++11")
 
       add_custom_target(
         dummy_${example}_${backend}
