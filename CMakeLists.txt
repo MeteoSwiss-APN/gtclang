@@ -67,7 +67,8 @@ if(GTCLANG_HAS_CUDA)
 endif(GTCLANG_HAS_CUDA)
 
 # Set C++ standard
-yoda_set_cxx_standard(c++17)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 11) # CUDA code (generated code) should be compiled with c++11
 
 # Set C++ flags (Note that the LLVM/Clang package might add some other flags)
 gtclang_set_cxx_flags()
