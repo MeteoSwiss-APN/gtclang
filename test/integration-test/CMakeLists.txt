@@ -17,7 +17,7 @@
 include(yodaAddCustomDummyTarget)
 
 # TODO cleanup when switching to cuda as a language
-set(CUDA_NVCC_FLAGS "-std=c++11")
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11")
 
 macro(ADD_COMPILER_FLAG_TO_EXAMPLE _KEY _VALUE)
   set("MyMap_${_KEY}" "${MyMap_${_KEY}}" "${_VALUE}")
