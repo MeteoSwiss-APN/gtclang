@@ -68,11 +68,6 @@ endif(GTCLANG_HAS_CUDA)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
-# TODO cleanup once we don't use yoda:
-# CUDA code (generated code) should be compiled with c++11
-# try to mimick yoda_set_cxx_standard for CUDA
-set(CMAKE_CUDA_STANDARD 11)
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -std=c++11")
 
 # Set C++ flags (Note that the LLVM/Clang package might add some other flags)
 gtclang_set_cxx_flags()
